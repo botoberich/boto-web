@@ -1,0 +1,66 @@
+/* .editable is the wrapping styles when an image has been selected */
+.editableContainer {
+    border: 1px solid transparent;
+    position: relative;
+}
+
+/* 1: opacity style logic for edit button */
+.editableContainer:hover .editCheckBox {
+    opacity: 1;
+}
+
+/* 2: opacity style logic for edit button */
+.editableContainer.editing .editCheckBox {
+    opacity: 1;
+}
+
+.editableContainer img {
+    border-radius: 6px;
+    margin: 0;
+    width: 100%;
+}
+
+/* light background highlight around the image */
+.editableContainer.editing {
+    background: #e8f0fe;
+    border-radius: 6px;
+}
+
+.editableContainer.editing img {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Self explanatory */
+.editCheckBox {
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    fill: #fff;
+    font-size: 24px;
+    opacity: 0;
+    outline: none;
+    padding-left: 8px;
+    padding-top: 4px;
+    position: absolute;
+    width: 100%;
+    z-index: 999;
+}
+
+/* Lightly opaque overlay to make the edit button more visible */
+.hoverOverlay {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.26), transparent 56px, transparent);
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 0.135s cubic-bezier(0, 0, 0.2, 1);
+    width: 100%;
+    z-index: -999;
+}
+
+.imageContainer {
+    transition: transform 0.135s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.scaleDown {
+    transform: translateZ(0px) scale3d(0.76, 0.82, 1);
+}

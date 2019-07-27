@@ -1,0 +1,23 @@
+.loadingIcon {
+    margin-top: 40px;
+    font-size: 32px;
+}
+
+.overlay {
+    height: 100vh;
+    opacity: 0.8;
+    position: absolute;
+    top: 0;
+    transition: opacity 0.5s ease;
+    width: 100vw;
+    z-index: 999;
+}
+
+.overlay div {
+    background-color: rgba(66, 133, 244, 0.988) !important;
+}
+
+.overlay * {
+    color: white !important;
+    opacity: 1;
+}

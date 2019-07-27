@@ -1,0 +1,32 @@
+.exception {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100vh;
+    padding: 24px;
+}
+
+.description h1 {
+    margin-bottom: 24px;
+    color: #434e59;
+    font-weight: 600;
+    font-size: 72px;
+    line-height: 72px;
+}
+
+.description p {
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 20px;
+    line-height: 28px;
+}
+
+@media (min-width: 768px) {
+    .exception {
+        align-items: center;
+    }
+
+    .exception img {
+        margin-right: 48px;
+    }
+}

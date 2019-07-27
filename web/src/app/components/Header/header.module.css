@@ -1,0 +1,43 @@
+.header {
+    /* TODO: Remove background and set via Theme later */
+    background: #fff; 
+    border-bottom: 1px solid #dadce0;
+    display: flex;
+    justify-content: space-between;
+    left: 0;
+    padding: 0 24px;
+    width: 100%;
+    z-index: 5;
+}
+
+.headerTitle {
+    color: #5f6368;
+    font-size: 24px;
+    text-rendering: optimizeLegibility;
+    margin-right: 16px;
+}
+
+.indicator {
+    font-size: 24px;
+}
+
+.nav {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.navItem {
+    margin-left: 8px;
+}
+
+.menu {
+    line-height: 64px;
+}
+
+@media (max-width: 568px) {
+    .desktopOnly {
+        display: none;
+    }
+}

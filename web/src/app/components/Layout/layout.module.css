@@ -1,0 +1,53 @@
+.content {
+    height: 100vh;
+}
+
+.children {
+    background: #fff;
+    margin-top: 16px;
+    padding: 16px;
+}
+
+.footer {
+    background: #fff;
+    text-align: center;
+}
+
+.layout {
+    background: #fff;
+}
+
+.menuItem {
+    padding-left: 24px;
+    margin-top: 16px;
+}
+
+.sider {
+    height: 100%;
+    position: fixed;
+    z-index: 900;
+}
+
+.themeToggleText {
+    margin-right: 16px;
+}
+
+@media (min-width: 568px) {
+    .mobileOnly {
+        display: none;
+    }
+
+    .content {
+        margin: 16px;
+    }
+
+    .children {
+        padding: 24px;
+    }
+}
+
+@media (min-width: 992px) {
+    .sider {
+        position: static;
+    }
+}

@@ -1,0 +1,4 @@
+{
+  "ext": "ts js",
+  "exec": "node -r ts-node/register --inspect"
+}
