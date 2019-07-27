@@ -10,19 +10,11 @@ import { mergeAll } from 'rxjs/operators';
 const BASE_PATH = `user/photos`;
 const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
 
-/** this doesn't work... it's weird because handleTestExif in Photo.jsx works */
-const getExifData = b64 => {
-    let img = document.createElement('img');
-    img.src = `data:image/jpeg;base64,${b64}`;
-    img.alt = 'DEFAULT_IMG';
-
-    EXIF.getData(img, function() {
-        var tags = EXIF.getAllTags(this);
-        console.log({ tags });
-    });
-};
-
-const _combineChunks = (chunkGroup, photos) => {
+/**
+ * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
+ * @returns An object with attributes photoId and b64
+ */
+const _combineChunks = chunkGroup => {
     let photoId = null;
     let b64 = chunkGroup
         .sort((a, b) => {
@@ -39,20 +31,22 @@ const _combineChunks = (chunkGroup, photos) => {
         })
         .join('');
 
-    let photoMetadata = photos.filter(photo => photo._id === photoId)[0] || { attrs: {} };
     return {
-        ...photoMetadata,
+        photoId,
         b64,
     };
 };
 
 /**
- * @returns API response object with data: error or array of objects { ...photoMetadata, b64 } (refer to models/photo for photoMetadata schema)
+ * @returns A success response with data - { metaData, $photos }
+ * - metaData: an array of photo metadata fetched from radiks server
+ * - $photos: an observable that streams { photoId , b64 }
  */
 export const getOwnPhotos = async () => {
     let $photos = new Subject();
     try {
         let photos = await Photo.fetchOwnList();
+        let metaData = photos.map(photo => photo.attrs);
         let chunkedPhotos = await Promise.all(
             photos
                 .filter(photo => photo.attrs.chunked)
@@ -74,7 +68,7 @@ export const getOwnPhotos = async () => {
             .apply(this, getChunkedPhotos)
             .pipe(mergeAll())
             .subscribe(chunks => {
-                let photo = _combineChunks(chunks, photos);
+                let photo = _combineChunks(chunks);
                 $photos.next(photo);
             });
 
@@ -86,15 +80,13 @@ export const getOwnPhotos = async () => {
             .apply(this, getUnchunkedPhotos)
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
-                let [_, id, b64] = unchunkedPhoto.split('|');
-                let photoMetadata = photos.filter(photo => photo._id === id)[0] || { attrs: {} };
-                let photo = {
-                    ...photoMetadata.attrs,
+                let [_, photoId, b64] = unchunkedPhoto.split('|');
+                $photos.next({
+                    photoId,
                     b64,
-                };
-                $photos.next(photo);
+                });
             });
-        return success($photos);
+        return success({ metaData, $photos });
     } catch (err) {
         return error(err);
     }

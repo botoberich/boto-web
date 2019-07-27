@@ -11,7 +11,7 @@ class Photo extends React.Component {
 
         this.photoService = null;
         this.handleFileUpload = this.handleFileUpload.bind(this);
-        this.handleTestExif = this.handleTestExif.bind(this);
+        this.handleTest = this.handleTest.bind(this);
 
         this.state = {
             uploadError: null,
@@ -22,11 +22,14 @@ class Photo extends React.Component {
     async componentDidMount() {
         let res = await getOwnPhotos();
         console.log(res);
+        /**
+         * The photo ids in each metadata object from the response should be used to initialize all loading photos by id
+         * So, when the $photo observable streams {photoId, b64}, you know where to load the b64
+         */
 
         if (res.status === 'success') {
-            // this.setState({ myPhotos: [] })
-            let $photo = res.data;
-            $photo.subscribe(photo => {
+            let $photos = res.data.$photos;
+            $photos.subscribe(photo => {
                 console.log('PHOTO DOWNLOADED:', photo);
                 this.setState({ myPhotos: [photo, ...this.state.myPhotos] });
             });
@@ -42,7 +45,7 @@ class Photo extends React.Component {
         }
     }
 
-    async handleTestExif(e) {
+    async handleTest(e) {
         // var img1 = document.querySelector('img');
         // EXIF.getData(img1, function() {
         //     var tags = EXIF.getAllTags(this);
@@ -92,7 +95,7 @@ class Photo extends React.Component {
                 </div>
 
                 <div style={{ marginTop: '24px' }}>
-                    <Button onClick={this.handleTestExif}>Test Exif</Button>
+                    <Button onClick={this.handleTest}>Test</Button>
                 </div>
 
                 <UploadOverlay></UploadOverlay>
