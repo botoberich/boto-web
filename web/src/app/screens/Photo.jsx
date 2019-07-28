@@ -21,7 +21,6 @@ class Photo extends React.Component {
 
     async componentDidMount() {
         let res = await getOwnPhotos();
-        console.log(res);
         /**
          * The photo ids in each metadata object from the response should be used to initialize all loading photos by id
          * So, when the $photo observable streams {photoId, b64}, you know where to load the b64
@@ -29,9 +28,14 @@ class Photo extends React.Component {
 
         if (res.status === 'success') {
             let $photos = res.data.$photos;
-            $photos.subscribe(photo => {
-                console.log('PHOTO DOWNLOADED:', photo);
-                this.setState({ myPhotos: [photo, ...this.state.myPhotos] });
+            $photos.subscribe({
+                next: photo => {
+                    console.log('PHOTO DOWNLOADED:', photo);
+                    this.setState({ myPhotos: [photo, ...this.state.myPhotos] });
+                },
+                complete: () => {
+                    console.log('ALL DOWNLOADS COMPLETED!');
+                },
             });
         }
     }
@@ -52,6 +56,8 @@ class Photo extends React.Component {
         //     console.log({ tags });
         // });
         // return;
+        let deleteRes = await deletePhoto('e21f04eb5c4a-4a9b-bc6c-58fcc36dba2f');
+        console.log({ deleteRes });
     }
 
     renderPhoto(b64, i) {

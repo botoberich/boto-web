@@ -38,7 +38,7 @@ const _combineChunks = chunkGroup => {
 };
 
 /**
- * @returns A success response with data - { metaData, $photos }
+ * @returns If not err, a success response with data - { metaData, $photos }
  * - metaData: an array of photo metadata fetched from radiks server
  * - $photos: an observable that streams { photoId , b64 }
  */
@@ -46,6 +46,7 @@ export const getOwnPhotos = async () => {
     let $photos = new Subject();
     try {
         let photos = await Photo.fetchOwnList();
+        let fetchedCtr = 0;
         let metaData = photos.map(photo => photo.attrs);
         let chunkedPhotos = await Promise.all(
             photos
@@ -57,6 +58,9 @@ export const getOwnPhotos = async () => {
                     })
                 )
         );
+        const checkComplete = () => {
+            if (photos.length === fetchedCtr) $photos.complete();
+        };
 
         let getChunkedPhotos = chunkedPhotos
             .map(chunkGroup =>
@@ -64,27 +68,31 @@ export const getOwnPhotos = async () => {
             )
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
+        let getUnchunkedPhotos = photos
+            .filter(photo => !photo.attrs.chunked)
+            .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
+
         let $chunkedPhotos = of
             .apply(this, getChunkedPhotos)
             .pipe(mergeAll())
             .subscribe(chunks => {
                 let photo = _combineChunks(chunks);
                 $photos.next(photo);
+                fetchedCtr++;
+                checkComplete();
             });
-
-        let getUnchunkedPhotos = photos
-            .filter(photo => !photo.attrs.chunked)
-            .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
 
         let $unchunkedPhotos = of
             .apply(this, getUnchunkedPhotos)
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
                 let [_, photoId, b64] = unchunkedPhoto.split('|');
+                fetchedCtr++;
                 $photos.next({
                     photoId,
                     b64,
                 });
+                checkComplete();
             });
         return success({ metaData, $photos });
     } catch (err) {
@@ -92,8 +100,12 @@ export const getOwnPhotos = async () => {
     }
 };
 
+export const postPhotos = async photos => {
+    // let
+};
+
 /**
- * @returns API response object with data: error or uploaded photos
+ * @returns If not err, a success response with data: { metadata, $photo }
  * @param {*} metadata Photo metadata: refer to the photo model@ /models/photo
  * @param {*} b64 Base64 data representation of the photo
  */
