@@ -471,8 +471,7 @@ class IndexPage extends React.Component {
                                                 See some potential in us? Stay in touch!
                                             </h2>
                                             <p className="section-paragraph">
-                                                Signup for our super rare, once-in-a-blue-moon newsletter. (This may
-                                                change - nature of the business).
+                                                Yes, no newsletter. Just plain-old direct emailing.
                                             </p>
                                         </div>
                                         <div className="footer-form newsletter-form field field-grouped justify-content-center">
