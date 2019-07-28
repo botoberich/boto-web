@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Upload, Button, Icon } from 'antd';
-import { getOwnPhotos, postPhoto, deletePhoto } from '../services/photo.ts';
+import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.ts';
 import { getBase64 } from '../utils/encoding';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
@@ -44,8 +44,21 @@ class Photo extends React.Component {
         if (e.file.status === 'done') {
             const fileObj = e.file.originFile || e.file.originFileObj;
             const b64 = await getBase64(fileObj);
-            let postResults = await postPhoto({ title: fileObj.name, archived: false, trashed: false }, b64);
-            console.log({ postResults });
+            const metaData = { title: fileObj.name, archived: false, trashed: false };
+            let postRes = await postPhotos([{ metaData, b64 }]);
+            if (postRes.status === 'success') {
+                let $postPhotos = postRes.data.$postPhotos;
+                let photoIds = postRes.data.photoIds;
+                console.log('UPLOADED PHOTO IDS: ', photoIds);
+                $postPhotos.subscribe({
+                    next: res => {
+                        console.log('PHOTO UPLOADED: ', res.photoId);
+                    },
+                    complete: () => {
+                        console.log('ALL PHOTOS UPLOADED!');
+                    },
+                });
+            }
         }
     }
 

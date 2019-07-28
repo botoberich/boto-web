@@ -101,7 +101,15 @@ export const getOwnPhotos = async () => {
 };
 
 export const postPhotos = async photos => {
-    // let
+    try {
+        let postResponses = await Promise.all(photos.map(photo => _postPhoto(photo.metaData, photo.b64)));
+        let postPhotos = postResponses.map(res => res.data.postPhoto);
+        let photoIds = postResponses.map(res => res.data.photoId);
+        let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
+        return success({ photoIds, $postPhotos });
+    } catch (err) {
+        return error(err);
+    }
 };
 
 /**
@@ -109,38 +117,43 @@ export const postPhotos = async photos => {
  * @param {*} metadata Photo metadata: refer to the photo model@ /models/photo
  * @param {*} b64 Base64 data representation of the photo
  */
-export const postPhoto = async (metadata, b64) => {
+export const _postPhoto = async (metaData, b64) => {
     /** Store all metadata in the database, get the ID and store blob in gaia */
     try {
         const chunkedBlobTexts = chunkB64(b64, GAIA_LIMIT);
         const photo = new Photo({
-            ...metadata,
+            ...metaData,
             chunked: chunkedBlobTexts.length > 1,
         });
         const saveRes = await photo.save();
-        const gaiaPath = `${BASE_PATH}/${saveRes._id}`;
+        const photoId = saveRes._id;
+        const gaiaPath = `${BASE_PATH}/${photoId}`;
+        const resolveWithId = promise => {
+            return new Promise(async (resolve, reject) => {
+                await promise;
+                resolve({ photoId });
+            });
+        };
         if (chunkedBlobTexts.length > 1) {
             /** store chunks in radik */
             const dbPosts = chunkedBlobTexts.map((txt, i) =>
                 new Chunk({
                     chunkNumber: i,
-                    photoId: saveRes._id,
+                    photoId,
                 }).save()
             );
 
             /** store chunks in gaia */
-            const gaiaPosts = chunkedBlobTexts.map((txt, i) =>
-                putFile(`${gaiaPath}/${i}`, `${i}|${saveRes._id}|${txt}`)
-            );
+            const gaiaPosts = chunkedBlobTexts.map((txt, i) => putFile(`${gaiaPath}/${i}`, `${i}|${photoId}|${txt}`));
 
-            const [radikRes, gaiaRes] = await Promise.all([...dbPosts, ...gaiaPosts]);
-            return success(radikRes);
+            const postPhoto = resolveWithId(Promise.all([...dbPosts, ...gaiaPosts]));
+            return success({ photoId, postPhoto });
         } else {
-            await putFile(gaiaPath, `-|${saveRes._id}|${chunkedBlobTexts[0]}`);
-            return success(saveRes);
+            const postPhoto = resolveWithId(putFile(gaiaPath, `-|${photoId}|${chunkedBlobTexts[0]}`));
+            return success({ photoId, postPhoto });
         }
     } catch (err) {
-        return error('Post photo err:', err);
+        throw new Error('Post photo err:', err);
     }
 };
 
