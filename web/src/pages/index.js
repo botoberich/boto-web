@@ -18,10 +18,10 @@ class IndexPage extends React.Component {
                     <link rel="stylesheet" href="style.css" />
                 </Helmet>
                 <SEO title="Photo Storage" keywords={[`gatsby`, `application`, `react`, `blockstack`, `photo`]} />
-                <div class="is-boxed has-animations">
-                    <div class="body-wrap boxed-container">
-                        <header class="site-header">
-                            <div class="header-shape header-shape-1">
+                <div className="is-boxed has-animations">
+                    <div className="body-wrap boxed-container">
+                        <header className="site-header">
+                            <div className="header-shape header-shape-1">
                                 <svg width="337" height="222" viewBox="0 0 337 222" xmlns="http://www.w3.org/2000/svg">
                                     <defs>
                                         <linearGradient x1="50%" y1="55.434%" x2="50%" y2="0%" id="header-shape-1">
@@ -33,11 +33,11 @@ class IndexPage extends React.Component {
                                         d="M1103.21 0H1440v400h-400c145.927-118.557 166.997-251.89 63.21-400z"
                                         transform="translate(-1103)"
                                         fill="url(#header-shape-1)"
-                                        fill-rule="evenodd"
+                                        fillRule="evenodd"
                                     />
                                 </svg>
                             </div>
-                            <div class="header-shape header-shape-2">
+                            <div className="header-shape header-shape-2">
                                 <svg
                                     width="128"
                                     height="128"
@@ -58,19 +58,19 @@ class IndexPage extends React.Component {
                                         </linearGradient>
                                     </defs>
                                     <circle
-                                        class="anime-element fadeup-animation"
+                                        className="anime-element fadeup-animation"
                                         cx="64"
                                         cy="64"
                                         r="64"
                                         fill="url(#header-shape-2)"
-                                        fill-rule="evenodd"
+                                        fillRule="evenodd"
                                     />
                                 </svg>
                             </div>
-                            <div class="container">
-                                <div class="site-header-inner">
-                                    <div class="brand header-brand">
-                                        <h1 class="m-0">
+                            <div className="container">
+                                <div className="site-header-inner">
+                                    <div className="brand header-brand">
+                                        <h1 className="m-0">
                                             <a href="#">
                                                 <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
                                                     <title>April</title>
@@ -106,7 +106,7 @@ class IndexPage extends React.Component {
                                                             <stop stopColor="#FF97AA" stopOpacity="0" offset="100%" />
                                                         </linearGradient>
                                                     </defs>
-                                                    <g fill="none" fill-rule="evenodd">
+                                                    <g fill="none" fillRule="evenodd">
                                                         <path
                                                             d="M31.12 7.482C28.327 19.146 19.147 28.326 7.483 31.121A12.04 12.04 0 0 1 .88 24.518C3.674 12.854 12.854 3.674 24.518.879a12.04 12.04 0 0 1 6.603 6.603z"
                                                             fill="#312ECA"
@@ -135,24 +135,24 @@ class IndexPage extends React.Component {
                         </header>
 
                         <main>
-                            <section class="hero">
-                                <div class="container">
-                                    <div class="hero-inner">
-                                        <div class="hero-copy">
-                                            <h1 class="hero-title mt-0">Welcome to Boto</h1>
-                                            <p class="hero-paragraph">
+                            <section className="hero">
+                                <div className="container">
+                                    <div className="hero-inner">
+                                        <div className="hero-copy">
+                                            <h1 className="hero-title mt-0">Welcome to Boto</h1>
+                                            <p className="hero-paragraph">
                                                 Your new private, secure, and unlimited photo storage
                                             </p>
-                                            <div class="hero-form field field-grouped">
-                                                <div class="control">
-                                                    <Link class="button button-primary button-block" to="/app/login">
+                                            <div className="hero-form field field-grouped">
+                                                <div className="control">
+                                                    <Link className="button button-primary button-block" to="/app/login">
                                                         Get Early Access
                                                     </Link>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="hero-illustration">
-                                            <div class="hero-shape hero-shape-1">
+                                        <div className="hero-illustration">
+                                            <div className="hero-shape hero-shape-1">
                                                 <svg
                                                     width="40"
                                                     height="40"
@@ -160,16 +160,16 @@ class IndexPage extends React.Component {
                                                     style={{ overflow: 'visible' }}
                                                 >
                                                     <circle
-                                                        class="anime-element fadeup-animation"
+                                                        className="anime-element fadeup-animation"
                                                         cx="20"
                                                         cy="20"
                                                         r="20"
                                                         fill="#FFD8CD"
-                                                        fill-rule="evenodd"
+                                                        fillRule="evenodd"
                                                     />
                                                 </svg>
                                             </div>
-                                            <div class="hero-shape hero-shape-2">
+                                            <div className="hero-shape hero-shape-2">
                                                 <svg
                                                     width="88"
                                                     height="88"
@@ -177,16 +177,16 @@ class IndexPage extends React.Component {
                                                     style={{ overflow: 'visible' }}
                                                 >
                                                     <circle
-                                                        class="anime-element fadeup-animation"
+                                                        className="anime-element fadeup-animation"
                                                         cx="44"
                                                         cy="44"
                                                         r="44"
                                                         fill="#FFD2DA"
-                                                        fill-rule="evenodd"
+                                                        fillRule="evenodd"
                                                     />
                                                 </svg>
                                             </div>
-                                            <div class="hero-main-shape">
+                                            <div className="hero-main-shape">
                                                 {/* TODO: Insert main image */}
                                                 <img src={'hero-svg.svg'}></img>
                                             </div>
@@ -195,23 +195,23 @@ class IndexPage extends React.Component {
                                 </div>
                             </section>
 
-                            <section class="features section">
-                                <div class="container">
-                                    <div class="features-inner section-inner">
-                                        <div class="features-header text-center">
-                                            <div class="container-sm">
-                                                <h2 class="section-title mt-0">Explore</h2>
-                                                <p class="section-paragraph">
+                            <section className="features section">
+                                <div className="container">
+                                    <div className="features-inner section-inner">
+                                        <div className="features-header text-center">
+                                            <div className="container-sm">
+                                                <h2 className="section-title mt-0">Explore</h2>
+                                                <p className="section-paragraph">
                                                     We're still in early access, but please enjoy our core features.
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="features-wrap">
-                                            <div class="feature text-center is-revealing">
-                                                <div class="feature-inner">
-                                                    <div class="feature-icon" style={{ background: '#FFD2DA' }}>
+                                        <div className="features-wrap">
+                                            <div className="feature text-center is-revealing">
+                                                <div className="feature-inner">
+                                                    <div className="feature-icon" style={{ background: '#FFD2DA' }}>
                                                         <svg width="88" height="88" xmlns="http://www.w3.org/2000/svg">
-                                                            <g fill="none" fill-rule="nonzero">
+                                                            <g fill="none" fillRule="nonzero">
                                                                 <path
                                                                     d="M43 47v7a13 13 0 0 0 13-13v-7c-7.18 0-13 5.82-13 13z"
                                                                     fill="#FF6381"
@@ -223,18 +223,18 @@ class IndexPage extends React.Component {
                                                             </g>
                                                         </svg>
                                                     </div>
-                                                    <h4 class="feature-title h3-mobile mb-8">Unlimited Storage</h4>
-                                                    <p class="text-sm">
+                                                    <h4 className="feature-title h3-mobile mb-8">Unlimited Storage</h4>
+                                                    <p className="text-sm">
                                                         With Blockstack empowering us, you'll have plenty of space for
                                                         all your photos (plenty as in unlimited).
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="feature text-center is-revealing">
-                                                <div class="feature-inner">
-                                                    <div class="feature-icon" style={{ background: '#FFD8CD' }}>
+                                            <div className="feature text-center is-revealing">
+                                                <div className="feature-inner">
+                                                    <div className="feature-icon" style={{ background: '#FFD8CD' }}>
                                                         <svg width="88" height="88" xmlns="http://www.w3.org/2000/svg">
-                                                            <g fill="none" fill-rule="nonzero">
+                                                            <g fill="none" fillRule="nonzero">
                                                                 <path
                                                                     d="M54 56h-9a2 2 0 0 1-2-2V43a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2zm-9-13v10h9V43h-9z"
                                                                     fill="#FCAC96"
@@ -246,18 +246,18 @@ class IndexPage extends React.Component {
                                                             </g>
                                                         </svg>
                                                     </div>
-                                                    <h4 class="feature-title h3-mobile mb-8">Easy to Use</h4>
-                                                    <p class="text-sm">
+                                                    <h4 className="feature-title h3-mobile mb-8">Easy to Use</h4>
+                                                    <p className="text-sm">
                                                         We're building Boto to be as intelligently-designed as possible
                                                         to do what you want most quickly and easily.
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="feature text-center is-revealing">
-                                                <div class="feature-inner">
-                                                    <div class="feature-icon" style={{ background: '#C6FDF3' }}>
+                                            <div className="feature text-center is-revealing">
+                                                <div className="feature-inner">
+                                                    <div className="feature-icon" style={{ background: '#C6FDF3' }}>
                                                         <svg width="88" height="88" xmlns="http://www.w3.org/2000/svg">
-                                                            <g fill="none" fill-rule="nonzero">
+                                                            <g fill="none" fillRule="nonzero">
                                                                 <circle fill="#1ADAB7" cx="38" cy="50" r="5" />
                                                                 <path
                                                                     d="M53 42h2v-8a1 1 0 0 0-1-1h-8v2h5.586l-8.293 8.293a1 1 0 1 0 1.414 1.414L53 36.414V42z"
@@ -270,18 +270,18 @@ class IndexPage extends React.Component {
                                                             </g>
                                                         </svg>
                                                     </div>
-                                                    <h4 class="feature-title h3-mobile mb-8">Private</h4>
-                                                    <p class="text-sm">
+                                                    <h4 className="feature-title h3-mobile mb-8">Private</h4>
+                                                    <p className="text-sm">
                                                         Your data always stays with you. None of it with it ever sits on
                                                         our side.
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="feature text-center is-revealing">
-                                                <div class="feature-inner">
-                                                    <div class="feature-icon" style={{ background: '#E0E1FE' }}>
+                                            <div className="feature text-center is-revealing">
+                                                <div className="feature-inner">
+                                                    <div className="feature-icon" style={{ background: '#E0E1FE' }}>
                                                         <svg width="88" height="88" xmlns="http://www.w3.org/2000/svg">
-                                                            <g fill="none" fill-rule="nonzero">
+                                                            <g fill="none" fillRule="nonzero">
                                                                 <path
                                                                     d="M41 42h-7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1zM41 55h-7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1z"
                                                                     fill="#4950F6"
@@ -293,8 +293,8 @@ class IndexPage extends React.Component {
                                                             </g>
                                                         </svg>
                                                     </div>
-                                                    <h4 class="feature-title h3-mobile mb-8">Secure</h4>
-                                                    <p class="text-sm">
+                                                    <h4 className="feature-title h3-mobile mb-8">Secure</h4>
+                                                    <p className="text-sm">
                                                         Because your data always stays with you, there'll never be a
                                                         scary data breach exposing your cherished memories.
                                                     </p>
@@ -305,8 +305,8 @@ class IndexPage extends React.Component {
                                 </div>
                             </section>
 
-                            {/* <section class="testimonials section">
-                                <div class="testimonials-shape testimonials-shape-1">
+                            {/* <section className="testimonials section">
+                                <div className="testimonials-shape testimonials-shape-1">
                                     <svg
                                         width="280"
                                         height="280"
@@ -331,18 +331,18 @@ class IndexPage extends React.Component {
                                             r="140"
                                             transform="translate(0 -545)"
                                             fill="url(#testimonials-shape-1)"
-                                            fill-rule="evenodd"
+                                            fillRule="evenodd"
                                         />
                                     </svg>
                                 </div>
-                                <div class="testimonials-shape testimonials-shape-2">
+                                <div className="testimonials-shape testimonials-shape-2">
                                     <svg
                                         width="125"
                                         height="107"
                                         viewBox="0 0 125 107"
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
-                                        <g fill="none" fill-rule="evenodd">
+                                        <g fill="none" fillRule="evenodd">
                                             <circle fill="#C6FDF3" cx="48" cy="59" r="48" />
                                             <path
                                                 d="M58.536 39.713c0-6.884 1.72-14.007 5.163-21.368 3.443-7.36 8.167-13.458 14.173-18.292l11.645 7.91c-3.589 4.98-6.262 10.016-8.02 15.106S78.86 33.598 78.86 39.384v13.623H58.536V39.713z"
@@ -355,7 +355,7 @@ class IndexPage extends React.Component {
                                         </g>
                                     </svg>
                                 </div>
-                                <div class="testimonials-shape testimonials-shape-3">
+                                <div className="testimonials-shape testimonials-shape-3">
                                     <svg width="48" height="48" viewBox="0 0 48 48" mlns="http://www.w3.org/2000/svg">
                                         <defs>
                                             <linearGradient
@@ -375,81 +375,81 @@ class IndexPage extends React.Component {
                                             r="24"
                                             transform="translate(0 -410)"
                                             fill="url(#testimonials-shape-3)"
-                                            fill-rule="evenodd"
+                                            fillRule="evenodd"
                                         />
                                     </svg>
                                 </div>
-                                <div class="container">
-                                    <div class="testimonials-inner section-inner">
-                                        <h2 class="section-title mt-0 text-center">Testimonials</h2>
-                                        <div class="testimonials-wrap">
-                                            <div class="testimonial text-xs is-revealing">
-                                                <div class="testimonial-inner">
-                                                    <div class="testimonial-main">
-                                                        <div class="testimonial-header">
+                                <div className="container">
+                                    <div className="testimonials-inner section-inner">
+                                        <h2 className="section-title mt-0 text-center">Testimonials</h2>
+                                        <div className="testimonials-wrap">
+                                            <div className="testimonial text-xs is-revealing">
+                                                <div className="testimonial-inner">
+                                                    <div className="testimonial-main">
+                                                        <div className="testimonial-header">
                                                             <img
-                                                                class="mb-16"
+                                                                className="mb-16"
                                                                 src="testimonial-01.png"
                                                                 alt="Testimonial"
                                                             />
                                                         </div>
-                                                        <div class="testimonial-body">
-                                                            <p class="mb-0">
+                                                        <div className="testimonial-body">
+                                                            <p className="mb-0">
                                                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                                                                 sed do eiusmod tempor incididunt.
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <div class="testimonial-footer">
-                                                        <div class="testimonial-link">
+                                                    <div className="testimonial-footer">
+                                                        <div className="testimonial-link">
                                                             <a href="#">@martajones</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="testimonial text-xs is-revealing">
-                                                <div class="testimonial-inner">
-                                                    <div class="testimonial-main">
-                                                        <div class="testimonial-header">
+                                            <div className="testimonial text-xs is-revealing">
+                                                <div className="testimonial-inner">
+                                                    <div className="testimonial-main">
+                                                        <div className="testimonial-header">
                                                             <img
-                                                                class="mb-16"
+                                                                className="mb-16"
                                                                 src="testimonial-02.png"
                                                                 alt="Testimonial"
                                                             />
                                                         </div>
-                                                        <div class="testimonial-body">
-                                                            <p class="mb-0">
+                                                        <div className="testimonial-body">
+                                                            <p className="mb-0">
                                                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                                                                 sed do eiusmod tempor incididunt.
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <div class="testimonial-footer">
-                                                        <div class="testimonial-link">
+                                                    <div className="testimonial-footer">
+                                                        <div className="testimonial-link">
                                                             <a href="#">@michealpahm</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="testimonial text-xs is-revealing">
-                                                <div class="testimonial-inner">
-                                                    <div class="testimonial-main">
-                                                        <div class="testimonial-header">
+                                            <div className="testimonial text-xs is-revealing">
+                                                <div className="testimonial-inner">
+                                                    <div className="testimonial-main">
+                                                        <div className="testimonial-header">
                                                             <img
-                                                                class="mb-16"
+                                                                className="mb-16"
                                                                 src="testimonial-03.png"
                                                                 alt="Testimonial"
                                                             />
                                                         </div>
-                                                        <div class="testimonial-body">
-                                                            <p class="mb-0">
+                                                        <div className="testimonial-body">
+                                                            <p className="mb-0">
                                                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                                                                 sed do eiusmod tempor incididunt.
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <div class="testimonial-footer">
-                                                        <div class="testimonial-link">
+                                                    <div className="testimonial-footer">
+                                                        <div className="testimonial-link">
                                                             <a href="#">@markbrown</a>
                                                         </div>
                                                     </div>
@@ -460,20 +460,20 @@ class IndexPage extends React.Component {
                                 </div>
                             </section> */}
 
-                            <section class="newsletter section text-light">
-                                <div class="container-sm">
-                                    <div class="newsletter-inner section-inner">
-                                        <div class="newsletter-header text-center">
-                                            <h2 class="section-title mt-0">See some potential in us? Stay in touch!</h2>
-                                            <p class="section-paragraph">
+                            <section className="newsletter section text-light">
+                                <div className="container-sm">
+                                    <div className="newsletter-inner section-inner">
+                                        <div className="newsletter-header text-center">
+                                            <h2 className="section-title mt-0">See some potential in us? Stay in touch!</h2>
+                                            <p className="section-paragraph">
                                                 Signup for our super rare, once-in-a-blue-moon newsletter. (This may
                                                 change - nature of the business).
                                             </p>
                                         </div>
-                                        <div class="footer-form newsletter-form field field-grouped justify-content-center">
-                                            <div class="control">
+                                        <div className="footer-form newsletter-form field field-grouped justify-content-center">
+                                            <div className="control">
                                                 <a
-                                                    class="button button-primary button-block button-shadow"
+                                                    className="button button-primary button-block button-shadow"
                                                     href="mailto:team@boto.photos"
                                                 >
                                                     Contact us!
@@ -485,10 +485,10 @@ class IndexPage extends React.Component {
                             </section>
                         </main>
 
-                        <footer class="site-footer">
-                            <div class="container">
-                                <div class="site-footer-inner has-top-divider">
-                                    <div class="brand footer-brand">
+                        <footer className="site-footer">
+                            <div className="container">
+                                <div className="site-footer-inner has-top-divider">
+                                    <div className="brand footer-brand">
                                         <a href="#">
                                             <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
                                                 <title>April</title>
@@ -524,7 +524,7 @@ class IndexPage extends React.Component {
                                                         <stop stopColor="#FF97AA" stopOpacity="0" offset="100%" />
                                                     </linearGradient>
                                                 </defs>
-                                                <g fill="none" fill-rule="evenodd">
+                                                <g fill="none" fillRule="evenodd">
                                                     <path
                                                         d="M31.12 7.482C28.327 19.146 19.147 28.326 7.483 31.121A12.04 12.04 0 0 1 .88 24.518C3.674 12.854 12.854 3.674 24.518.879a12.04 12.04 0 0 1 6.603 6.603z"
                                                         fill="#312ECA"
@@ -547,7 +547,7 @@ class IndexPage extends React.Component {
                                             </svg>
                                         </a>
                                     </div>
-                                    {/* <ul class="footer-links list-reset">
+                                    {/* <ul className="footer-links list-reset">
                                         <li>
                                             <a href="#">Contact</a>
                                         </li>
@@ -561,10 +561,10 @@ class IndexPage extends React.Component {
                                             <a href="#">Support</a>
                                         </li>
                                     </ul> */}
-                                    {/* <ul class="footer-social-links list-reset">
+                                    {/* <ul className="footer-social-links list-reset">
                                         <li>
                                             <a href="#">
-                                                <span class="screen-reader-text">Facebook</span>
+                                                <span className="screen-reader-text">Facebook</span>
                                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         d="M6.023 16L6 9H3V6h3V4c0-2.7 1.672-4 4.08-4 1.153 0 2.144.086 2.433.124v2.821h-1.67c-1.31 0-1.563.623-1.563 1.536V6H13l-1 3H9.28v7H6.023z"
@@ -575,7 +575,7 @@ class IndexPage extends React.Component {
                                         </li>
                                         <li>
                                             <a href="#">
-                                                <span class="screen-reader-text">Twitter</span>
+                                                <span className="screen-reader-text">Twitter</span>
                                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         d="M16 3c-.6.3-1.2.4-1.9.5.7-.4 1.2-1 1.4-1.8-.6.4-1.3.6-2.1.8-.6-.6-1.5-1-2.4-1-1.7 0-3.2 1.5-3.2 3.3 0 .3 0 .5.1.7-2.7-.1-5.2-1.4-6.8-3.4-.3.5-.4 1-.4 1.7 0 1.1.6 2.1 1.5 2.7-.5 0-1-.2-1.5-.4C.7 7.7 1.8 9 3.3 9.3c-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.3 1.6 2.3 3.1 2.3-1.1.9-2.5 1.4-4.1 1.4H0c1.5.9 3.2 1.5 5 1.5 6 0 9.3-5 9.3-9.3v-.4C15 4.3 15.6 3.7 16 3z"
@@ -586,7 +586,7 @@ class IndexPage extends React.Component {
                                         </li>
                                         <li>
                                             <a href="#">
-                                                <span class="screen-reader-text">Google</span>
+                                                <span className="screen-reader-text">Google</span>
                                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         d="M7.9 7v2.4H12c-.2 1-1.2 3-4 3-2.4 0-4.3-2-4.3-4.4 0-2.4 2-4.4 4.3-4.4 1.4 0 2.3.6 2.8 1.1l1.9-1.8C11.5 1.7 9.9 1 8 1 4.1 1 1 4.1 1 8s3.1 7 7 7c4 0 6.7-2.8 6.7-6.8 0-.5 0-.8-.1-1.2H7.9z"
@@ -596,7 +596,7 @@ class IndexPage extends React.Component {
                                             </a>
                                         </li>
                                     </ul> */}
-                                    <div class="footer-copyright">
+                                    <div className="footer-copyright">
                                         &copy; <CopyrightYear></CopyrightYear>, all rights reserved
                                     </div>
                                 </div>
