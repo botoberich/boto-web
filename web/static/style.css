@@ -1574,10 +1574,10 @@ main {
 .footer-links,
 .footer-social-links,
 .footer-copyright {
-    flex: none;
     width: 100%;
-    display: inline-flex;
-    justify-content: center;
+}
+.footer-copyright p {
+    margin: 0;
 }
 .footer-brand,
 .footer-links,

@@ -145,7 +145,10 @@ class IndexPage extends React.Component {
                                             </p>
                                             <div className="hero-form field field-grouped">
                                                 <div className="control">
-                                                    <Link className="button button-primary button-block" to="/app/login">
+                                                    <Link
+                                                        className="button button-primary button-block"
+                                                        to="/app/login"
+                                                    >
                                                         Get Early Access
                                                     </Link>
                                                 </div>
@@ -249,7 +252,7 @@ class IndexPage extends React.Component {
                                                     <h4 className="feature-title h3-mobile mb-8">Easy to Use</h4>
                                                     <p className="text-sm">
                                                         We're building Boto to be as intelligently-designed as possible
-                                                        to do what you want most quickly and easily.
+                                                        to do what you want most, quickly and easily.
                                                     </p>
                                                 </div>
                                             </div>
@@ -272,8 +275,8 @@ class IndexPage extends React.Component {
                                                     </div>
                                                     <h4 className="feature-title h3-mobile mb-8">Private</h4>
                                                     <p className="text-sm">
-                                                        Your data always stays with you. None of it with it ever sits on
-                                                        our side.
+                                                        All your data always stays with you. Only the minimum sits on
+                                                        our side so we can serve you up the right stuff.
                                                     </p>
                                                 </div>
                                             </div>
@@ -464,7 +467,9 @@ class IndexPage extends React.Component {
                                 <div className="container-sm">
                                     <div className="newsletter-inner section-inner">
                                         <div className="newsletter-header text-center">
-                                            <h2 className="section-title mt-0">See some potential in us? Stay in touch!</h2>
+                                            <h2 className="section-title mt-0">
+                                                See some potential in us? Stay in touch!
+                                            </h2>
                                             <p className="section-paragraph">
                                                 Signup for our super rare, once-in-a-blue-moon newsletter. (This may
                                                 change - nature of the business).
@@ -597,7 +602,15 @@ class IndexPage extends React.Component {
                                         </li>
                                     </ul> */}
                                     <div className="footer-copyright">
-                                        &copy; <CopyrightYear></CopyrightYear>, all rights reserved
+                                        <p>
+                                            &copy; <CopyrightYear></CopyrightYear>, all rights reserved.
+                                        </p>
+                                        <p>
+                                            Template from <a href="https://cruip.com/">Cruip</a>
+                                        </p>
+                                        <p>
+                                            Banner art from <a href="https://iradesign.io">IRA Design</a>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
