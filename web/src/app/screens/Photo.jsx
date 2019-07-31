@@ -4,6 +4,7 @@ import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.ts';
 import { getBase64 } from '../utils/encoding';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
+import { getExif } from '../utils/exif';
 
 class Photo extends React.Component {
     constructor(props) {
@@ -12,10 +13,12 @@ class Photo extends React.Component {
         this.photoService = null;
         this.handleFileUpload = this.handleFileUpload.bind(this);
         this.handleTest = this.handleTest.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
 
         this.state = {
             uploadError: null,
             myPhotos: [],
+            input: '',
         };
     }
 
@@ -40,16 +43,23 @@ class Photo extends React.Component {
         }
     }
 
+    handleInputChange(e) {
+        this.setState({ input: e.target.value });
+    }
+
     async handleFileUpload(e) {
         if (e.file.status === 'done') {
             const fileObj = e.file.originFile || e.file.originFileObj;
             const b64 = await getBase64(fileObj);
+            const exifData = await getExif(b64);
+            console.log({ exifData });
+
             const metaData = { title: fileObj.name, archived: false, trashed: false };
             let postRes = await postPhotos([{ metaData, b64 }]);
             if (postRes.status === 'success') {
                 let $postPhotos = postRes.data.$postPhotos;
                 let photoIds = postRes.data.photoIds;
-                console.log('UPLOADED PHOTO IDS: ', photoIds);
+                console.log('UPLOADING PHOTO IDS: ', photoIds);
                 $postPhotos.subscribe({
                     next: res => {
                         console.log('PHOTO UPLOADED: ', res.photoId);
@@ -69,7 +79,8 @@ class Photo extends React.Component {
         //     console.log({ tags });
         // });
         // return;
-        let deleteRes = await deletePhoto('e21f04eb5c4a-4a9b-bc6c-58fcc36dba2f');
+
+        let deleteRes = await deletePhoto(this.state.input);
         console.log({ deleteRes });
     }
 
@@ -116,6 +127,8 @@ class Photo extends React.Component {
                 <div style={{ marginTop: '24px' }}>
                     <Button onClick={this.handleTest}>Test</Button>
                 </div>
+
+                <input onChange={e => this.setState({ input: e.target.value })} type="text" />
 
                 <UploadOverlay></UploadOverlay>
             </div>

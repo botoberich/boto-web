@@ -174,7 +174,9 @@ export const deletePhoto = async id => {
                 });
                 let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
                 if (deleteChunksInRadik.length === chunks.length) {
-                    chunks.map(chunk => deleteFile(`${BASE_PATH}/${photo._id}/${chunk.attrs.chunkNumber}`));
+                    for (let i = 0; i < chunks.length; i++) {
+                        deleteFile(`${BASE_PATH}/${photo._id}/${chunks[i].attrs.chunkNumber}`);
+                    }
                     deletes.chunks = deleteChunksInRadik;
                 }
             }
