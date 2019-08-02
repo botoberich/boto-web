@@ -1,6 +1,7 @@
 import React from 'react';
 import { Router } from '@reach/router';
 import loadable from '@loadable/component';
+import styles from './app.module.css';
 
 // UI
 import Layout from './components/Layout';
@@ -21,22 +22,19 @@ function App() {
     const { setOverlayVisible } = useOverlay();
 
     return (
-        <>
+        <div className={styles.root}>
             <div
                 id={APP_ROOT}
                 onDrop={e => e.preventDefault()}
-                onDragEnter={e => {
-                    e.persist()
-                    setOverlayVisible(true)
-                    console.log({ e })
+                onDragEnter={() => {
+                    setOverlayVisible(true);
                 }}
                 onDragLeave={e => {
                     e.persist();
                     if (e.pageX <= 0 && e.pageY <= 0) {
                         setOverlayVisible(false);
                     }
-                }}
-            >
+                }}>
                 <Layout>
                     <Router>
                         <PrivateRoute path="/app/profile" component={Profile} />
@@ -50,7 +48,7 @@ function App() {
                 </Layout>
             </div>
             <div id={OVERLAY_ROOT}></div>
-        </>
+        </div>
     );
 }
 

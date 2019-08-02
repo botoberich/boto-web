@@ -38,7 +38,7 @@ export const handleLogin = async callback => {
 
 export const checkIsSignedIn = async () => {
     if (!isBrowser()) {
-        clog('Not a browser');
+        // clog('Not a browser');
         return Promise.resolve(false);
     }
     if (userSession.isSignInPending()) {
@@ -47,10 +47,10 @@ export const checkIsSignedIn = async () => {
         return true;
     } else if (userSession.isUserSignedIn()) {
         const user = userSession.loadUserData();
-        clog('isLoggedIn check', { user });
+        // clog('isLoggedIn check', { user });
         return Promise.resolve(!!user);
     } else {
-        clog('isLoggedIn check - nothing');
+        // clog('isLoggedIn check - nothing');
         return Promise.resolve(false);
     }
 };
@@ -58,9 +58,4 @@ export const checkIsSignedIn = async () => {
 export const logout = callback => {
     userSession.signUserOut('/app/login');
     callback();
-};
-
-export const encryptContent = message => {
-    console.log('encrypting ' + message);
-    return userSession.encryptContent(message);
 };

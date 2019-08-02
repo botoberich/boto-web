@@ -1,11 +1,15 @@
 import React from 'react';
+
+// UI
 import { Alert, Upload, Button, Icon } from 'antd';
-import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.ts';
-import { getBase64 } from '../utils/encoding';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
-import { getExif } from '../utils/exif';
 import 'react-image-lightbox/style.css';
+
+// State
+import { getExif } from '../utils/exif';
+import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo';
+import { getBase64 } from '../utils/encoding';
 
 class Photo extends React.Component {
     constructor(props) {
@@ -52,11 +56,13 @@ class Photo extends React.Component {
         if (e.file.status === 'done') {
             const fileObj = e.file.originFile || e.file.originFileObj;
             const b64 = await getBase64(fileObj);
+            console.log({ b64 });
             const exifData = await getExif(b64);
             console.log({ exifData });
 
             const metaData = { title: fileObj.name, archived: false, trashed: false };
             let postRes = await postPhotos([{ metaData, b64 }]);
+            console.log({ postRes });
             if (postRes.status === 'success') {
                 let $postPhotos = postRes.data.$postPhotos;
                 let photoIds = postRes.data.photoIds;
@@ -85,20 +91,12 @@ class Photo extends React.Component {
         console.log({ deleteRes });
     }
 
-    renderPhoto(b64, i) {
-        /** just temporary to test if my images are being uploaded and pulled correctly, remove this and put the photos in photogrid*/
-        return (
-            <img
-                key={i}
-                alt="DEFAULT_IMAGE"
-                style={{ width: 'auto', height: '300px', marginRight: '15px' }}
-                src={b64}
-            ></img>
-        );
-    }
-
     render() {
-        const { uploadError } = this.state;
+        const { uploadError, myPhotos } = this.state;
+        const transformedPhotos = myPhotos.map(({ b64, photoId }) => ({
+            src: `data:image/gif;base64,${b64}`,
+            id: photoId,
+        }));
 
         return (
             <div>
@@ -108,28 +106,23 @@ class Photo extends React.Component {
                     <Alert style={{ marginTop: '30px', marginBottom: '20px' }} message={uploadError} type="error" />
                 )}
 
-                <div className="photos">
-                    {this.state.myPhotos.map((photo, i) => this.renderPhoto(`data:image/jpeg;base64,${photo.b64}`, i))}
-                </div>
-
                 <div>
-                    {/* Leave this part in for demo purposes -- DD 07/22/19 */}
-                    <PhotoGrid />
+                    <PhotoGrid photos={transformedPhotos}></PhotoGrid>
                 </div>
 
                 <div style={{ marginTop: '24px' }}>
-                    <Upload listType="picture" onChange={this.handleFileUpload}>
+                    <Upload listType="picture" multiple onChange={this.handleFileUpload}>
                         <Button>
                             <Icon type="upload" /> Upload
                         </Button>
                     </Upload>
                 </div>
 
-                <div style={{ marginTop: '24px' }}>
+                {/* <div style={{ marginTop: '24px' }}>
                     <Button onClick={this.handleTest}>Test</Button>
                 </div>
 
-                <input onChange={e => this.setState({ input: e.target.value })} type="text" />
+                <input onChange={e => this.setState({ input: e.target.value })} type="text" /> */}
 
                 <UploadOverlay></UploadOverlay>
             </div>
