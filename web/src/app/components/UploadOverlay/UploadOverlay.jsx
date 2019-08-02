@@ -3,14 +3,15 @@ import ReactDOM from 'react-dom';
 
 // UI
 import { motion } from 'framer-motion';
-import { Upload, Icon } from 'antd';
+import { Upload, Icon, Button } from 'antd';
 import { OVERLAY_ROOT } from '../../app';
 import styles from './UploadOverlay.module.css';
 
 // State
+import { getExif } from '../../utils/exif';
 import { useOverlay } from '../../contexts/OverlayContext';
-import { getBase64, chunkB64 } from '../../utils/encoding';
-import { postPhoto } from '../../services/photo.ts';
+import { getBase64 } from '../../utils/encoding';
+import { postPhotos } from '../../services/photo';
 
 const { Dragger } = Upload;
 
@@ -24,27 +25,45 @@ function UploadOverlay({ setOverlayVisible }) {
     const overlayRef = useRef(document.getElementById(OVERLAY_ROOT));
     const [uploadingInProgress, setUploadInProgress] = useState(false);
 
-    const handleOnChange = useCallback(async e => {
-        console.log(e);
-        const { status } = e.file;
-        setUploadInProgress(true);
-        if (status !== 'uploading') {
-            console.log(e.file, e.fileList);
-        }
-        if (status === 'done') {
-            const fileObj = e.file.originFile || e.file.originFileObj;
-            const b64 = await getBase64(fileObj);
-            let postResults = await postPhoto({ title: fileObj.name, archived: false, trashed: false }, b64);
-            console.log({ chunkedb64: chunkB64(b64, 12582912) });
-            console.log({ length: b64.length });
-            console.log({ postResults });
-            console.log(`${e.file.name} file uploaded successfully.`);
-            setOverlayVisible(false);
-        } else if (status === 'error') {
-            console.error(`${e.file.name} file upload failed.`);
-            setOverlayVisible(false);
-        }
-    }, []);
+    const handleOnChange = useCallback(
+        async e => {
+            console.log(e);
+            const { status } = e.file;
+            setUploadInProgress(true);
+            if (status !== 'uploading') {
+                console.log(e.file, e.fileList);
+            }
+            if (status === 'done') {
+                const fileObj = e.file.originFile || e.file.originFileObj;
+                const b64 = await getBase64(fileObj);
+                console.log({ b64 });
+                const exifData = await getExif(b64);
+                console.log({ exifData });
+
+                const metaData = { title: fileObj.name, archived: false, trashed: false };
+                let postRes = await postPhotos([{ metaData, b64 }]);
+                console.log({ postRes });
+                if (postRes.status === 'success') {
+                    let $postPhotos = postRes.data.$postPhotos;
+                    let photoIds = postRes.data.photoIds;
+                    console.log('UPLOADING PHOTO IDS: ', photoIds);
+                    $postPhotos.subscribe({
+                        next: res => {
+                            console.log('PHOTO UPLOADED: ', res.photoId);
+                        },
+                        complete: () => {
+                            console.log('ALL PHOTOS UPLOADED!');
+                            setOverlayVisible(false);
+                        },
+                    });
+                }
+            } else if (status === 'error') {
+                console.error(`${e.file.name} file upload failed.`);
+                setOverlayVisible(false);
+            }
+        },
+        [uploadingInProgress]
+    );
 
     return ReactDOM.createPortal(
         <div className={styles.overlay}>
@@ -52,13 +71,12 @@ function UploadOverlay({ setOverlayVisible }) {
                 <motion.div
                     animate={
                         uploadingInProgress
-                            ? {}
-                            : {
-                                y: [0, -10, 0],
-                            }
+                            ? {
+                                  y: [0, -10, 0],
+                              }
+                            : {}
                     }
-                    transition={{ loop: Infinity }}
-                >
+                    transition={{ loop: Infinity }}>
                     <p className="ant-upload-drag-icon" style={{ margin: '0 auto', width: 'fit-content' }}>
                         <Icon type="inbox" />
                     </p>
@@ -68,11 +86,17 @@ function UploadOverlay({ setOverlayVisible }) {
                     Support for a single or bulk upload. Strictly prohibit from uploading company data or other band
                     files
                 </p>
-                {uploadingInProgress && (
-                    <div className={styles.loadingIcon}>
-                        <Icon type="loading-3-quarters" spin />
-                    </div>
-                )}
+
+                <div className={styles.closeOverlayButton}>
+                    <Icon
+                        aria-label="Close overlay"
+                        type="close-circle"
+                        onClick={e => {
+                            e.stopPropagation();
+                            setOverlayVisible(false);
+                        }}
+                    />
+                </div>
             </Dragger>
         </div>,
         overlayRef.current
