@@ -7,7 +7,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { checkIsSignedIn } from '../../services/auth';
 
 // UI
-import { Affix, Icon, Layout, Menu, Switch, Button } from 'antd';
+import { Affix, Icon, Layout, Menu, Switch } from 'antd';
 import PageHeader from '../Header';
 import Logo from '../Logo';
 import AuthButton from '../AuthButton';
