@@ -147,7 +147,12 @@ class IndexPage extends React.Component {
                                                 <div className="control">
                                                     <Link
                                                         className="button button-primary button-block"
-                                                        to="/app/login"
+                                                        style={{
+                                                            alignItems: 'center',
+                                                            height: '60px',
+                                                            borderRadius: '8px'
+                                                        }}
+                                                        to="/app"
                                                     >
                                                         Get Early Access
                                                     </Link>

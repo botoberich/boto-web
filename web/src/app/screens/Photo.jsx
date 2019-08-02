@@ -1,11 +1,15 @@
 import React from 'react';
+
+// UI
 import { Alert, Upload, Button, Icon } from 'antd';
-import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.ts';
-import { getBase64 } from '../utils/encoding';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
-import { getExif } from '../utils/exif';
 import 'react-image-lightbox/style.css';
+
+// State
+import { getExif } from '../utils/exif';
+import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo';
+import { getBase64 } from '../utils/encoding';
 
 class Photo extends React.Component {
     constructor(props) {
@@ -52,11 +56,13 @@ class Photo extends React.Component {
         if (e.file.status === 'done') {
             const fileObj = e.file.originFile || e.file.originFileObj;
             const b64 = await getBase64(fileObj);
+            console.log({ b64 })
             const exifData = await getExif(b64);
             console.log({ exifData });
 
             const metaData = { title: fileObj.name, archived: false, trashed: false };
             let postRes = await postPhotos([{ metaData, b64 }]);
+            console.log({ postRes })
             if (postRes.status === 'success') {
                 let $postPhotos = postRes.data.$postPhotos;
                 let photoIds = postRes.data.photoIds;
@@ -98,7 +104,8 @@ class Photo extends React.Component {
     }
 
     render() {
-        const { uploadError } = this.state;
+        const { uploadError, myPhotos } = this.state;
+        console.log({ myPhotos })
 
         return (
             <div>

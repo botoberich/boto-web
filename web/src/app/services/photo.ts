@@ -102,9 +102,13 @@ export const getOwnPhotos = async () => {
 
 export const postPhotos = async photos => {
     try {
+        debugger;
         let postResponses = await Promise.all(photos.map(photo => _postPhoto(photo.metaData, photo.b64)));
+        debugger;
         let postPhotos = postResponses.map(res => res.data.postPhoto);
+        debugger;
         let photoIds = postResponses.map(res => res.data.photoId);
+        debugger;
         let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
         return success({ photoIds, $postPhotos });
     } catch (err) {
@@ -120,7 +124,10 @@ export const postPhotos = async photos => {
 export const _postPhoto = async (metaData, b64) => {
     /** Store all metadata in the database, get the ID and store blob in gaia */
     try {
+        debugger;
         const chunkedBlobTexts = chunkB64(b64, GAIA_LIMIT);
+
+        debugger;
         const photo = new Photo({
             ...metaData,
             chunked: chunkedBlobTexts.length > 1,

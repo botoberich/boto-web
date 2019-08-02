@@ -10,7 +10,7 @@ import styles from './UploadOverlay.module.css';
 // State
 import { useOverlay } from '../../contexts/OverlayContext';
 import { getBase64, chunkB64 } from '../../utils/encoding';
-import { postPhoto } from '../../services/photo.ts';
+import { postPhotos } from '../../services/photo';
 
 const { Dragger } = Upload;
 
@@ -34,7 +34,7 @@ function UploadOverlay({ setOverlayVisible }) {
         if (status === 'done') {
             const fileObj = e.file.originFile || e.file.originFileObj;
             const b64 = await getBase64(fileObj);
-            let postResults = await postPhoto({ title: fileObj.name, archived: false, trashed: false }, b64);
+            let postResults = await postPhotos({ title: fileObj.name, archived: false, trashed: false }, b64);
             console.log({ chunkedb64: chunkB64(b64, 12582912) });
             console.log({ length: b64.length });
             console.log({ postResults });
