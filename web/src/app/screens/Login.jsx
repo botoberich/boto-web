@@ -17,8 +17,8 @@ class Login extends React.Component {
     }
 
     handleSubmit = () =>
-        handleLogin(user => {
-            navigate(`/app/profile`);
+        handleLogin(() => {
+            navigate(`/app/`);
         });
 
     render() {

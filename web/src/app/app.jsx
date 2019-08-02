@@ -25,7 +25,11 @@ function App() {
             <div
                 id={APP_ROOT}
                 onDrop={e => e.preventDefault()}
-                onDragEnter={e => setOverlayVisible(true)}
+                onDragEnter={e => {
+                    e.persist()
+                    setOverlayVisible(true)
+                    console.log({ e })
+                }}
                 onDragLeave={e => {
                     e.persist();
                     if (e.pageX <= 0 && e.pageY <= 0) {

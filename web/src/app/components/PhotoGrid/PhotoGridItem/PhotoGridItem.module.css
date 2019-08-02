@@ -58,7 +58,14 @@
 }
 
 .imageContainer {
+    cursor: pointer;
     transition: transform 0.135s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.img {
+    background-position: center;
+    background-size: cover;
+    height: 220px;
 }
 
 .scaleDown {

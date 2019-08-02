@@ -5,6 +5,7 @@ import { getBase64 } from '../utils/encoding';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
 import { getExif } from '../utils/exif';
+import 'react-image-lightbox/style.css';
 
 class Photo extends React.Component {
     constructor(props) {

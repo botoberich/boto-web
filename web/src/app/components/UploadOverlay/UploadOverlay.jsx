@@ -25,6 +25,7 @@ function UploadOverlay({ setOverlayVisible }) {
     const [uploadingInProgress, setUploadInProgress] = useState(false);
 
     const handleOnChange = useCallback(async e => {
+        console.log(e);
         const { status } = e.file;
         setUploadInProgress(true);
         if (status !== 'uploading') {
@@ -53,8 +54,8 @@ function UploadOverlay({ setOverlayVisible }) {
                         uploadingInProgress
                             ? {}
                             : {
-                                  y: [0, -10, 0],
-                              }
+                                y: [0, -10, 0],
+                            }
                     }
                     transition={{ loop: Infinity }}
                 >
