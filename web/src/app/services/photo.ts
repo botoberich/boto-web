@@ -123,6 +123,7 @@ export const postPhotos = async photos => {
 export const _postPhoto = async (metaData, b64) => {
     /** Store all metadata in the database, get the ID and store blob in gaia */
     try {
+        debugger;
         const chunkedBlobTexts = chunkB64(b64, GAIA_LIMIT);
 
         const photo = new Photo({
