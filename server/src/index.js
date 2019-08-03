@@ -30,7 +30,7 @@ app.post('/set', (req, res) => {
 });
 
 app.listen(PORT, async () => {
-    console.log(`EXPRESS SERVER LISTENING ON PORT ${PORT}!`);
+    console.log(`Express server is listening on ${PORT}!`);
 
     let RadiksController = await setup({
         mongoDBUrl: process.env.MONGODB_URL,
