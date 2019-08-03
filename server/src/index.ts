@@ -1,8 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const NodeCache = require('node-cache');
-const cors = require('cors');
-const { setup } = require('radiks-server');
+import express from 'express';
+import bodyParser from 'body-parser';
+import NodeCache from 'node-cache';
+import cors from 'cors';
+import { setup } from 'radiks-server';
 
 const app = express();
 const PORT = process.env.PORT || (process.env.DEBUG ? 4001 : 4000);

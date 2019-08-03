@@ -2,14 +2,13 @@
     "compilerOptions": {
         "module": "commonjs",
         "esModuleInterop": true,
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "target": "es6",
         "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "dist",
+        "outDir": "./dist",
         "baseUrl": "."
-    },
-    "exclude": ["dist"],
-    "include": ["src/**/*"]
+    }
 }
