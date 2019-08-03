@@ -15,7 +15,7 @@ const appConfig = new AppConfig(
 const userSession = new UserSession({ appConfig });
 
 configure({
-    apiServer: 'http://localhost:4000',
+    apiServer: process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : process.env.RADIKS_SERVER_URL,
     userSession,
 });
 
