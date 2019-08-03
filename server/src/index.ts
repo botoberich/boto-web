@@ -5,7 +5,7 @@ import cors from 'cors';
 import { setup } from 'radiks-server';
 
 const app = express();
-const PORT = process.env.PORT || (process.env.DEBUG ? 4001 : 4000);
+const PORT = process.env.PORT || 9999 // 9999 cuz just making sure Render is using their port env
 const Cache = new NodeCache();
 
 app.use(
