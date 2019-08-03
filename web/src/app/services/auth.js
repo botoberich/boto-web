@@ -14,7 +14,7 @@ const appConfig = new AppConfig(
 );
 const userSession = new UserSession({ appConfig });
 
-const PORT = process.env.RADIKS_PORT || 4000;
+const PORT = process.env.PORT || 4000;
 
 configure({
     apiServer: process.env.NODE_ENV === 'development' ? `http://localhost:${PORT}` : process.env.RADIKS_SERVER_URL,
