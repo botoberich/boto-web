@@ -8,8 +8,19 @@ const app = express();
 const PORT = process.env.DEBUG ? 4001 : 4000;
 const Cache = new NodeCache();
 
+const whitelist = ['http://boto.photos', 'https://boto.photos'];
+const corsOptions = {
+    origin: function(origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+};
+
 app.use(
-    cors(),
+    cors(corsOptions),
     bodyParser.json({
         limit: '50mb',
     })
