@@ -1,12 +1,10 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import NodeCache from 'node-cache';
-import cors from 'cors';
-import { setup } from 'radiks-server';
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { setup } = require('radiks-server');
 
 const app = express();
-const PORT = process.env.PORT || 9999 // 9999 cuz just making sure Render is using their port env
-const Cache = new NodeCache();
+const PORT = process.env.PORT || (process.env.DEBUG ? 4001 : 4000);
 
 app.use(
     cors(),
@@ -21,16 +19,6 @@ app.get('/', (req, res) => {
 
 app.get('/healthcheck', (req, res) => {
     res.status(200).json({ status: 'Healthy' });
-});
-
-app.use('/get/:id', (req, res) => {
-    let cache = Cache.get(req.params.id);
-    res.json({ status: 'success', cache });
-});
-
-app.post('/set', (req, res) => {
-    Cache.set(req.body.id, req.body.cache);
-    res.json({ status: 'success' });
 });
 
 app.listen(PORT, async () => {
