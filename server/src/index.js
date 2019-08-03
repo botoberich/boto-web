@@ -5,7 +5,7 @@ const cors = require('cors');
 const { setup } = require('radiks-server');
 
 const app = express();
-const PORT = process.env.PORT && process.env.DEBUG ? 4001 : 4000;
+const PORT = process.env.NODE_PORT && process.env.DEBUG ? 4001 : 4000;
 const Cache = new NodeCache();
 
 app.use(
