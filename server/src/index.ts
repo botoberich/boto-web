@@ -15,6 +15,10 @@ app.use(
     })
 );
 
+app.get('/', (req, res) => {
+    res.status(200).json({ ['March to Web3']: 'Alive' });
+});
+
 app.get('/healthcheck', (req, res) => {
     res.status(200).json({ status: 'Healthy' });
 });

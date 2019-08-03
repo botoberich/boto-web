@@ -22,6 +22,9 @@ const Cache = new node_cache_1.default();
 app.use(cors_1.default(), body_parser_1.default.json({
     limit: '50mb',
 }));
+app.get('/', (req, res) => {
+    res.status(200).json({ ['March to Web3']: 'Alive' });
+});
 app.get('/healthcheck', (req, res) => {
     res.status(200).json({ status: 'Healthy' });
 });
@@ -36,7 +39,7 @@ app.post('/set', (req, res) => {
 app.listen(PORT, () => __awaiter(this, void 0, void 0, function* () {
     console.log(`Express server is listening on ${PORT}!`);
     let RadiksController = yield radiks_server_1.setup({
-        mongoDBUrl: process.env.MONGODB_URL || '',
+        mongoDBUrl: process.env.MONGODB_URL,
     });
     app.use('/radiks', RadiksController);
 }));
