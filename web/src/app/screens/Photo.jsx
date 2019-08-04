@@ -10,7 +10,7 @@ import 'react-image-lightbox/style.css';
 import { getExif } from '../utils/exif';
 import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo';
 import { getBase64 } from '../utils/encoding';
-import PhotoWorker from './photo.worker';
+import PhotoWorker from '../services/photo.worker';
 
 const worker = typeof window === 'object' && PhotoWorker();
 
