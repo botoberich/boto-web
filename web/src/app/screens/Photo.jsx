@@ -22,24 +22,59 @@ class Photo extends React.Component {
 
         this.state = {
             uploadError: null,
-            myPhotos: [],
+            fetchedPhotos: [],
             input: '',
         };
     }
 
     async componentDidMount() {
         let res = await getOwnPhotos();
+        console.log({ res });
         /**
          * The photo ids in each metadata object from the response should be used to initialize all loading photos by id
          * So, when the $photo observable streams {photoId, b64}, you know where to load the b64
          */
 
         if (res.status === 'success') {
-            let $photos = res.data.$photos;
+            const { metaData } = res.data;
+
+            // Create a prefilled hash-map for the in-flight photos
+            const pendingPhotos = Array(metaData.length)
+                .fill({})
+                .reduce((photos, _, index) => {
+                    return {
+                        ...photos,
+                        [metaData[index]._id]: {
+                            src: null,
+                            title: metaData[index].title,
+                            id: metaData[index]._id,
+                        },
+                    };
+                }, {});
+
+            this.setState({ fetchedPhotos: pendingPhotos });
+
+            const $photos = res.data.$photos;
             $photos.subscribe({
-                next: photo => {
-                    console.log('PHOTO DOWNLOADED:', photo);
-                    this.setState({ myPhotos: [photo, ...this.state.myPhotos] });
+                next: ({ photoId, b64 }) => {
+                    console.log('PHOTO DOWNLOADED:', { photoId, b64 });
+
+                    // Replace the corresponding photo placeholder with the newly fetched photos
+                    // const fetchedPhotos = { ...this.state.fetchedPhotos };
+                    // fetchedPhotos[photoId] = {
+                    //     id: photoId,
+                    //     src: b64,
+                    // };
+
+                    this.setState({
+                        fetchedPhotos: {
+                            ...this.state.fetchedPhotos,
+                            [photoId]: {
+                                id: photoId,
+                                src: b64,
+                            },
+                        },
+                    });
                 },
                 complete: () => {
                     console.log('ALL DOWNLOADS COMPLETED!');
@@ -92,11 +127,10 @@ class Photo extends React.Component {
     }
 
     render() {
-        const { uploadError, myPhotos } = this.state;
-        const transformedPhotos = myPhotos.map(({ b64, photoId }) => ({
-            src: `data:image/gif;base64,${b64}`,
-            id: photoId,
-        }));
+        const { uploadError, fetchedPhotos } = this.state;
+        const normalizedPhotos = Object.values(fetchedPhotos);
+        console.log({ normalizedPhotos });
+        let test = [{ src: null, id: '5123424' }];
 
         return (
             <div>
@@ -106,9 +140,7 @@ class Photo extends React.Component {
                     <Alert style={{ marginTop: '30px', marginBottom: '20px' }} message={uploadError} type="error" />
                 )}
 
-                <div>
-                    <PhotoGrid photos={transformedPhotos}></PhotoGrid>
-                </div>
+                <div>{<PhotoGrid photos={test}></PhotoGrid>}</div>
 
                 <div style={{ marginTop: '24px' }}>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // UI
 import Lightbox from 'react-image-lightbox';
-import { Icon } from 'antd';
+import { Icon, Skeleton } from 'antd';
 import styles from './PhotoGridItem.module.css';
 
 function PhotoGridItem({ src, id }) {
