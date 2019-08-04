@@ -22,11 +22,13 @@ app.get('/healthcheck', (req, res) => {
 });
 
 app.listen(PORT, async () => {
-    console.log(`Express server is listening on ${PORT}!`);
+    console.log(`Successfully started '${process.env.APP_ENV}' server on port ${PORT}!`);
 
     let RadiksController = await setup({
         mongoDBUrl: process.env.MONGODB_URL,
     });
+
+    console.log(`Successfully connected to the '${process.env.APP_ENV}' mongodb instance.`);
 
     app.use('/radiks', RadiksController);
 });
