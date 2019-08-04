@@ -6,35 +6,42 @@ import { success, error } from '../utils/apiResponse';
 import * as EXIF from 'exif-js';
 import { of, Subject } from 'rxjs';
 import { mergeAll } from 'rxjs/operators';
+import PhotoWorker from './photo.worker';
 
 const BASE_PATH = `user/photos`;
 const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
+const worker = typeof window !== 'undefined' && PhotoWorker();
 
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
  * @returns An object with attributes photoId and b64
  */
-const _combineChunks = chunkGroup => {
-    let photoId = null;
-    let b64 = chunkGroup
-        .sort((a, b) => {
-            if (a.split('|')[0] < b.split('|')[0]) {
-                return -1;
-            } else {
-                return 1;
-            }
-        })
-        .map(chunk => {
-            let split = chunk.split('|');
-            if (!photoId) photoId = split[1];
-            return split[2];
-        })
-        .join('');
+const _combineChunks = async chunkGroup => {
+    let chunks;
+    if (worker) {
+        chunks = await worker.combineChunks(chunkGroup);
+    }
+    return chunks;
+    // let photoId = null;
+    // let b64 = chunkGroup
+    //     .sort((a, b) => {
+    //         if (a.split('|')[0] < b.split('|')[0]) {
+    //             return -1;
+    //         } else {
+    //             return 1;
+    //         }
+    //     })
+    //     .map(chunk => {
+    //         let split = chunk.split('|');
+    //         if (!photoId) photoId = split[1];
+    //         return split[2];
+    //     })
+    //     .join('');
 
-    return {
-        photoId,
-        b64,
-    };
+    // return {
+    //     photoId,
+    //     b64,
+    // };
 };
 
 /**
@@ -75,8 +82,8 @@ export const getOwnPhotos = async () => {
         let $chunkedPhotos = of
             .apply(this, getChunkedPhotos)
             .pipe(mergeAll())
-            .subscribe(chunks => {
-                let photo = _combineChunks(chunks);
+            .subscribe(async chunks => {
+                let photo = await _combineChunks(chunks);
                 $photos.next(photo);
                 fetchedCtr++;
                 checkComplete();
@@ -123,7 +130,7 @@ export const postPhotos = async photos => {
 export const _postPhoto = async (metaData, b64) => {
     /** Store all metadata in the database, get the ID and store blob in gaia */
     try {
-        const chunkedBlobTexts = chunkB64(b64, GAIA_LIMIT);
+        const chunkedBlobTexts = await chunkB64(b64, GAIA_LIMIT);
 
         const photo = new Photo({
             ...metaData,
