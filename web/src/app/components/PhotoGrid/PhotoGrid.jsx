@@ -2,21 +2,34 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './PhotoGrid.module.css';
 import PhotoGridItem from './PhotoGridItem';
+// import { Skeleton } from 'antd';
+import PhotoWorker from '../../screens/photo.worker';
 import { Skeleton } from 'antd';
 
-function PhotoGrid({ photos }) {
-    return (
-        <div className={styles.gridContainer}>
-            <div className={styles.grid}>
-                {photos.map(({ src, id }) => {
-                    if (!src) {
-                        return null;
-                    }
-                    return <PhotoGridItem key={id} src={src}></PhotoGridItem>;
-                })}
+const worker = typeof window === 'object' && PhotoWorker();
+
+async function PhotoGrid({ photos }) {
+    let newPhotos = null;
+    if (worker) {
+        // setNewPhotos(newPhotos);
+        newPhotos = await worker.fromValues(photos);
+        return (
+            <div className={styles.gridContainer}>
+                <div className={styles.grid}>
+                    {newPhotos.map(({ src, id }) => {
+                        if (!src) {
+                            return <Skeleton></Skeleton>;
+                        }
+                        return <PhotoGridItem key={id} src={src}></PhotoGridItem>;
+                    })}
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
+
+    console.log('worker photogrid photos', newPhotos);
+
+    return null;
 }
 
 PhotoGrid.propTypes = {
