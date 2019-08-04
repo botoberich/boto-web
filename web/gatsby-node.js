@@ -8,3 +8,16 @@
 
 // note we do use https://www.gatsbyjs.org/packages/gatsby-plugin-create-client-paths/
 // for more info read https://www.gatsbyjs.org/docs/authentication-tutorial/#creating-client-only-routes
+
+exports.onCreateWebpackConfig = ({ actions: { replaceWebpackConfig }, getConfig }) => {
+    const config = getConfig();
+
+    config.module.rules.push({
+        test: /\.worker\.js$/,
+        use: { loader: 'workerize-loader' },
+    });
+
+    config.output.globalObject = 'this';
+
+    replaceWebpackConfig(config);
+};
