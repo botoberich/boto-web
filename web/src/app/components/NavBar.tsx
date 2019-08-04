@@ -29,8 +29,7 @@ export default class NavBar extends React.Component {
                     justifyContent: 'space-between',
                     borderBottom: '1px solid #d1c1e0',
                     backgroundColor: 'aliceblue',
-                }}
-            >
+                }}>
                 <span>{content.message}</span>
 
                 <nav>
@@ -45,8 +44,7 @@ export default class NavBar extends React.Component {
                             onClick={async event => {
                                 event.preventDefault();
                                 logout(() => navigate(`/app/login`));
-                            }}
-                        >
+                            }}>
                             Logout
                         </a>
                     ) : (

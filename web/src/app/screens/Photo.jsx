@@ -49,8 +49,7 @@ class Photo extends React.Component {
 
             $photos.subscribe({
                 next: photo => {
-                    console.log('PHOTO DOWNLOADED:', photo);
-
+                    console.log('Photo downloaded:', photo);
                     // Replace the corresponding photo placeholder with the newly fetched photos
                     const fetchedPhotos = {
                         ...this.state.fetchedPhotos,

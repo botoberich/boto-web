@@ -110,11 +110,8 @@ export const getOwnPhotos = async () => {
 export const postPhotos = async photos => {
     try {
         let postResponses = await Promise.all(photos.map(photo => _postPhoto(photo.metaData, photo.b64)));
-
         let postPhotos = postResponses.map(res => res.data.postPhoto);
-
         let photoIds = postResponses.map(res => res.data.photoId);
-
         let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
         return success({ photoIds, $postPhotos });
     } catch (err) {
