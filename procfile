@@ -1,1 +1,0 @@
-web: npm run build:server && npm run start:server -p $PORT

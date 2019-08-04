@@ -4,8 +4,7 @@
     "description": "Database setup",
     "main": "index.js",
     "scripts": {
-        "build:server": "cd server && npm run build",
-        "start:server": "cd server && npm run serve"
+        "start": "cd server && npm run build && npm run serve"
     },
     "repository": {
         "type": "git",
