@@ -4,10 +4,10 @@ const cors = require('cors');
 const { setup } = require('radiks-server');
 
 const app = express();
-const PORT = process.env.PORT || (process.env.DEBUG ? 4001 : 3000);
+const PORT = process.env.SERVER_PORT || (process.env.DEBUG ? 4001 : 3000);
 console.log('ENVS: ', JSON.stringify(process.env));
 console.log('MONGO URL: ', process.env.MONGODB_URL);
-console.log('PORT: ', process.env.PORT);
+console.log('PORT: ', process.env.SERVER_PORT);
 app.use(
     cors(),
     bodyParser.json({
