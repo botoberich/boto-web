@@ -56,7 +56,7 @@ class Photo extends React.Component {
                         ...this.state.fetchedPhotos,
                         [photo.photoId]: {
                             id: photo.photoId,
-                            src: `data:image/gif;base64,${photo.b64}`,
+                            src: `data:image/jpeg;base64,${photo.b64}`,
                         },
                     };
 

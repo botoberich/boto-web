@@ -19,7 +19,7 @@ export function mapPhotoToPlaceholder(photos, incomingPhoto) {
         ...photos,
         [photoId]: {
             id: photoId,
-            src: `data:image/gif;base64,${b64}`,
+            src: `data:image/jpeg;base64,${b64}`,
         },
     };
 }

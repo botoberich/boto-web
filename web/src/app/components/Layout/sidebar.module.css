@@ -1,0 +1,22 @@
+.menuItem {
+    padding-left: 24px;
+    margin-top: 16px;
+}
+
+.sider {
+    z-index: 900;
+}
+
+.sider ul {
+    height: 100%;
+}
+
+.themeToggleText {
+    margin-right: 16px;
+}
+
+@media (min-width: 568px) {
+    .mobileOnly {
+        display: none;
+    }
+}

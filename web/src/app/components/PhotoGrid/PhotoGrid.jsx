@@ -9,26 +9,18 @@ import { Skeleton } from 'antd';
 const worker = typeof window === 'object' && PhotoWorker();
 
 function PhotoGrid({ photos }) {
-    // let newPhotos = null;
-    // if (worker) {
-    //     // setNewPhotos(newPhotos);
-    //     newPhotos = await worker.fromValues(photos);
     return (
         <div className={styles.gridContainer}>
             <div className={styles.grid}>
                 {photos.map(({ src, id }) => {
                     if (!src) {
-                        return <Skeleton></Skeleton>;
+                        return <Skeleton active></Skeleton>;
                     }
                     return <PhotoGridItem key={id} src={src}></PhotoGridItem>;
                 })}
             </div>
         </div>
     );
-
-    // console.log('worker photogrid photos', newPhotos);
-
-    // return null;
 }
 
 PhotoGrid.propTypes = {
