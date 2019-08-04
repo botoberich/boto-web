@@ -1,0 +1,20 @@
+{
+    "name": "blockstack-poc",
+    "version": "1.0.0",
+    "description": "Database setup",
+    "main": "index.js",
+    "scripts": {
+        "build:server": "cd server && npm run build",
+        "start:server": "cd server && npm run serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://botoberich@github.com/botoberich/boto-web.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/botoberich/boto-web/issues"
+    },
+    "homepage": "https://github.com/botoberich/boto-web#readme"
+}
