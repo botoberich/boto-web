@@ -22,7 +22,7 @@ class Photo extends React.Component {
 
         this.state = {
             uploadError: null,
-            myPhotos: [],
+            fetchedPhotos: [],
             input: '',
         };
     }
@@ -34,12 +34,20 @@ class Photo extends React.Component {
          * So, when the $photo observable streams {photoId, b64}, you know where to load the b64
          */
 
+        // const pendingPhotos = Array(metaData.length)
+        //     .fill({})
+        //     .map((_, index) => ({
+        //         src: null,
+        //     }));
+
+        // this.setState({ fetchedPhotos: pendingPhotos });
+
         if (res.status === 'success') {
             let $photos = res.data.$photos;
             $photos.subscribe({
                 next: photo => {
                     console.log('PHOTO DOWNLOADED:', photo);
-                    this.setState({ myPhotos: [photo, ...this.state.myPhotos] });
+                    this.setState({ fetchedPhotos: [photo, ...this.state.fetchedPhotos] });
                 },
                 complete: () => {
                     console.log('ALL DOWNLOADS COMPLETED!');
@@ -92,8 +100,8 @@ class Photo extends React.Component {
     }
 
     render() {
-        const { uploadError, myPhotos } = this.state;
-        const transformedPhotos = myPhotos.map(({ b64, photoId }) => ({
+        const { uploadError, fetchedPhotos } = this.state;
+        const transformedPhotos = fetchedPhotos.map(({ b64, photoId }) => ({
             src: `data:image/gif;base64,${b64}`,
             id: photoId,
         }));
