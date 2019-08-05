@@ -4,14 +4,45 @@ import PropTypes from 'prop-types';
 // UI
 import Lightbox from 'react-image-lightbox';
 import { Icon } from 'antd';
-
+import { motion } from 'framer-motion';
 import styles from './PhotoGridItem.module.css';
 
-function PhotoGridItem({ src, id, downloadPhoto, deletePhoto }) {
+// Framer animations
+const variants = {
+    open: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            duration: 0.3,
+            staggerChildren: 0.1,
+            staggerDirection: 1,
+            y: { stiffness: 500 },
+        },
+    },
+    closed: {
+        y: 30,
+        opacity: 0,
+        transition: { staggerChildren: 0.05, y: { stiffness: 500 } },
+    },
+};
+
+function PhotoGridItem({ src, id, deletePhoto }) {
     const [isDeleting, setDeleting] = React.useState(false);
-    const [deleted, setDeleted] = React.useState(false); // Quick way to hide deleted photos
+    // Quick way to hide deleted photos without refetching all the photos
+    const [deleted, setDeleted] = React.useState(false);
     const [isOpen, setOpen] = React.useState(false);
-    const [isEdit, setEdit] = React.useState(false);
+    const [isSelected, setSelected] = React.useState(false);
+
+    const handleDownload = React.useCallback(() => {
+        if (isDeleting) return;
+
+        const downloadableImg = document.createElement('a');
+        downloadableImg.download = `${id}.jpg`;
+        downloadableImg.href = src;
+        document.body.appendChild(downloadableImg);
+        downloadableImg.click();
+        document.body.removeChild(downloadableImg);
+    });
 
     const handleDelete = React.useCallback(() => {
         if (isDeleting) return;
@@ -19,22 +50,14 @@ function PhotoGridItem({ src, id, downloadPhoto, deletePhoto }) {
         async function run() {
             try {
                 setDeleting(true);
-                const { status, data } = await deletePhoto(id);
+                const { status } = await deletePhoto(id);
                 if (status === 'success') {
-                    // await new Promise((resolve, reject) => {
-                    //     setTimeout(() => {
-                    //         reject(new Error('failed'));
-                    //     }, 1000);
-                    // });
-                    // Delete photo from DOM
-                    console.log(`Photo ${id} deleted successfully`);
+                    // Delete photo from DOM. We don't need to refetch all the photos.
                     setDeleted(true);
                     setDeleting(false);
                 } else {
                     setDeleting(false);
                 }
-
-                console.log({ status, data });
             } catch (e) {
                 setDeleted(false);
                 setDeleting(false);
@@ -45,10 +68,6 @@ function PhotoGridItem({ src, id, downloadPhoto, deletePhoto }) {
         run();
     });
 
-    const handleDownload = React.useCallback(() => {
-        console.log('downloading photo');
-    });
-
     if (deleted) {
         return null;
     }
@@ -56,23 +75,41 @@ function PhotoGridItem({ src, id, downloadPhoto, deletePhoto }) {
     return (
         <div
             className={`${styles.editableContainer} 
-                ${isEdit ? styles.editing : ''} 
+                ${isSelected ? styles.editing : ''} 
                 ${isDeleting ? styles.deleting : ''}`}
             key={id}>
-            <div role="checkbox" aria-checked={isEdit} className={styles.triggerBox} onClick={() => setEdit(!isEdit)}>
-                <Icon type="check-circle" theme={isEdit ? 'twoTone' : ''} />
-            </div>
+            <motion.div
+                aria-checked={isSelected}
+                whileHover={{ opacity: [0, 1] }}
+                className={styles.triggerBox}
+                onClick={() => setSelected(!isSelected)}
+                role="checkbox"
+                transition={{
+                    duration: 0.133,
+                }}>
+                <Icon type="check-circle" theme={isSelected ? 'twoTone' : ''} />
+            </motion.div>
 
-            <div className={styles.editBox}>
-                <button className={styles.btn} aria-label="Download Photo" onClick={handleDownload}>
+            <motion.div animate={isSelected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
+                <motion.button
+                    aria-label="Download Photo"
+                    className={styles.btn}
+                    onClick={handleDownload}
+                    whileHover={{ scale: 1.1 }}>
                     <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                </button>
-                <button className={styles.btn} aria-label="Delete Photo" onClick={handleDelete}>
+                </motion.button>
+                <motion.button
+                    aria-label="Delete Photo"
+                    className={styles.btn}
+                    onClick={handleDelete}
+                    whileHover={{ scale: 1.1 }}>
                     <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                </button>
-            </div>
+                </motion.button>
+            </motion.div>
 
-            <div onClick={() => setOpen(true)} className={`${isEdit ? styles.scaleDown : ''} ${styles.imageContainer}`}>
+            <div
+                onClick={() => setOpen(true)}
+                className={`${isSelected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
                 <div
                     aria-label={`PhotoId: ${id}`}
                     className={styles.img}
@@ -95,12 +132,10 @@ function PhotoGridItem({ src, id, downloadPhoto, deletePhoto }) {
 }
 
 PhotoGridItem.propTypes = {
-    downloadPhoto: PropTypes.func,
     deletePhoto: PropTypes.func,
 };
 
 PhotoGridItem.defaultProps = {
-    downloadPhoto: () => {},
     deletePhoto: () => {},
 };
 

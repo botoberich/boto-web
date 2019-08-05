@@ -33,11 +33,6 @@
     position: relative;
 }
 
-/* opacity style logic for edit button */
-.editableContainer:hover .triggerBox {
-    opacity: 1;
-}
-
 .editableContainer .editBox {
     display: none;
 }
