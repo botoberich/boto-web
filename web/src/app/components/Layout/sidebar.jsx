@@ -64,12 +64,12 @@ const Sidebar = () => {
                 <div className={`${styles.menuItem} ${styles.mobileOnly}`}>
                     <AuthButton signedIn={signedIn}></AuthButton>
                 </div>
-                <div className={styles.menuItem}>
+                {/* <div className={styles.menuItem}>
                     <span className={styles.themeToggleText}>
                         {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
                     </span>
                     <Switch onChange={toggleTheme}></Switch>
-                </div>
+                </div> */}
             </Menu>
         </Sider>
     );

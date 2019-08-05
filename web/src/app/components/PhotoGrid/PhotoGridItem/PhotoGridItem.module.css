@@ -1,17 +1,47 @@
-/* .editable is the wrapping styles when an image has been selected */
+.editBox {
+    color: #fff;
+    fill: #fff;
+    font-size: 24px;
+    height: 70px;
+    padding-left: 8px;
+    padding-top: 4px;
+    position: absolute;
+    right: -20px;
+    top: -30px;
+    z-index: 50;
+}
+
+.editBox .btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 1px;
+    margin: 4px;
+}
+
+.editBox svg {
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.2));
+}
+
 .editableContainer {
     border: 1px solid transparent;
     position: relative;
 }
 
-/* 1: opacity style logic for edit button */
-.editableContainer:hover .editCheckBox {
+/* opacity style logic for edit button */
+.editableContainer:hover .triggerBox {
     opacity: 1;
 }
 
-/* 2: opacity style logic for edit button */
-.editableContainer.editing .editCheckBox {
-    opacity: 1;
+.editableContainer .editBox {
+    display: none;
+}
+
+/* opacity style logic for edit button */
+.editableContainer.editing .triggerBox,
+.editableContainer.editing .editBox {
+    display: block;
 }
 
 .editableContainer img {
@@ -28,26 +58,6 @@
 
 .editableContainer.editing img {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* Self explanatory */
-.editCheckBox {
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    fill: #fff;
-    font-size: 24px;
-    opacity: 0;
-    outline: none;
-    padding-left: 8px;
-    padding-top: 4px;
-    position: absolute;
-    width: 100%;
-    z-index: 999;
-}
-
-.editCheckBox svg {
-    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.2)); /* Change this to whatever you think would look better >.< */
 }
 
 /* Lightly opaque overlay to make the edit button more visible */
@@ -75,4 +85,23 @@
 
 .scaleDown {
     transform: translateZ(0px) scale3d(0.76, 0.82, 1);
+}
+
+.triggerBox {
+    color: #fff;
+    cursor: pointer;
+    fill: #fff;
+    font-size: 24px;
+    height: 70px;
+    opacity: 0;
+    outline: none;
+    padding-left: 8px;
+    padding-top: 4px;
+    position: absolute;
+    width: 70px;
+    z-index: 50;
+}
+
+.triggerBox svg {
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.2));
 }
