@@ -37,10 +37,14 @@
     display: none;
 }
 
-/* opacity style logic for edit button */
+.editableContainer:hover .triggerBox {
+    opacity: 1;
+}
+
 .editableContainer.editing .triggerBox,
 .editableContainer.editing .editBox {
     display: block;
+    opacity: 1;
 }
 
 .editableContainer img {

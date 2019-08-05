@@ -80,7 +80,6 @@ function PhotoGridItem({ src, id, deletePhoto }) {
             key={id}>
             <motion.div
                 aria-checked={isSelected}
-                whileHover={{ opacity: [0, 1] }}
                 className={styles.triggerBox}
                 onClick={() => setSelected(!isSelected)}
                 role="checkbox"
