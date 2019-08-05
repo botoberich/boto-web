@@ -1,4 +1,9 @@
-var proxy = require('http-proxy-middleware')
+var proxy = require('http-proxy-middleware');
+require('dotenv').config({
+    path: `.env.${process.env.NODE_ENV}`,
+});
+
+console.log(`RADIKS SERVER: ${process.env.RADIKS_SERVER_URL}`);
 
 module.exports = {
     siteMetadata: {
@@ -13,7 +18,7 @@ module.exports = {
         {
             resolve: `gatsby-plugin-create-client-paths`,
             options: {
-                prefixes: [`/app/*`]
+                prefixes: [`/app/*`],
             },
         },
         {
@@ -41,4 +46,4 @@ module.exports = {
         // To learn more, visit: https://gatsby.app/offline
         // 'gatsby-plugin-offline',
     ],
-}
+};

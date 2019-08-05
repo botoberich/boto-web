@@ -14,13 +14,12 @@ const appConfig = new AppConfig(
 );
 const userSession = new UserSession({ appConfig });
 
-const PORT = process.env.PORT || 4000;
-
 configure({
-    apiServer: process.env.NODE_ENV === 'development' ? `http://localhost:${PORT}` : process.env.RADIKS_SERVER_URL,
+    apiServer: process.env.RADIKS_SERVER_URL || 'http://localhost:3000',
     userSession,
 });
 
+console.log('ENVS:', process.env);
 export const isBrowser = () => typeof window !== 'undefined';
 
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});
