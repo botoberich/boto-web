@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 
 // State
 import { useTheme } from '../../contexts/ThemeContext';
-import { checkIsSignedIn } from '../../services/auth';
+import { checkIsSignedIn } from '../../services/auth.service';
 
 // UI
 import { Icon, Layout, Menu, Switch } from 'antd';

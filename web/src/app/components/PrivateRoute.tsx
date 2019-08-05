@@ -1,5 +1,5 @@
 import React from 'react';
-import { checkIsSignedIn } from '../services/auth';
+import { checkIsSignedIn } from '../services/auth.service';
 import { navigate } from 'gatsby';
 
 type RouteProps = {

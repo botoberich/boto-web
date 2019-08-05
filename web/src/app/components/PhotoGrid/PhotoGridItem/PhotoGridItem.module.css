@@ -1,3 +1,7 @@
+.deleting {
+    opacity: 0.5;
+}
+
 .editBox {
     color: #fff;
     fill: #fff;
@@ -69,6 +73,13 @@
     transition: opacity 0.135s cubic-bezier(0, 0, 0.2, 1);
     width: 100%;
     z-index: -999;
+}
+
+.inProgress {
+    font-size: 40px;
+    left: 38%;
+    position: absolute;
+    top: 36%;
 }
 
 .imageContainer {

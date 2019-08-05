@@ -8,7 +8,7 @@ import 'react-image-lightbox/style.css';
 
 // State
 import { getExif } from '../utils/exif';
-import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo';
+import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.service';
 import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 
@@ -123,7 +123,7 @@ class Photo extends React.Component {
                     <Alert style={{ marginTop: '30px', marginBottom: '20px' }} message={uploadError} type="error" />
                 )}
 
-                <div>{<PhotoGrid photos={transformedData}></PhotoGrid>}</div>
+                <div>{<PhotoGrid photos={transformedData} deletePhoto={deletePhoto}></PhotoGrid>}</div>
 
                 <div style={{ marginTop: '24px' }}>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>

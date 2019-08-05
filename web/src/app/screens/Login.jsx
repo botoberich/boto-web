@@ -1,6 +1,6 @@
 import React from 'react';
 import { navigate } from 'gatsby';
-import { handleLogin } from '../services/auth';
+import { handleLogin } from '../services/auth.service';
 // import { User } from 'radiks';
 
 class Login extends React.Component {

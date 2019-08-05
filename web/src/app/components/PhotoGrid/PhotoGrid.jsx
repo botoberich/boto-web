@@ -5,7 +5,7 @@ import PhotoGridItem from './PhotoGridItem';
 // import { Skeleton } from 'antd';
 import TestImg1 from './testImg1.jpg';
 
-function PhotoGrid({ photos }) {
+function PhotoGrid({ photos, deletePhoto }) {
     return (
         <div className={styles.gridContainer}>
             <div className={styles.grid}>
@@ -14,7 +14,7 @@ function PhotoGrid({ photos }) {
                         return <Skeleton key={id} active></Skeleton>;
                     }
                     return  */}
-                    <PhotoGridItem key={51423} src={TestImg1}></PhotoGridItem>
+                <PhotoGridItem deletePhoto={deletePhoto} key={51423} src={TestImg1}></PhotoGridItem>
                 {/* })} */}
             </div>
         </div>
@@ -23,10 +23,12 @@ function PhotoGrid({ photos }) {
 
 PhotoGrid.propTypes = {
     photos: PropTypes.array,
+    deletePhoto: PropTypes.func,
 };
 
 PhotoGrid.defaultProps = {
     photos: [],
+    deletePhoto: () => {},
 };
 
 export default PhotoGrid;

@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 import PropTypes from 'prop-types';
 
 // State
-import { checkIsSignedIn, logout } from '../../services/auth';
+import { checkIsSignedIn, logout } from '../../services/auth.service';
 
 // UI
 import { Button, Layout, Icon } from 'antd';

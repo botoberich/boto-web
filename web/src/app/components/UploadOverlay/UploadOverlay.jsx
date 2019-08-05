@@ -11,7 +11,7 @@ import styles from './UploadOverlay.module.css';
 import { getExif } from '../../utils/exif';
 import { useOverlay } from '../../contexts/OverlayContext';
 import { getBase64 } from '../../utils/encoding';
-import { postPhotos } from '../../services/photo';
+import { postPhotos } from '../../services/photo.service';
 
 const { Dragger } = Upload;
 
