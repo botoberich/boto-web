@@ -1,9 +1,4 @@
 var proxy = require('http-proxy-middleware');
-require('dotenv').config({
-    path: `.env.${process.env.NODE_ENV}`,
-});
-
-console.log(`RADIKS SERVER: ${process.env.RADIKS_SERVER_URL}`);
 
 module.exports = {
     siteMetadata: {

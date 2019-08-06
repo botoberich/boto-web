@@ -25,7 +25,6 @@
     "antd": "^3.19.8",
     "blockstack": "^19.2.1",
     "browser-image-compression": "^1.0.6",
-    "dotenv": "^8.0.0",
     "exif-js": "^2.3.0",
     "framer-motion": "^1.2.4",
     "gatsby": "^2.13.0",
