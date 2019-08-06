@@ -19,8 +19,6 @@ configure({
     userSession,
 });
 
-console.log(`ENVS: ${process.env.GATSBY_RADIKS_SERVER_URL}, ${process.env.GATSBY_ENV}`);
-
 export const isBrowser = () => typeof window !== 'undefined';
 
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});
