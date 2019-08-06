@@ -24,9 +24,10 @@ class Photo extends React.Component {
         this.handleInputChange = this.handleInputChange.bind(this);
 
         this.state = {
-            uploadError: null,
+            downloadComplete: false,
             fetchedPhotos: [],
             input: '',
+            uploadError: null,
         };
     }
 
@@ -62,6 +63,7 @@ class Photo extends React.Component {
                     this.setState({ fetchedPhotos });
                 },
                 complete: () => {
+                    this.setState({ downloadComplete: true });
                     console.log('ALL DOWNLOADS COMPLETED!');
                 },
             });
@@ -112,19 +114,21 @@ class Photo extends React.Component {
     }
 
     render() {
-        const { uploadError, fetchedPhotos } = this.state;
+        const { downloadComplete, fetchedPhotos, uploadError } = this.state;
         const transformedData = Object.values(fetchedPhotos);
 
         return (
             <div>
                 <div className="photos"></div>
-
                 {uploadError && (
                     <Alert style={{ marginTop: '30px', marginBottom: '20px' }} message={uploadError} type="error" />
                 )}
-
-                <div>{<PhotoGrid photos={transformedData} deletePhoto={deletePhoto}></PhotoGrid>}</div>
-
+                <div>
+                    <PhotoGrid
+                        deletePhoto={deletePhoto}
+                        downloadComplete={downloadComplete}
+                        photos={transformedData}></PhotoGrid>
+                </div>
                 <div style={{ marginTop: '24px' }}>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>
                         <Button>
@@ -132,13 +136,11 @@ class Photo extends React.Component {
                         </Button>
                     </Upload>
                 </div>
-
                 {/* <div style={{ marginTop: '24px' }}>
                     <Button onClick={this.handleTest}>Test</Button>
                 </div>
 
                 <input onChange={e => this.setState({ input: e.target.value })} type="text" /> */}
-
                 <UploadOverlay></UploadOverlay>
             </div>
         );

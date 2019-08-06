@@ -68,9 +68,7 @@ function PhotoGridItem({ src, id, deletePhoto }) {
         run();
     });
 
-    if (deleted) {
-        return null;
-    }
+    if (deleted) return null;
 
     return (
         <div

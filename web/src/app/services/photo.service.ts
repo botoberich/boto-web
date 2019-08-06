@@ -26,11 +26,11 @@ const _combineChunks = async chunkGroup => {
     return chunks;
 };
 
-// export const getOwnMiniPhotos = async () => {
-//     let $photos = new Subject();
+// export const getOwnMiniPhotos = async (photo) => {
+//     // let $photos = new Subject();
 //     try {
-//         let miniPhotos = await MiniPhoto.fetchOwnList();
-
+//         // let miniPhotos = await MiniPhoto.fetchOwnList();
+//         console.log("get own ")
 //     } catch(e) {
 //         console.error(e)
 //     }
@@ -85,13 +85,15 @@ export const getOwnPhotos = async () => {
             .apply(this, getUnchunkedPhotos)
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
-                let [_, photoId, b64] = unchunkedPhoto.split('|');
-                fetchedCtr++;
-                $photos.next({
-                    photoId,
-                    b64,
-                });
-                checkComplete();
+                if (unchunkedPhoto && unchunkedPhoto.length) {
+                    let [_, photoId, b64] = unchunkedPhoto.split('|');
+                    fetchedCtr++;
+                    $photos.next({
+                        photoId,
+                        b64,
+                    });
+                    checkComplete();
+                }
             });
         return success({ metaData, $photos });
     } catch (err) {
@@ -100,15 +102,25 @@ export const getOwnPhotos = async () => {
 };
 
 export const postPhotos = async photos => {
+    console.log('postphotos arg:', { photos });
     try {
-        let postResponses = await Promise.all(photos.map(photo => _postPhoto(photo.metaData, photo.b64)));
-        let postPhotos = postResponses.map(res => res.data.postPhoto);
-        let photoIds = postResponses.map(res => res.data.photoId);
-        let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
-        return success({ photoIds, $postPhotos });
+        const postResponses = await Promise.all(
+            photos.map(photo => {
+                compressPhoto(photo);
+                // _postPhoto(photo.metaData, photo.b64);
+            })
+        );
+        // let postPhotos = postResponses.map(res => res.data.postPhoto);
+        // let photoIds = postResponses.map(res => res.data.photoId);
+        // let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
+        // return success({ photoIds, $postPhotos });
     } catch (err) {
         return error(err);
     }
+};
+
+export const compressPhoto = photo => {
+    console.log('compressing photo', photo);
 };
 
 /**
