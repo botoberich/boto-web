@@ -1,7 +1,7 @@
 import { putFile, getFile, deleteFile } from 'blockstack';
-import Photo from '../models/photo.model';
-import MiniPhoto from '../models/mini-photo.model';
-import Chunk from '../models/chunk.model';
+import PhotoModel from '../models/photo.model';
+import MiniPhotoModel from '../models/mini-photo.model';
+import ChunkModel from '../models/chunk.model';
 import { chunkB64 } from '../utils/encoding';
 import { success, error } from '../utils/apiResponse';
 // import * as EXIF from 'exif-js';
@@ -13,6 +13,17 @@ import imageCompression from 'browser-image-compression';
 const BASE_PATH = `user/photos`;
 const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
 const worker = typeof window !== 'undefined' && PhotoWorker();
+
+interface Photo {
+    b64: string;
+    metaData: MetaData;
+}
+
+interface MetaData {
+    archived: boolean;
+    title: string;
+    trashed: boolean;
+}
 
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
@@ -44,14 +55,14 @@ const _combineChunks = async chunkGroup => {
 export const getOwnPhotos = async () => {
     let $photos = new Subject();
     try {
-        let photos = await Photo.fetchOwnList();
+        let photos = await PhotoModel.fetchOwnList();
         let fetchedCtr = 0;
         let metaData = photos.map(photo => photo.attrs);
         let chunkedPhotos = await Promise.all(
             photos
                 .filter(photo => photo.attrs.chunked)
                 .map(photo =>
-                    Chunk.fetchOwnList({
+                    ChunkModel.fetchOwnList({
                         photoId: photo._id,
                         sort: 'chunkNumber-',
                     })
@@ -63,7 +74,9 @@ export const getOwnPhotos = async () => {
 
         let getChunkedPhotos = chunkedPhotos
             .map(chunkGroup =>
-                chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`))
+                chunkGroup.map(chunk =>
+                    getFile(`${BASE_PATH}/${ChunkModel.attrs.photoId}/${ChunkModel.attrs.chunkNumber}`)
+                )
             )
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
@@ -133,7 +146,7 @@ export const _postPhoto = async (metaData, b64) => {
     try {
         const chunkedBlobTexts = await chunkB64(b64, GAIA_LIMIT);
 
-        const photo = new Photo({
+        const photo = new PhotoModel({
             ...metaData,
             chunked: chunkedBlobTexts.length > 1,
         });
@@ -171,7 +184,7 @@ export const _postPhoto = async (metaData, b64) => {
 
 export const deletePhoto = async id => {
     try {
-        const photo = await Photo.findById(id);
+        const photo = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };
         if (photo) {
             let deleteInRadik = await photo.destroy(); /** you only wanna delete in GAIA if the entry is deleted in radiks */
@@ -181,10 +194,10 @@ export const deletePhoto = async id => {
             }
 
             if (photo.attrs.chunked) {
-                let chunks = await Chunk.fetchOwnList({
+                let chunks = await ChunkModel.fetchOwnList({
                     photoId: photo._id,
                 });
-                let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
+                let deleteChunksInRadik = await Promise.all(chunks.map(chunk => ChunkModel.destroy()));
                 if (deleteChunksInRadik.length === chunks.length) {
                     for (let i = 0; i < chunks.length; i++) {
                         deleteFile(`${BASE_PATH}/${photo._id}/${chunks[i].attrs.chunkNumber}`);

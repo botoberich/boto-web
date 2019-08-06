@@ -33,6 +33,8 @@ class Photo extends React.Component {
 
     async componentDidMount() {
         const photoResponse = await getOwnPhotos();
+
+        if (!!photoResponse) return;
         /**
          * The photo ids in each metadata object from the response should be used to initialize all loading photos by id
          * So, when the $photo observable streams {photoId, b64}, you know where to load the b64

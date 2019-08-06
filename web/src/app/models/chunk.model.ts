@@ -1,8 +1,8 @@
 import { Model } from 'radiks';
 
 class Chunk extends Model {
-    constructor({ chunkNumber: number, photoId: string }) {
-        super();
+    constructor(...args) {
+        super(...args);
     }
 
     static className = 'Chunk';

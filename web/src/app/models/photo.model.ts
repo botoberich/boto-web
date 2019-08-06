@@ -1,6 +1,10 @@
 import { Model } from 'radiks';
 
 class Photo extends Model {
+    constructor(...args) {
+        super(...args);
+    }
+
     static className = 'Photo';
 
     static schema = {
