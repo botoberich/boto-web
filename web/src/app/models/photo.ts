@@ -8,12 +8,13 @@ class Photo extends Model {
             type: String,
             decrypted: true,
         },
-        title: String,
         archived: Boolean,
-        trashed: Boolean,
         chunked: Boolean,
+        compressed: String,
+        title: String,
+        trashed: Boolean,
         lat: Number,
-        long: Number,
+        lng: Number,
     };
 }
 
