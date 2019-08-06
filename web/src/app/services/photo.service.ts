@@ -14,12 +14,12 @@ const BASE_PATH = `user/photos`;
 const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
 const worker = typeof window !== 'undefined' && PhotoWorker();
 
-interface Photo {
+export interface Photo {
     b64: string;
     metaData: MetaData;
 }
 
-interface MetaData {
+export interface MetaData {
     archived: boolean;
     title: string;
     trashed: boolean;
@@ -42,7 +42,7 @@ const _combineChunks = async chunkGroup => {
 //
 
 export const postMiniPhoto = async (photo: File) => {
-    compressPhoto(photo);
+    const compressed = await compressPhoto(photo);
 };
 
 // export const getOwnMiniPhotos = async (photo) => {
@@ -76,15 +76,14 @@ export const getOwnPhotos = async () => {
                     })
                 )
         );
+
         const checkComplete = () => {
             if (photos.length === fetchedCtr) $photos.complete();
         };
 
         let getChunkedPhotos = chunkedPhotos
             .map(chunkGroup =>
-                chunkGroup.map(chunk =>
-                    getFile(`${BASE_PATH}/${ChunkModel.attrs.photoId}/${ChunkModel.attrs.chunkNumber}`)
-                )
+                chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`))
             )
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
@@ -127,7 +126,7 @@ export const postPhotos = async (photos: Photo[]) => {
     try {
         const postResponses = await Promise.all(
             photos.map(photo => {
-                _postPhoto(photo.metaData, photo.b64);
+                return _postPhoto(photo.metaData, photo.b64);
             })
         );
         let postPhotos = postResponses.map(res => res.data.postPhoto);
@@ -140,17 +139,17 @@ export const postPhotos = async (photos: Photo[]) => {
 };
 
 export const compressPhoto = async (file: File) => {
-    console.log('compressing photo', file);
     const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 300,
         useWebWorker: true,
     };
+
     try {
         const compressedFile = await imageCompression(file, options);
         console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
         console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-        // await uploadToServer(compressedFile); // write your own logic
+        return compressedFile;
     } catch (error) {
         console.log(error);
     }
