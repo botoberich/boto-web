@@ -15,11 +15,12 @@ const appConfig = new AppConfig(
 const userSession = new UserSession({ appConfig });
 
 configure({
-    apiServer: process.env.RADIKS_SERVER_URL || 'http://localhost:3000',
+    apiServer: process.env.GATSBY_RADIKS_SERVER_URL || 'http://localhost:3000',
     userSession,
 });
 
-console.log('ENVS:', process.env);
+console.log(`ENVS: ${process.env.GATSBY_RADIKS_SERVER_URL}, ${process.env.GATSBY_ENV}`);
+
 export const isBrowser = () => typeof window !== 'undefined';
 
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});
