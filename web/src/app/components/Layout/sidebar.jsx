@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'gatsby';
 
 // State
-import { useTheme } from '../../contexts/ThemeContext';
+// import { useTheme } from '../../contexts/ThemeContext';
 import { checkIsSignedIn } from '../../services/auth.service';
 
 // UI
-import { Icon, Layout, Menu, Switch } from 'antd';
+import { Icon, Layout, Menu } from 'antd';
 import Logo from '../Logo';
 import AuthButton from '../AuthButton';
 import styles from './sidebar.module.css';
@@ -14,7 +14,7 @@ import styles from './sidebar.module.css';
 const { Sider } = Layout;
 
 const Sidebar = () => {
-    const { toggleTheme, theme } = useTheme();
+    // const { toggleTheme, theme } = useTheme();
     const [signedIn, setSignedIn] = React.useState(false);
 
     React.useEffect(() => {
@@ -33,9 +33,9 @@ const Sidebar = () => {
     });
 
     return (
-        <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0" theme={theme}>
+        <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0">
             <div className="logo" />
-            <Menu theme={theme} mode="inline" defaultSelectedKeys={['1']}>
+            <Menu mode="inline" defaultSelectedKeys={['1']}>
                 <Logo />
                 <Menu.Item key="1">
                     <Link to="/app/">

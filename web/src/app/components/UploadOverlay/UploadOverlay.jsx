@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 // UI
 import { motion } from 'framer-motion';
-import { Upload, Icon, Button } from 'antd';
+import { Upload, Icon } from 'antd';
 import { OVERLAY_ROOT } from '../../app';
 import styles from './UploadOverlay.module.css';
 
@@ -81,11 +81,8 @@ function UploadOverlay({ setOverlayVisible }) {
                         <Icon type="inbox" />
                     </p>
                 </motion.div>
-                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                <p className="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other band
-                    files
-                </p>
+                <p className="ant-upload-text">Click or drag file to this area to upload.</p>
+                <p className="ant-upload-hint">Support for a single or bulk image uploads.</p>
 
                 <div className={styles.closeOverlayButton}>
                     <Icon

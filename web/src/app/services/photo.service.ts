@@ -1,12 +1,14 @@
 import { putFile, getFile, deleteFile } from 'blockstack';
-import Photo from '../models/photo';
-import Chunk from '../models/chunk';
+import Photo from '../models/photo.model';
+import MiniPhoto from '../models/mini-photo.model';
+import Chunk from '../models/chunk.model';
 import { chunkB64 } from '../utils/encoding';
 import { success, error } from '../utils/apiResponse';
-import * as EXIF from 'exif-js';
+// import * as EXIF from 'exif-js';
 import { of, Subject } from 'rxjs';
 import { mergeAll } from 'rxjs/operators';
 import PhotoWorker from './photo.worker';
+import imageCompression from 'browser-image-compression';
 
 const BASE_PATH = `user/photos`;
 const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
@@ -23,6 +25,16 @@ const _combineChunks = async chunkGroup => {
     }
     return chunks;
 };
+
+// export const getOwnMiniPhotos = async () => {
+//     let $photos = new Subject();
+//     try {
+//         let miniPhotos = await MiniPhoto.fetchOwnList();
+
+//     } catch(e) {
+//         console.error(e)
+//     }
+// }
 
 /**
  * @returns If not err, a success response with data - { metaData, $photos }
