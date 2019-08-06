@@ -1,34 +1,17 @@
 import React from 'react';
 import { navigate } from 'gatsby';
-import { handleLogin } from '../services/auth.service';
-// import { User } from 'radiks';
 
-class Login extends React.Component {
-    componentDidMount() {
-        const location = this.props;
-        if (
-            location &&
-            location.location &&
-            !!location.location.search &&
-            location.location.search.startsWith('?authResponse=')
-        ) {
+// UI
+import LoginForm from '../components/LoginForm';
+
+function Login({ location }) {
+    React.useEffect(() => {
+        if (location && !!location.search) {
             navigate(`/app`);
         }
-    }
+    }, []);
 
-    handleSubmit = () =>
-        handleLogin(() => {
-            navigate(`/app/`);
-        });
-
-    render() {
-        return (
-            <div>
-                <h1>Log in</h1>
-                <button onClick={this.handleSubmit}>log in</button>
-            </div>
-        );
-    }
+    return <LoginForm />;
 }
 
 export default Login;

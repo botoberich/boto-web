@@ -30,10 +30,10 @@ function PageHeader() {
         }
 
         signin();
-    });
+    }, []);
 
     return (
-        <Header className={styles.header} theme="light">
+        <Header className={styles.header}>
             <span className={styles.headerTitle}>Photos</span>
             {checking && (
                 <div className={styles.indicator}>
