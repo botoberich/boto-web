@@ -37,6 +37,14 @@ const _combineChunks = async chunkGroup => {
     return chunks;
 };
 
+//
+//  Mini-Photo Model
+//
+
+export const postMiniPhoto = async (photo: File) => {
+    compressPhoto(photo);
+};
+
 // export const getOwnMiniPhotos = async (photo) => {
 //     // let $photos = new Subject();
 //     try {
@@ -114,26 +122,38 @@ export const getOwnPhotos = async () => {
     }
 };
 
-export const postPhotos = async photos => {
+export const postPhotos = async (photos: Photo[]) => {
     console.log('postphotos arg:', { photos });
     try {
         const postResponses = await Promise.all(
             photos.map(photo => {
-                compressPhoto(photo);
-                // _postPhoto(photo.metaData, photo.b64);
+                _postPhoto(photo.metaData, photo.b64);
             })
         );
-        // let postPhotos = postResponses.map(res => res.data.postPhoto);
-        // let photoIds = postResponses.map(res => res.data.photoId);
-        // let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
-        // return success({ photoIds, $postPhotos });
+        let postPhotos = postResponses.map(res => res.data.postPhoto);
+        let photoIds = postResponses.map(res => res.data.photoId);
+        let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
+        return success({ photoIds, $postPhotos });
     } catch (err) {
         return error(err);
     }
 };
 
-export const compressPhoto = photo => {
-    console.log('compressing photo', photo);
+export const compressPhoto = async (file: File) => {
+    console.log('compressing photo', file);
+    const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
+    };
+    try {
+        const compressedFile = await imageCompression(file, options);
+        console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+        console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+        // await uploadToServer(compressedFile); // write your own logic
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 /**
@@ -141,7 +161,7 @@ export const compressPhoto = photo => {
  * @param {*} metadata Photo metadata: refer to the photo model@ /models/photo
  * @param {*} b64 Base64 data representation of the photo
  */
-export const _postPhoto = async (metaData, b64) => {
+export const _postPhoto = async (metaData: MetaData, b64: string) => {
     /** Store all metadata in the database, get the ID and store blob in gaia */
     try {
         const chunkedBlobTexts = await chunkB64(b64, GAIA_LIMIT);
@@ -162,7 +182,7 @@ export const _postPhoto = async (metaData, b64) => {
         if (chunkedBlobTexts.length > 1) {
             /** store chunks in radik */
             const dbPosts = chunkedBlobTexts.map((txt, i) =>
-                new Chunk({
+                new ChunkModel({
                     chunkNumber: i,
                     photoId,
                 }).save()
@@ -178,11 +198,11 @@ export const _postPhoto = async (metaData, b64) => {
             return success({ photoId, postPhoto });
         }
     } catch (err) {
-        throw new Error('Post photo err:', err);
+        throw new Error(`Photo post error: ${err}`);
     }
 };
 
-export const deletePhoto = async id => {
+export const deletePhoto = async (id: string) => {
     try {
         const photo = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };

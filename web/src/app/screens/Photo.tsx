@@ -8,7 +8,7 @@ import 'react-image-lightbox/style.css';
 
 // State
 import { getExif } from '../utils/exif';
-import { getOwnPhotos, postPhotos, deletePhoto } from '../services/photo.service';
+import { getOwnPhotos, postPhotos, deletePhoto, postMiniPhoto } from '../services/photo.service';
 import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 
@@ -18,7 +18,6 @@ class Photo extends React.Component {
     constructor(props) {
         super(props);
 
-        this.photoService = null;
         this.handleFileUpload = this.handleFileUpload.bind(this);
         this.handleTest = this.handleTest.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -78,28 +77,29 @@ class Photo extends React.Component {
 
     async handleFileUpload(e) {
         if (e.file.status === 'done') {
-            const fileObj = e.file.originFile || e.file.originFileObj;
-            const b64 = await getBase64(fileObj);
-            console.log({ b64 });
-            const exifData = await getExif(b64);
-            console.log({ exifData });
+            const fileObj: File = e.file.originFile || e.file.originFileObj;
+            postMiniPhoto(fileObj);
+            // const b64 = await getBase64(fileObj);
+            // console.log({ b64 });
+            // const exifData = await getExif(b64);
+            // console.log({ exifData });
 
-            const metaData = { title: fileObj.name, archived: false, trashed: false };
-            let postRes = await postPhotos([{ metaData, b64 }]);
-            console.log({ postRes });
-            if (postRes.status === 'success') {
-                let $postPhotos = postRes.data.$postPhotos;
-                let photoIds = postRes.data.photoIds;
-                console.log('UPLOADING PHOTO IDS: ', photoIds);
-                $postPhotos.subscribe({
-                    next: res => {
-                        console.log('PHOTO UPLOADED: ', res.photoId);
-                    },
-                    complete: () => {
-                        console.log('ALL PHOTOS UPLOADED!');
-                    },
-                });
-            }
+            // const metaData = { title: fileObj.name, archived: false, trashed: false };
+            // let postRes = await postPhotos([{ metaData, b64 }]);
+            // console.log({ postRes });
+            // if (postRes.status === 'success') {
+            //     let $postPhotos = postRes.data.$postPhotos;
+            //     let photoIds = postRes.data.photoIds;
+            //     console.log('UPLOADING PHOTO IDS: ', photoIds);
+            //     $postPhotos.subscribe({
+            //         next: res => {
+            //             console.log('PHOTO UPLOADED: ', res.photoId);
+            //         },
+            //         complete: () => {
+            //             console.log('ALL PHOTOS UPLOADED!');
+            //         },
+            //     });
+            // }
         }
     }
 
