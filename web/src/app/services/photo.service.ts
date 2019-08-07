@@ -25,6 +25,30 @@ export interface MetaData {
     trashed: boolean;
 }
 
+export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
+    const miniFile = await compressPhoto(photo);
+    const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
+    try {
+        const resp = await putFile(gaiaPath, miniFile);
+        console.log('Mini photo post successful');
+        return success(resp);
+    } catch (e) {
+        console.error('Mini photo post failed');
+        return error(e);
+    }
+};
+
+export const getMiniPhotos = async () => {
+    try {
+        const miniPhotos = await MiniPhotoModel.fetchOwnList();
+        console.log('Fetched all mini photos successfully');
+        return success(miniPhotos);
+    } catch (e) {
+        console.error('Failed to fetch all mini photos');
+        return error(e);
+    }
+};
+
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
  * @returns An object with attributes photoId and b64
@@ -36,26 +60,6 @@ const _combineChunks = async chunkGroup => {
     }
     return chunks;
 };
-
-//
-//  Mini-Photo Model
-//
-
-export const postMiniPhoto = async (photo: File, originalId: string) => {
-    const miniFile = await compressPhoto(photo);
-
-    // putFile(gaiaPath, `-|${photoId}|${chunkedBlobTexts[0]}`)
-};
-
-// export const getOwnMiniPhotos = async (photo) => {
-//     // let $photos = new Subject();
-//     try {
-//         // let miniPhotos = await MiniPhoto.fetchOwnList();
-//         console.log("get own ")
-//     } catch(e) {
-//         console.error(e)
-//     }
-// }
 
 /**
  * @returns If not err, a success response with data - { metaData, $photos }
@@ -189,7 +193,9 @@ export const _postPhoto = async (metaData: MetaData, b64: string) => {
             );
 
             /** store chunks in gaia */
-            const gaiaPosts = chunkedBlobTexts.map((txt, i) => putFile(`${gaiaPath}/${i}`, `${i}|${photoId}|${txt}`));
+            try {
+                const gaiaPosts = chunkedBlobTexts.map((txt, i) => (`${gaiaPath}/${i}`, `${i}|${photoId}|${txt}`));
+            } catch (e) {}
 
             const postPhoto = resolveWithId(Promise.all([...dbPosts, ...gaiaPosts]));
             return success({ photoId, postPhoto });
