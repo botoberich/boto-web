@@ -49,7 +49,6 @@ export const checkIsSignedIn = async () => {
         let userFromLocalStorage = User.currentUser();
         let userFromRadiks = await User.findById(userFromLocalStorage._id);
 
-        console.log({ userFromLocalStorage, userFromRadiks });
         if (!userFromRadiks) {
             await User.createWithCurrentUser();
         }
