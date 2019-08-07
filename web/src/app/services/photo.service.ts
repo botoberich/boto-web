@@ -41,8 +41,10 @@ const _combineChunks = async chunkGroup => {
 //  Mini-Photo Model
 //
 
-export const postMiniPhoto = async (photo: File) => {
-    const compressed = await compressPhoto(photo);
+export const postMiniPhoto = async (photo: File, originalId: string) => {
+    const miniFile = await compressPhoto(photo);
+
+    // putFile(gaiaPath, `-|${photoId}|${chunkedBlobTexts[0]}`)
 };
 
 // export const getOwnMiniPhotos = async (photo) => {
@@ -122,7 +124,6 @@ export const getOwnPhotos = async () => {
 };
 
 export const postPhotos = async (photos: Photo[]) => {
-    console.log('postphotos arg:', { photos });
     try {
         const postResponses = await Promise.all(
             photos.map(photo => {
