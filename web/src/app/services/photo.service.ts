@@ -49,6 +49,10 @@ export const getMiniPhotos = async () => {
 };
 
 export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
+    /**
+     * We need to set a threshold on when we should compress - Example: above 25MB
+     * Because photos that are small in size end up looking jagged and poor quality.
+     */
     const miniFile = await compressPhoto(photo);
     const miniBase64: string = await getBase64(miniFile);
 
@@ -57,11 +61,23 @@ export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
         src: miniBase64,
         photoId: originalPhotoId,
     });
+
+    /**
+     * You don't wanna store base64 in our radiks database.
+     * 1 - Even if it's compressed, the load could add up and cause our db to blow up
+     * 2 - Use radiks as a tool to index into our actual b64 stored in Gaia | how current fetch is doing it
+     */
+
     radiksMiniPhoto.save();
 
     // But we...also store the actual content. Can't Radiks just do this for us as well?
     const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
     try {
+        /**
+         * Now you have two sources of truth for all b64 data - one in our radiks db and one in gaia
+         * Let's not do that. Let's store b64 in gaia and store ONLY metadata in our radiks db then use id to index into gaia and fetch the b64
+         */
+
         const resp = await putFile(gaiaPath, miniBase64);
         console.log('Mini photo post successful');
         return success(resp);

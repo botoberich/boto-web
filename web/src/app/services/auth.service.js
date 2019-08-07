@@ -5,7 +5,6 @@ import { configure, User } from 'radiks';
 const logAuth = process.env.NODE_ENV === 'development' && true; // set to true to turn on logging
 const clog = (...args) => logAuth && console.log(...args);
 // helpful for debugging
-
 const appConfig = new AppConfig(
     ['store_write', 'publish_data'],
     typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000',
@@ -19,12 +18,15 @@ configure({
     userSession,
 });
 
+(async () => {})();
+
 export const isBrowser = () => typeof window !== 'undefined';
 
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});
 
 export const handleLogin = async callback => {
     clog('isLoggedIn check', userSession.isUserSignedIn());
+
     if (userSession.isUserSignedIn()) {
         clog('logged in');
         callback(getUser());
@@ -43,7 +45,14 @@ export const checkIsSignedIn = async () => {
     }
     if (userSession.isSignInPending()) {
         await userSession.handlePendingSignIn();
-        await User.createWithCurrentUser();
+
+        let userFromLocalStorage = User.currentUser();
+        let userFromRadiks = await User.findById(userFromLocalStorage._id);
+
+        console.log({ userFromLocalStorage, userFromRadiks });
+        if (!userFromRadiks) {
+            await User.createWithCurrentUser();
+        }
         return true;
     } else if (userSession.isUserSignedIn()) {
         const user = userSession.loadUserData();
