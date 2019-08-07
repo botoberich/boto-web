@@ -27,9 +27,11 @@ export interface MetaData {
 
 export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
     const miniFile = await compressPhoto(photo);
+    const miniArrayBuffer = await fileToArrayBuffer(miniFile);
+    const content = new Uint8Array(miniArrayBuffer)
     const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
     try {
-        const resp = await putFile(gaiaPath, miniFile);
+        const resp = await putFile(gaiaPath, content.buffer);
         console.log('Mini photo post successful');
         return success(resp);
     } catch (e) {
@@ -48,6 +50,23 @@ export const getMiniPhotos = async () => {
         return error(e);
     }
 };
+
+function fileToArrayBuffer(file: File) {
+    return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+
+        reader.onerror = function onerror(error) {
+            reject(error);
+        };
+
+        reader.onload = function onload() {
+            // const buffer = ArrayBuffer(reader.result)
+            resolve(reader.result);
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+}
 
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
