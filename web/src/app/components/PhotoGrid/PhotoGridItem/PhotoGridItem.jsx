@@ -7,6 +7,9 @@ import { Icon } from 'antd';
 import { motion } from 'framer-motion';
 import styles from './PhotoGridItem.module.css';
 
+// state
+import { deleteMiniPhoto } from '../../../services/photo.service';
+
 // Framer animations
 const variants = {
     open: {
@@ -26,7 +29,7 @@ const variants = {
     },
 };
 
-function PhotoGridItem({ src, id, deletePhoto }) {
+function PhotoGridItem({ deletePhoto, id, photoId, src }) {
     const [isDeleting, setDeleting] = React.useState(false);
     // Quick way to hide deleted photos without refetching all the photos
     const [deleted, setDeleted] = React.useState(false);
@@ -50,8 +53,9 @@ function PhotoGridItem({ src, id, deletePhoto }) {
         async function run() {
             try {
                 setDeleting(true);
-                const { status } = await deletePhoto(id);
-                if (status === 'success') {
+                const res = await deleteMiniPhoto(id);
+                console.log({ res });
+                if (res.status === 'success') {
                     // Delete photo from DOM. We don't need to refetch all the photos.
                     setDeleted(true);
                     setDeleting(false);

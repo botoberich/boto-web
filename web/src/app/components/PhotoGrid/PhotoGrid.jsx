@@ -9,14 +9,21 @@ function PhotoGrid({ photos, deletePhoto, downloadComplete }) {
     return (
         <div className={styles.gridContainer}>
             <div className={styles.grid}>
-                {photos.map(({ src, id }) => {
+                {photos.map(({ src, id, photoId }) => {
                     if (!src && downloadComplete) {
                         return null;
                     }
                     if (!src) {
                         return <Skeleton key={id} active></Skeleton>;
                     }
-                    return <PhotoGridItem deletePhoto={deletePhoto} id={id} key={id} src={src}></PhotoGridItem>;
+                    return (
+                        <PhotoGridItem
+                            deletePhoto={deletePhoto}
+                            id={id}
+                            key={id}
+                            photoId={photoId}
+                            src={src}></PhotoGridItem>
+                    );
                 })}
             </div>
         </div>

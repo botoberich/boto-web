@@ -1,8 +1,8 @@
-import { putFile, getFile, deleteFile } from 'blockstack';
 import PhotoModel from '../models/photo.model';
 import MiniPhotoModel from '../models/mini-photo.model';
+import { putFile, getFile } from 'blockstack';
 import ChunkModel from '../models/chunk.model';
-import { chunkB64 } from '../utils/encoding';
+import { chunkB64, getBase64 } from '../utils/encoding';
 import { success, error } from '../utils/apiResponse';
 // import * as EXIF from 'exif-js';
 import { of, Subject } from 'rxjs';
@@ -25,13 +25,44 @@ export interface MetaData {
     trashed: boolean;
 }
 
+export const getMiniPhotos = async () => {
+    try {
+        const miniPhotos = await MiniPhotoModel.fetchOwnList();
+        console.log('Fetched all mini photos successfully');
+        console.log(miniPhotos);
+        if (miniPhotos) {
+            const metaData = miniPhotos.map(mini => mini.attrs);
+            const photos = miniPhotos.map(mini => {
+                return {
+                    photoId: mini.attrs.photoId,
+                    src: mini.attrs.src,
+                    id: mini._id,
+                };
+            });
+            console.log({ photos });
+            return success({ metaData, photos });
+        }
+    } catch (e) {
+        console.error('Failed to fetch all mini photos');
+        return error(e);
+    }
+};
+
 export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
     const miniFile = await compressPhoto(photo);
-    const miniArrayBuffer = await fileToArrayBuffer(miniFile);
-    const content = new Uint8Array(miniArrayBuffer)
+    const miniBase64: string = await getBase64(miniFile);
+
+    // Have Radiks index our files for us
+    const radiksMiniPhoto = new MiniPhotoModel({
+        src: miniBase64,
+        photoId: originalPhotoId,
+    });
+    radiksMiniPhoto.save();
+
+    // But we...also store the actual content. Can't Radiks just do this for us as well?
     const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
     try {
-        const resp = await putFile(gaiaPath, content.buffer);
+        const resp = await putFile(gaiaPath, miniBase64);
         console.log('Mini photo post successful');
         return success(resp);
     } catch (e) {
@@ -40,33 +71,23 @@ export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
     }
 };
 
-export const getMiniPhotos = async () => {
+export const deleteMiniPhoto = async (miniPhotoId: string) => {
     try {
-        const miniPhotos = await MiniPhotoModel.fetchOwnList();
-        console.log('Fetched all mini photos successfully');
-        return success(miniPhotos);
+        const mini = await MiniPhotoModel.findById(miniPhotoId);
+        if (mini) {
+            console.log('mini photo found by id', mini);
+            const originalPhotoId = mini.attrs.photoId;
+            const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
+            // Just let Aaron's delete method do its thing
+            deletePhoto(originalPhotoId);
+            await mini.destroy();
+            return deleteFile(gaiaPath).then(res => success(res));
+        }
     } catch (e) {
-        console.error('Failed to fetch all mini photos');
+        console.error('Failed to find mini photo id');
         return error(e);
     }
 };
-
-function fileToArrayBuffer(file: File) {
-    return new Promise(function(resolve, reject) {
-        const reader = new FileReader();
-
-        reader.onerror = function onerror(error) {
-            reject(error);
-        };
-
-        reader.onload = function onload() {
-            // const buffer = ArrayBuffer(reader.result)
-            resolve(reader.result);
-        };
-
-        reader.readAsArrayBuffer(file);
-    });
-}
 
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
@@ -234,9 +255,9 @@ export const deletePhoto = async (id: string) => {
         if (photo) {
             let deleteInRadik = await photo.destroy(); /** you only wanna delete in GAIA if the entry is deleted in radiks */
             if (deleteInRadik) {
-                deleteFile(`${BASE_PATH}/${photo._id}`);
                 deletes.photo = deleteInRadik;
             }
+            `${BASE_PATH}/${photo._id}`;
 
             if (photo.attrs.chunked) {
                 let chunks = await ChunkModel.fetchOwnList({
@@ -244,10 +265,9 @@ export const deletePhoto = async (id: string) => {
                 });
                 let deleteChunksInRadik = await Promise.all(chunks.map(chunk => ChunkModel.destroy()));
                 if (deleteChunksInRadik.length === chunks.length) {
-                    for (let i = 0; i < chunks.length; i++) {
-                        deleteFile(`${BASE_PATH}/${photo._id}/${chunks[i].attrs.chunkNumber}`);
-                    }
+                    for (let i = 0; i < chunks.length; i++) {}
                     deletes.chunks = deleteChunksInRadik;
+                    `${BASE_PATH}/${photo._id}/${chunks[i].attrs.chunkNumber}`;
                 }
             }
             return success(deletes);

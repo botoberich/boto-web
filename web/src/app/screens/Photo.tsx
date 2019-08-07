@@ -22,7 +22,6 @@ type State = {
         src: string;
         id: string;
     }[];
-    input: string;
     uploadError: any;
 };
 
@@ -35,20 +34,27 @@ class PhotoScreen extends React.Component<Props, State> {
         super(props);
 
         this.handleFileUpload = this.handleFileUpload.bind(this);
-        this.handleTest = this.handleTest.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
 
         this.state = {
             downloadComplete: false,
             fetchedPhotos: [],
-            input: '',
             uploadError: null,
         };
     }
 
     async componentDidMount() {
-        const photoResponse = await getMiniPhotos();
-        console.log('Mini photos response:', photoResponse);
+        const { data } = await getMiniPhotos();
+        const { photos, metaData } = data;
+        const fetchedPhotos = photos.map(photo => ({
+            src: `data:image/jpeg;base64,${photo.src}`,
+            photoId: photo.photoId,
+            id: photo.id,
+        }));
+
+        this.setState({
+            fetchedPhotos,
+        });
     }
 
     // async componentDidMount() {
@@ -107,11 +113,18 @@ class PhotoScreen extends React.Component<Props, State> {
             console.log({ exifData });
 
             const metaData = { title: fileObj.name, archived: false, trashed: false };
+            console.log('post meta data', { metaData });
             let postRes = await postPhotos([{ metaData, b64 }]);
-            console.log({ postRes });
+            console.log('post res:', { postRes });
             if (postRes.status === 'success') {
                 let $postPhotos = postRes.data.$postPhotos;
                 let photoIds = postRes.data.photoIds;
+
+                // Keep the original photo Id for our mini photo
+                postMiniPhoto(fileObj, photoIds[0]).then((resp: PhotoResponse) => {
+                    console.log({ resp });
+                });
+
                 console.log('Uploading $postPhotos', $postPhotos);
                 console.log('UPLOADING PHOTO IDS: ', photoIds);
                 $postPhotos.subscribe({
@@ -130,46 +143,30 @@ class PhotoScreen extends React.Component<Props, State> {
         }
     }
 
-    async handleTest(e) {
-        // var img1 = document.querySelector('img');
-        // EXIF.getData(img1, function() {
-        //     var tags = EXIF.getAllTags(this);
-        //     console.log({ tags });
-        // });
-        // return;
-
-        let deleteRes = await deletePhoto(this.state.input);
-        console.log({ deleteRes });
-    }
-
     render() {
         const { downloadComplete, fetchedPhotos, uploadError } = this.state;
-        const transformedData = Object.values(fetchedPhotos);
 
         return (
             <div>
-                <div className="photos"></div>
                 {uploadError && (
-                    <Alert style={{ marginTop: '30px', marginBottom: '20px' }} message={uploadError} type="error" />
+                    <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />
                 )}
+
                 <div>
-                    <PhotoGrid
-                        deletePhoto={deletePhoto}
-                        downloadComplete={downloadComplete}
-                        photos={transformedData}></PhotoGrid>
-                </div>
-                <div style={{ marginTop: '24px' }}>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>
                         <Button>
                             <Icon type="upload" /> Upload
                         </Button>
                     </Upload>
                 </div>
-                {/* <div style={{ marginTop: '24px' }}>
-                    <Button onClick={this.handleTest}>Test</Button>
+
+                <div className="photoGrid">
+                    <PhotoGrid
+                        deletePhoto={deletePhoto}
+                        downloadComplete={downloadComplete}
+                        photos={fetchedPhotos}></PhotoGrid>
                 </div>
 
-                <input onChange={e => this.setState({ input: e.target.value })} type="text" /> */}
                 <UploadOverlay></UploadOverlay>
             </div>
         );
