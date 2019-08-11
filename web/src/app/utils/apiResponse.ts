@@ -1,21 +1,12 @@
-export interface PhotoResponse {
-    status: ResponseStatus | 'success' | 'error';
-    data: any;
-}
-
-export enum ResponseStatus {
-    Success,
-    Error,
-}
-
-export function success(data: any): PhotoResponse {
+import { ApiResponse } from '../interfaces/response.interface';
+export function success(data: any): ApiResponse<any> {
     return {
         status: 'success',
         data,
     };
 }
 
-export function error(data: any): PhotoResponse {
+export function error(data: any): ApiResponse<any> {
     return {
         status: 'error',
         data,

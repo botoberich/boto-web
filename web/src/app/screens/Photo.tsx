@@ -148,9 +148,7 @@ class PhotoScreen extends React.Component<Props, State> {
 
         return (
             <div>
-                {uploadError && (
-                    <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />
-                )}
+                {uploadError && <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />}
 
                 <div>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>
@@ -161,10 +159,7 @@ class PhotoScreen extends React.Component<Props, State> {
                 </div>
 
                 <div className="photoGrid">
-                    <PhotoGrid
-                        deletePhoto={deletePhoto}
-                        downloadComplete={downloadComplete}
-                        photos={fetchedPhotos}></PhotoGrid>
+                    <PhotoGrid deletePhoto={deletePhoto} downloadComplete={downloadComplete} photos={fetchedPhotos}></PhotoGrid>
                 </div>
 
                 <UploadOverlay></UploadOverlay>
