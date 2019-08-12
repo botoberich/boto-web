@@ -1,6 +1,5 @@
 import { UserSession, AppConfig } from 'blockstack';
-import { configure, User } from 'radiks';
-import querystring from 'querystring';
+import { configure, User } from 'radiks/src';
 
 // helpful for debugging
 const logAuth = process.env.NODE_ENV === 'development' && true; // set to true to turn on logging
@@ -43,8 +42,6 @@ export const checkIsSignedIn = async () => {
         return Promise.resolve(false);
     }
     if (userSession.isSignInPending()) {
-        let query = window.location.search;
-
         await userSession.handlePendingSignIn();
 
         let userFromLocalStorage = User.currentUser();

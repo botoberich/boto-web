@@ -8,7 +8,7 @@ import 'react-image-lightbox/style.css';
 
 // State
 import { getExif } from '../utils/exif';
-import { getOwnPhotos, postPhotos, deletePhoto, postMiniPhoto, getMiniPhotos } from '../services/photo.service';
+import { getOwnPhotos, postPhotos, deletePhoto, postMiniPhoto, getMiniPhotos } from '../services/miniphoto.dennis';
 import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 

@@ -1,13 +1,10 @@
-import PhotoModel from '../models/photo.model';
-import MiniPhotoModel from '../models/mini-photo.model';
+import { PhotoModel, ChunkModel } from '../models';
 import { putFile, getFile, deleteFile } from 'blockstack';
-import ChunkModel from '../models/chunk.model';
 import { chunkB64, getBase64 } from '../utils/encoding';
 import { success, error } from '../utils/apiResponse';
-// import * as EXIF from 'exif-js';
 import { of, Subject } from 'rxjs';
-import { mergeAll } from 'rxjs/operators';
-import { combineChunks } from './photo.worker';
+import { mergeAll, map } from 'rxjs/operators';
+import PhotoWorker from './photo.worker';
 import imageCompression from 'browser-image-compression';
 import uuid from 'uuid/v4';
 import {
@@ -38,7 +35,7 @@ const _combineChunks = async chunkGroup => {
 };
 
 /** @returns a b64 string representing a photo smaller in size than the actual photo */
-export const _generateThumbnail = async file => {
+const _generateThumbnail = async file => {
     const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 300,
@@ -59,7 +56,10 @@ export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>>
         let photos = await PhotoModel.fetchOwnList();
         let photoIds = photos.map(photo => photo._id);
         let fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
-        let $thumbnails = of.apply(fetchThumbnails, this).pipe(mergeAll());
+        let $thumbnails = of
+            .apply(fetchThumbnails, this)
+            .pipe(mergeAll())
+            .pipe(map((json: string) => JSON.parse(json)));
         return success({ photoIds, $thumbnails });
     } catch (err) {
         return error(err);
@@ -113,7 +113,7 @@ export const getOwnPhotos = async () => {
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
                 if (unchunkedPhoto && unchunkedPhoto.length) {
-                    let [_, photoId, b64] = unchunkedPhoto.split('|');
+                    let { photoId, b64 } = JSON.parse(unchunkedPhoto);
                     fetchedCtr++;
                     $photos.next({
                         photoId,
@@ -173,20 +173,23 @@ export const _postPhoto = async ({
     metaData,
     file,
 }: PostPhotoInput): Promise<{ photoId: string; postPhoto: Promise<PostPhotoResult> }> => {
-    /** Store all metadata in the database, get the ID and store b64 in gaia */
+    /** Store all metadata in the database and store b64 in gaia */
+    const photoId: string = uuid();
+    const gaiaPath = `${BASE_PATH}/${photoId}`;
+    const thumbnailUploaded = false;
     try {
         const [thumbnail, original]: [string, string] = await Promise.all([_generateThumbnail(file), getBase64(file)]);
-        const chunkedBlobTexts = await chunkB64(original, CHUNK_SIZE);
-        const photoId: string = uuid();
-        const gaiaPath = `${BASE_PATH}/${photoId}`;
+        const b64Chunks = await chunkB64(original, CHUNK_SIZE);
+
         /** Upload thumbnail */
-        await putFile(`${gaiaPath}/thumbnail`, thumbnail);
+        await putFile(`${gaiaPath}/thumbnail`, JSON.stringify({ photoId, b64: thumbnail }));
+        thumbnailUploaded = true;
 
         /** Upload original photo */
         const photo = new PhotoModel({
             _id: photoId,
             ...metaData,
-            chunked: chunkedBlobTexts.length > 1,
+            chunked: b64Chunks.length > 1,
         });
         const saveRes = await photo.save();
 
@@ -202,9 +205,9 @@ export const _postPhoto = async ({
             });
         };
 
-        if (chunkedBlobTexts.length > 1) {
+        if (b64Chunks.length > 1) {
             /** store chunks in radik */
-            const radiksPosts = chunkedBlobTexts.map((txt, i) =>
+            const radiksPosts = b64Chunks.map((txt, i) =>
                 new ChunkModel({
                     chunkNumber: i,
                     photoId,
@@ -212,17 +215,22 @@ export const _postPhoto = async ({
             );
 
             /** store chunks in gaia */
-            const gaiaPosts = chunkedBlobTexts.map((txt, i) => putFile(`${gaiaPath}/${i}`, `${i}|${photoId}|${txt}`));
+            const gaiaPosts = b64Chunks.map((chunk, i) =>
+                putFile(`${gaiaPath}/${i}`, JSON.stringify({ photoId, chunkNumber: i, b64: chunk }))
+            );
             const postPhoto = handlePosts(Promise.all([...radiksPosts, ...gaiaPosts]));
             return { photoId, postPhoto };
         } else {
-            const postPhoto = handlePosts(putFile(gaiaPath, `-|${photoId}|${chunkedBlobTexts[0]}`));
+            const postPhoto = handlePosts(putFile(gaiaPath, JSON.stringify({ photoId, b64: b64Chunks[0] })));
             return { photoId, postPhoto };
         }
 
         /** If original photo upload is successful, upload thumbnail */
     } catch (err) {
-        throw new Error(`Photo post error: ${err}`);
+        if (thumbnailUploaded) {
+            await deleteFile(`${BASE_PATH}/${photoId}/thumbnail`);
+        }
+        throw new Error(err);
     }
 };
 

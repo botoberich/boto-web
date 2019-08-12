@@ -12,6 +12,7 @@ import { useOverlay } from './contexts/OverlayContext';
 const Photo = loadable(() => import('./screens/Photo'));
 const Profile = loadable(() => import('./screens/Profile'));
 const Login = loadable(() => import('./screens/Login'));
+const ApiTestScreen = loadable(() => import('./screens/Api.test'));
 // const Album = loadable(() => import('./screens/Album'));
 // const Sharing = loadable(() => import('./screens/Sharing'));
 
@@ -40,6 +41,7 @@ function App() {
                         <PrivateRoute path="/app/profile" component={Profile} />
                         <PublicRoute path="/app">
                             <PrivateRoute path="/" component={Photo} />
+                            <PrivateRoute path="/apitest" component={ApiTestScreen} />
                             {/* <PrivateRoute exact path="/albums" component={Album} /> */}
                             {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                             <Login exact path="/login" />

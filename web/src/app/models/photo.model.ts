@@ -1,4 +1,4 @@
-import Model from 'radiks';
+import { Model } from 'radiks/src';
 class Photo extends Model {
     constructor(...args) {
         super(...args);

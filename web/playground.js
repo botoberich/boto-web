@@ -46,3 +46,7 @@ var p2 = new Promise(async (resolve, reject) => {
     var p2Data = await p2;
     console.log(p2Data);
 })();
+
+var a = [`{"chunkNumber": 0}`, `{"chunkNumber": 3}`, `{"chunkNumber": 2}`, `{"chunkNumber": 1}`];
+a.sort((a, b) => (JSON.parse(a).chunkNumber < JSON.parse(b).chunkNumber ? -1 : 1));
+console.log(a);

@@ -13,8 +13,8 @@ export interface Photo {
 }
 
 export interface PostPhotosResult {
-    photoIds?: string[];
-    $photos?: Subject<PostPhotoResult>;
+    photoIds: string[];
+    $photos: Subject<PostPhotoResult>;
 }
 
 export interface PostPhotoResult {
@@ -28,6 +28,11 @@ export interface PostPhotoInput {
 }
 
 export interface GetThumbnailsResult {
-    photoIds?: string[];
-    $thumbnails?: Subject<string>;
+    photoIds: string[];
+    $thumbnails: Subject<Thumbnail>;
+}
+
+export interface Thumbnail {
+    photoId: string;
+    b64: string;
 }
