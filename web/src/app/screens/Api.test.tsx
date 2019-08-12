@@ -45,7 +45,25 @@ class ApiTestScreen extends React.Component<Props, State> {
         };
     }
 
-    async componentDidMount() {}
+    async componentDidMount() {
+        const getRes = await getThumbnails();
+        if (getRes.status === 'success') {
+            let $thumbnails = getRes.data.$thumbnails;
+            $thumbnails.subscribe({
+                next: res => {
+                    console.log(`Thumbnail downloaded for photo: ${res.photoId}`);
+                },
+                error: err => {
+                    console.log(`Error downloading thumbnail: ${err}`);
+                },
+                complete: () => {
+                    console.log(`Thumbnails download completed.`);
+                },
+            });
+        } else {
+            console.log(`Error downloading thumbnail: ${getRes.data}`);
+        }
+    }
 
     async handleFileUpload(e) {
         if (e.file.status === 'done') {
@@ -63,6 +81,9 @@ class ApiTestScreen extends React.Component<Props, State> {
                     },
                     error: err => {
                         console.log('Upload error: ', err);
+                    },
+                    complete: () => {
+                        console.log('Uploads completed.');
                     },
                 });
             } else {

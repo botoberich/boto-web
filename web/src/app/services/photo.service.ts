@@ -57,7 +57,7 @@ export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>>
         let photoIds = photos.map(photo => photo._id);
         let fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
         let $thumbnails = of
-            .apply(fetchThumbnails, this)
+            .apply(this, fetchThumbnails)
             .pipe(mergeAll())
             .pipe(map((json: string) => JSON.parse(json)));
         return success({ photoIds, $thumbnails });
@@ -176,7 +176,7 @@ export const _postPhoto = async ({
     /** Store all metadata in the database and store b64 in gaia */
     const photoId: string = uuid();
     const gaiaPath = `${BASE_PATH}/${photoId}`;
-    const thumbnailUploaded = false;
+    let thumbnailUploaded = false;
     try {
         const [thumbnail, original]: [string, string] = await Promise.all([_generateThumbnail(file), getBase64(file)]);
         const b64Chunks = await chunkB64(original, CHUNK_SIZE);
