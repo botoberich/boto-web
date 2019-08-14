@@ -1,12 +1,17 @@
 import React from 'react';
-import { Link } from 'gatsby';
+import { Link, navigate } from 'gatsby';
 import Helmet from 'react-helmet';
-// import Image from '../app/components/Image';
+
+// UI
+import { Button } from 'antd'
 import SEO from '../components/seo';
 import CopyrightYear from '../components/copyright-year';
 
+// State
+import { handleLogin } from '../app/services/auth.service';
+
 class IndexPage extends React.Component {
-    componentDidMount() { }
+    componentDidMount() {}
 
     render() {
         return (
@@ -43,16 +48,14 @@ class IndexPage extends React.Component {
                                     height="128"
                                     viewBox="0 0 128 128"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    style={{ overflow: 'visible' }}
-                                >
+                                    style={{ overflow: 'visible' }}>
                                     <defs>
                                         <linearGradient
                                             x1="93.05%"
                                             y1="19.767%"
                                             x2="15.034%"
                                             y2="85.765%"
-                                            id="header-shape-2"
-                                        >
+                                            id="header-shape-2">
                                             <stop stopColor="#FF3058" offset="0%" />
                                             <stop stopColor="#FF6381" offset="100%" />
                                         </linearGradient>
@@ -80,8 +83,7 @@ class IndexPage extends React.Component {
                                                             y1="39.507%"
                                                             x2="-52.998%"
                                                             y2="39.507%"
-                                                            id="logo-a"
-                                                        >
+                                                            id="logo-a">
                                                             <stop stopColor="#8D92FA" offset="0%" />
                                                             <stop stopColor="#8D92FA" stopOpacity="0" offset="100%" />
                                                         </linearGradient>
@@ -90,8 +92,7 @@ class IndexPage extends React.Component {
                                                             y1="19.767%"
                                                             x2="15.034%"
                                                             y2="85.765%"
-                                                            id="logo-b"
-                                                        >
+                                                            id="logo-b">
                                                             <stop stopColor="#FF3058" offset="0%" />
                                                             <stop stopColor="#FF6381" offset="100%" />
                                                         </linearGradient>
@@ -100,8 +101,7 @@ class IndexPage extends React.Component {
                                                             y1="-20.176%"
                                                             x2="32.716%"
                                                             y2="148.747%"
-                                                            id="logo-c"
-                                                        >
+                                                            id="logo-c">
                                                             <stop stopColor="#FF97AA" offset="0%" />
                                                             <stop stopColor="#FF97AA" stopOpacity="0" offset="100%" />
                                                         </linearGradient>
@@ -145,17 +145,20 @@ class IndexPage extends React.Component {
                                             </p>
                                             <div className="hero-form field field-grouped">
                                                 <div className="control">
-                                                    <Link
+                                                    <Button
                                                         className="button button-primary button-block"
+                                                        onClick={() => {
+                                                            handleLogin(() => {
+                                                                navigate(`/app/`);
+                                                            });
+                                                        }}
                                                         style={{
                                                             alignItems: 'center',
                                                             height: '60px',
-                                                            borderRadius: '8px'
-                                                        }}
-                                                        to="/app"
-                                                    >
+                                                            borderRadius: '8px',
+                                                        }}>
                                                         Get Early Access
-                                                    </Link>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,8 +168,7 @@ class IndexPage extends React.Component {
                                                     width="40"
                                                     height="40"
                                                     xmlns="http://www.w3.org/2000/svg"
-                                                    style={{ overflow: 'visible' }}
-                                                >
+                                                    style={{ overflow: 'visible' }}>
                                                     <circle
                                                         className="anime-element fadeup-animation"
                                                         cx="20"
@@ -182,8 +184,7 @@ class IndexPage extends React.Component {
                                                     width="88"
                                                     height="88"
                                                     xmlns="http://www.w3.org/2000/svg"
-                                                    style={{ overflow: 'visible' }}
-                                                >
+                                                    style={{ overflow: 'visible' }}>
                                                     <circle
                                                         className="anime-element fadeup-animation"
                                                         cx="44"
@@ -328,8 +329,7 @@ class IndexPage extends React.Component {
                                             <div className="control">
                                                 <a
                                                     className="button button-primary button-block button-shadow"
-                                                    href="mailto:team@boto.photos"
-                                                >
+                                                    href="mailto:team@boto.photos">
                                                     Contact us!
                                                 </a>
                                             </div>
@@ -352,8 +352,7 @@ class IndexPage extends React.Component {
                                                         y1="39.507%"
                                                         x2="-52.998%"
                                                         y2="39.507%"
-                                                        id="logo-footer-a"
-                                                    >
+                                                        id="logo-footer-a">
                                                         <stop stopColor="#8D92FA" offset="0%" />
                                                         <stop stopColor="#8D92FA" stopOpacity="0" offset="100%" />
                                                     </linearGradient>
@@ -362,8 +361,7 @@ class IndexPage extends React.Component {
                                                         y1="19.767%"
                                                         x2="15.034%"
                                                         y2="85.765%"
-                                                        id="logo-footer-b"
-                                                    >
+                                                        id="logo-footer-b">
                                                         <stop stopColor="#FF3058" offset="0%" />
                                                         <stop stopColor="#FF6381" offset="100%" />
                                                     </linearGradient>
@@ -372,8 +370,7 @@ class IndexPage extends React.Component {
                                                         y1="-20.176%"
                                                         x2="32.716%"
                                                         y2="148.747%"
-                                                        id="logo-footer-c"
-                                                    >
+                                                        id="logo-footer-c">
                                                         <stop stopColor="#FF97AA" offset="0%" />
                                                         <stop stopColor="#FF97AA" stopOpacity="0" offset="100%" />
                                                     </linearGradient>

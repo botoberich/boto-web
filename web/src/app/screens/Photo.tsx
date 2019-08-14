@@ -46,15 +46,17 @@ class PhotoScreen extends React.Component<Props, State> {
     async componentDidMount() {
         const { data } = await getMiniPhotos();
         const { photos, metaData } = data;
-        const fetchedPhotos = photos.map(photo => ({
-            src: `data:image/jpeg;base64,${photo.src}`,
-            photoId: photo.photoId,
-            id: photo.id,
-        }));
+        if (photos !== undefined && photos.length > 0) {
+            const fetchedPhotos = photos.map(photo => ({
+                src: `data:image/jpeg;base64,${photo.src}`,
+                photoId: photo.photoId,
+                id: photo.id,
+            }));
 
-        this.setState({
-            fetchedPhotos,
-        });
+            this.setState({
+                fetchedPhotos,
+            });
+        }
     }
 
     // async componentDidMount() {

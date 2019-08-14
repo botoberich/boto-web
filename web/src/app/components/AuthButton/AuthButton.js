@@ -1,7 +1,12 @@
 import React from 'react';
 import { navigate, Link } from 'gatsby';
-import { logout } from '../../services/auth.service';
+
+// UI
 import { Button } from 'antd';
+
+// State
+import { logout } from '../../services/auth.service';
+import { handleLogin } from '../../services/auth.service';
 
 function AuthButton({ signedIn, className }) {
     if (signedIn) {
@@ -12,8 +17,7 @@ function AuthButton({ signedIn, className }) {
                     onClick={async event => {
                         event.preventDefault();
                         logout(() => navigate(`/app/login`));
-                    }}
-                >
+                    }}>
                     Logout
                 </Link>
             </Button>
@@ -21,8 +25,15 @@ function AuthButton({ signedIn, className }) {
     }
 
     return (
-        <Button type="primary" className={className}>
-            <Link to="/app/login">Login</Link>
+        <Button
+            type="primary"
+            className={className}
+            onClick={() => {
+                handleLogin(() => {
+                    navigate(`/app/`);
+                });
+            }}>
+            Login
         </Button>
     );
 }

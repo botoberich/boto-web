@@ -1,7 +1,7 @@
 .header {
     /* TODO: Remove background and set via Theme later */
     background: #fff; 
-    border-bottom: 1px solid #dadce0;
+    /* border-bottom: 1px solid #dadce0; */
     display: flex;
     justify-content: space-between;
     left: 0;

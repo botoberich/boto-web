@@ -33,29 +33,29 @@ const Sidebar = () => {
     });
 
     return (
-        <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0">
+        <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0" width={140} theme="light">
             <div className="logo" />
             <Menu mode="inline" defaultSelectedKeys={['1']}>
                 <Logo />
-                <Menu.Item key="1">
+                <Menu.Item key="1" className={styles.menuItem}>
                     <Link to="/app/">
                         <Icon type="picture" />
                         <span className="nav-text">Photos</span>
                     </Link>
                 </Menu.Item>
-                {/* <Menu.Item key="2">
-                                    <Link to="/app/albums">
-                                        <Icon type="book" />
-                                        <span className="nav-text">Albums</span>
-                                    </Link>
-                                </Menu.Item> */}
-                {/* <Menu.Item key="3">
-                                    <Link to="/app/sharing">
-                                        <Icon type="upload" />
-                                        <span className="nav-text">Sharing</span>
-                                    </Link>
-                                </Menu.Item> */}
-                <Menu.Item key="4" className={styles.mobileOnly}>
+                <Menu.Item key="2" className={`${styles.menuItem}  ${styles.disabled}`}>
+                    {/* <Link to="/app/albums"> */}
+                    <Icon type="book" />
+                    <span className="nav-text">Albums</span>
+                    {/* </Link> */}
+                </Menu.Item>
+                <Menu.Item className={`${styles.menuItem} ${styles.disabled}`}>
+                    {/* <Link to="/app/sharing"> */}
+                    <Icon type="upload" />
+                    <span className="nav-text">Sharing</span>
+                    {/* </Link> */}
+                </Menu.Item>
+                <Menu.Item className={styles.mobileOnly}>
                     <Link to="/app/profile">
                         <Icon type="user" />
                         <span className="nav-text">Profile</span>
