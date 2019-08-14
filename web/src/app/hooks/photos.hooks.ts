@@ -4,7 +4,7 @@ import { getBase64 } from '../utils/encoding';
 import { PhotoResponse } from '../utils/apiResponse';
 import { getExif } from '../utils/exif';
 
-export const useFileUpload = (e, callback) => {
+export const useFileUpload = (e, callback = () => {}) => {
     async function run(e) {
         console.log('file upload event', e);
         if (e.file.status === 'done') {
@@ -32,10 +32,6 @@ export const useFileUpload = (e, callback) => {
                 $postPhotos.subscribe({
                     next: res => {
                         console.log('PHOTO UPLOADED: ', res.photoId);
-                        // I hope we're not using too much memory keeping all of fileObj in this closure
-                        postMiniPhoto(fileObj, res.photoId).then((resp: PhotoResponse) => {
-                            console.log({ resp });
-                        });
                     },
                     complete: () => {
                         console.log('ALL PHOTOS UPLOADED!');

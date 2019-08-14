@@ -1,14 +1,13 @@
 import React from 'react';
 
 // UI
-import { Alert, Upload, Button, Icon } from 'antd';
+import { Alert } from 'antd';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/UploadOverlay';
 import 'react-image-lightbox/style.css';
 
 // State
 import { deletePhoto, getMiniPhotos } from '../services/photo.service';
-import { useFileUpload } from '../hooks/photos.hooks';
 
 // Types
 type FetchedPhoto = {
@@ -18,30 +17,29 @@ type FetchedPhoto = {
 };
 
 function PhotoScreen() {
-    const [downloadComplete, setDownloadComplete] = React.useState<boolean>(false);
     const [fetchedPhotos, setFetchedPhotos] = React.useState<FetchedPhoto[]>([]);
     const [uploadError, setUploadError] = React.useState(null);
 
-    const handleFileUpload = e => {
-        useFileUpload(e, () => setDownloadComplete(true));
-    };
-
     React.useEffect(() => {
         async function run() {
-            const { data } = await getMiniPhotos();
-            const { photos, metaData } = data;
-            if (photos !== undefined && photos.length > 0) {
-                const fetchedPhotos: FetchedPhoto[] = photos.map(photo => ({
-                    src: `data:image/jpeg;base64,${photo.src}`,
-                    photoId: photo.photoId,
-                    id: photo.id,
-                }));
-                setFetchedPhotos(fetchedPhotos);
+            try {
+                const { data } = await getMiniPhotos();
+                const { photos, metaData } = data;
+                if (photos !== undefined && photos.length > 0) {
+                    const fetchedPhotos: FetchedPhoto[] = photos.map(photo => ({
+                        src: `data:image/jpeg;base64,${photo.src}`,
+                        photoId: photo.photoId,
+                        id: photo.id,
+                    }));
+                    setFetchedPhotos(fetchedPhotos);
+                }
+            } catch (e) {
+                setUploadError(e);
             }
         }
 
         run();
-    }, [fetchedPhotos]);
+    }, []);
 
     return (
         <div>
@@ -49,19 +47,8 @@ function PhotoScreen() {
                 <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />
             )}
 
-            <div>
-                <Upload listType="picture" multiple onChange={handleFileUpload}>
-                    <Button>
-                        <Icon type="upload" /> Upload
-                    </Button>
-                </Upload>
-            </div>
-
             <div className="photoGrid">
-                <PhotoGrid
-                    deletePhoto={deletePhoto}
-                    downloadComplete={downloadComplete}
-                    photos={fetchedPhotos}></PhotoGrid>
+                <PhotoGrid deletePhoto={deletePhoto} photos={fetchedPhotos}></PhotoGrid>
             </div>
 
             <UploadOverlay></UploadOverlay>

@@ -5,14 +5,14 @@ import PhotoGridItem from './PhotoGridItem';
 import { Skeleton } from 'antd';
 // import TestImg1 from './testImg1.jpg';
 
-function PhotoGrid({ photos, deletePhoto, downloadComplete }) {
+function PhotoGrid({ photos, deletePhoto }) {
     return (
         <div className={styles.gridContainer}>
             <div className={styles.grid}>
                 {photos.map(({ src, id, photoId }) => {
-                    if (!src && downloadComplete) {
-                        return null;
-                    }
+                    // if (!src && downloadComplete) {
+                    //     return null;
+                    // }
                     if (!src) {
                         return <Skeleton key={id} active></Skeleton>;
                     }

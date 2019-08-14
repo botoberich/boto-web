@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 
 // State
 import { checkIsSignedIn, logout } from '../../services/auth.service';
+import { useFileUpload } from '../../hooks/photos.hooks';
 
 // UI
-import { Button, Layout, Icon } from 'antd';
+import { Button, Layout, Icon, Upload } from 'antd';
 import styles from './header.module.css';
 import AuthButton from '../AuthButton';
 
@@ -40,7 +41,13 @@ function PageHeader() {
                     <Icon type="loading" />
                 </div>
             )}
+
             <nav className={`${styles.desktopOnly} ${styles.nav}`}>
+                <Upload listType="picture" multiple onChange={useFileUpload} showUploadList={false}>
+                    <Button>
+                        <Icon type="upload" /> Upload
+                    </Button>
+                </Upload>
                 <Button className={styles.navItem}>
                     <Link to="/app/profile">Profile</Link>
                 </Button>
