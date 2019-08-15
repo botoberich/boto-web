@@ -8,7 +8,7 @@ import 'react-image-lightbox/style.css';
 
 // State
 import { getExif } from '../utils/exif';
-import { getOwnPhotos, postPhotos, deletePhoto, getThumbnails } from '../services/photo.service';
+import { getPhotoById, postPhotos, deletePhoto, getThumbnails } from '../services/photo.service';
 import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 
@@ -23,7 +23,7 @@ type State = {
         id: string;
     }[];
     uploadError: any;
-    input: any;
+    photoId: any;
 };
 
 type Props = {};
@@ -36,12 +36,12 @@ class ApiTestScreen extends React.Component<Props, State> {
 
         this.handleFileUpload = this.handleFileUpload.bind(this);
         this.handleFileDelete = this.handleFileDelete.bind(this);
-
+        this.handleGetById = this.handleGetById.bind(this);
         this.state = {
             downloadComplete: false,
             fetchedPhotos: [],
             uploadError: null,
-            deleteId: '',
+            photoId: '',
         };
     }
 
@@ -63,6 +63,11 @@ class ApiTestScreen extends React.Component<Props, State> {
         } else {
             console.log(`Error downloading thumbnail: ${getRes.data}`);
         }
+    }
+
+    async handleGetById() {
+        let getRes = await getPhotoById(this.state.photoId);
+        console.log({ getRes });
     }
 
     async handleFileUpload(e) {
@@ -93,7 +98,8 @@ class ApiTestScreen extends React.Component<Props, State> {
     }
 
     async handleFileDelete(e) {
-        console.log('DELETING PHOTO ID:', this.state.deleteId);
+        console.log('DELETING PHOTO ID:', this.state.photoId);
+        // await deletePhoto(this.state.photoId);
     }
 
     render() {
@@ -113,13 +119,14 @@ class ApiTestScreen extends React.Component<Props, State> {
 
                 <input
                     onChange={e => {
-                        this.setState({ deleteId: e.target.value });
+                        this.setState({ photoId: e.target.value });
                     }}
                     type="text"
                     name=""
                     id=""
                 />
                 <Button onClick={this.handleFileDelete}>Delete</Button>
+                <Button onClick={this.handleGetById}>Get by ID</Button>
 
                 <div className="photoGrid">
                     <PhotoGrid deletePhoto={deletePhoto} downloadComplete={downloadComplete} photos={fetchedPhotos}></PhotoGrid>

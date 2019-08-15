@@ -5,12 +5,17 @@ export interface PhotoMetaData {
     archived: boolean;
     title: string;
     trashed: boolean;
+    updatedAt: number;
+    createdAt: number;
+    _id: string;
 }
 
 export interface Photo {
     b64: string;
     metaData: PhotoMetaData;
 }
+
+export interface 
 
 export interface PostPhotosResult {
     photoIds: string[];
