@@ -1,7 +1,9 @@
+.avatar {
+    background: #1890ff;
+}
+
 .header {
-    /* TODO: Remove background and set via Theme later */
-    background: #fff; 
-    /* border-bottom: 1px solid #dadce0; */
+    background: #fff;
     display: flex;
     justify-content: space-between;
     left: 0;
@@ -29,11 +31,15 @@
 }
 
 .navItem {
-    margin-left: 8px;
+    margin-left: 16px;
 }
 
 .menu {
     line-height: 64px;
+}
+
+.userName {
+    margin-left: 8px;
 }
 
 @media (max-width: 568px) {

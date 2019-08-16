@@ -8,8 +8,8 @@ import { StaticQuery, graphql } from 'gatsby';
 // UI
 import { Affix, Layout } from 'antd';
 import Siderbar from './sidebar';
-import PageHeader from '../Header';
-import './layout.css';
+import PageHeader from './Header';
+import './index.css';
 import styles from './layout.module.css';
 
 const { Content, Footer } = Layout;

@@ -3,12 +3,11 @@ import { Link } from 'gatsby';
 
 // State
 // import { useTheme } from '../../contexts/ThemeContext';
-import { checkIsSignedIn } from '../../services/auth.service';
+import { checkIsSignedIn } from '../services/auth.service';
 
 // UI
-import { Icon, Layout, Menu } from 'antd';
-import Logo from '../Logo';
-import AuthButton from '../AuthButton';
+import { Icon, Layout, Menu, Button } from 'antd';
+import Logo from './Logo';
 import styles from './sidebar.module.css';
 
 const { Sider } = Layout;
@@ -43,26 +42,49 @@ const Sidebar = () => {
                         <span className="nav-text">Photos</span>
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="2" className={`${styles.menuItem}  ${styles.disabled}`}>
-                    {/* <Link to="/app/albums"> */}
-                    <Icon type="book" />
-                    <span className="nav-text">Albums</span>
-                    {/* </Link> */}
-                </Menu.Item>
-                <Menu.Item className={`${styles.menuItem} ${styles.disabled}`}>
-                    {/* <Link to="/app/sharing"> */}
-                    <Icon type="upload" />
-                    <span className="nav-text">Sharing</span>
-                    {/* </Link> */}
-                </Menu.Item>
-                <Menu.Item className={styles.mobileOnly}>
+
+                <Menu.Item key="2" className={`${styles.menuItem} ${styles.mobileOnly}`}>
                     <Link to="/app/profile">
                         <Icon type="user" />
                         <span className="nav-text">Profile</span>
                     </Link>
                 </Menu.Item>
+                <Menu.Item key="3" className={`${styles.menuItem}  ${styles.disabled}`}>
+                    {/* <Link to="/app/albums"> */}
+                    <Icon type="book" />
+                    <span className="nav-text">Albums</span>
+                    {/* </Link> */}
+                </Menu.Item>
+                <Menu.Item key="4" className={`${styles.menuItem} ${styles.disabled}`}>
+                    {/* <Link to="/app/sharing"> */}
+                    <Icon type="upload" />
+                    <span className="nav-text">Sharing</span>
+                    {/* </Link> */}
+                </Menu.Item>
                 <div className={`${styles.menuItem} ${styles.mobileOnly}`}>
-                    <AuthButton signedIn={signedIn}></AuthButton>
+                    {signedIn ? (
+                        <Button type="danger" className={styles.authButton}>
+                            <Link
+                                to="/"
+                                onClick={async event => {
+                                    event.preventDefault();
+                                    logout(() => navigate(`/app/login`));
+                                }}>
+                                Logout
+                            </Link>
+                        </Button>
+                    ) : (
+                        <Button
+                            type="primary"
+                            className={styles.authButton}
+                            onClick={() => {
+                                handleLogin(() => {
+                                    navigate(`/app/`);
+                                });
+                            }}>
+                            Login
+                        </Button>
+                    )}
                 </div>
                 {/* <div className={styles.menuItem}>
                     <span className={styles.themeToggleText}>

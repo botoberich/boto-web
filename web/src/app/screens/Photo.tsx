@@ -3,7 +3,7 @@ import React from 'react';
 // UI
 import { Alert } from 'antd';
 import PhotoGrid from '../components/PhotoGrid';
-import UploadOverlay from '../components/UploadOverlay';
+import UploadOverlay from '../components/uploadOverlay';
 import 'react-image-lightbox/style.css';
 
 // State

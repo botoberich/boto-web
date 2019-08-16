@@ -5,8 +5,8 @@ import { navigate, Link } from 'gatsby';
 import { Button } from 'antd';
 
 // State
-import { logout } from '../../services/auth.service';
-import { handleLogin } from '../../services/auth.service';
+import { logout } from '../services/auth.service';
+import { handleLogin } from '../services/auth.service';
 
 function AuthButton({ signedIn, className }) {
     if (signedIn) {

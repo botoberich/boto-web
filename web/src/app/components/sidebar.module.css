@@ -1,3 +1,7 @@
+.authButton {
+    width: 100%;
+}
+
 .disabled,
 .disabled:hover,
 .disabled::after {

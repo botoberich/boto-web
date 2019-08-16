@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom';
 // UI
 import { motion } from 'framer-motion';
 import { Upload, Icon } from 'antd';
-import { OVERLAY_ROOT } from '../../app';
+import { OVERLAY_ROOT } from '../app';
 import styles from './UploadOverlay.module.css';
 
 // State
-import { getExif } from '../../utils/exif';
-import { useOverlay } from '../../contexts/OverlayContext';
-import { getBase64 } from '../../utils/encoding';
-import { postPhotos } from '../../services/photo.service';
+import { getExif } from '../utils/exif';
+import { useOverlay } from '../contexts/OverlayContext';
+import { getBase64 } from '../utils/encoding';
+import { postPhotos } from '../services/photo.service';
 
 const { Dragger } = Upload;
 
