@@ -6,10 +6,10 @@ import { StaticQuery, graphql } from 'gatsby';
 // import { useTheme } from '../../contexts/ThemeContext';
 
 // UI
-import { Affix, Layout } from 'antd';
-import Siderbar from './sidebar';
-import PageHeader from './Header';
 import './index.css';
+import { Affix, Layout } from 'antd';
+import SideNav from './sideNav';
+import Header from './Header';
 import styles from './layout.module.css';
 
 const { Content, Footer } = Layout;
@@ -30,10 +30,10 @@ const PageLayout = ({ children }) => {
             `}
             render={data => (
                 <Layout className={styles.layout} hasSider>
-                    <Siderbar></Siderbar>
+                    <SideNav></SideNav>
                     <Layout className={styles.layout}>
                         <Affix>
-                            <PageHeader siteTitle={data.site.siteMetadata.title} />
+                            <Header siteTitle={data.site.siteMetadata.title} />
                         </Affix>
                         <Content className={styles.content}>
                             <div className={styles.children}>{children}</div>

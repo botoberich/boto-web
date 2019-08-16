@@ -8,7 +8,7 @@ import { checkIsSignedIn } from '../services/auth.service';
 // UI
 import { Icon, Layout, Menu, Button } from 'antd';
 import Logo from './Logo';
-import styles from './sidebar.module.css';
+import styles from './sideNav.module.css';
 
 const { Sider } = Layout;
 
@@ -48,13 +48,13 @@ const Sidebar = () => {
                         <span className="nav-text">Profile</span>
                     </Link>
                 </Menu.Item> */}
-                <Menu.Item key="2" className={`${styles.menuItem}  ${styles.disabled}`}>
+                <Menu.Item key="2" className={styles.menuItem} disabled>
                     {/* <Link to="/app/albums"> */}
                     <Icon type="book" />
                     <span className="nav-text">Albums</span>
                     {/* </Link> */}
                 </Menu.Item>
-                <Menu.Item key="4" className={`${styles.menuItem} ${styles.disabled}`}>
+                <Menu.Item key="4" className={styles.menuItem} disabled>
                     {/* <Link to="/app/sharing"> */}
                     <Icon type="upload" />
                     <span className="nav-text">Sharing</span>
