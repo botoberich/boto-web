@@ -42,14 +42,13 @@ const Sidebar = () => {
                         <span className="nav-text">Photos</span>
                     </Link>
                 </Menu.Item>
-
-                <Menu.Item key="2" className={`${styles.menuItem} ${styles.mobileOnly}`}>
+                {/* <Menu.Item key="2" className={`${styles.menuItem} ${styles.mobileOnly}`}>
                     <Link to="/app/profile">
                         <Icon type="user" />
                         <span className="nav-text">Profile</span>
                     </Link>
-                </Menu.Item>
-                <Menu.Item key="3" className={`${styles.menuItem}  ${styles.disabled}`}>
+                </Menu.Item> */}
+                <Menu.Item key="2" className={`${styles.menuItem}  ${styles.disabled}`}>
                     {/* <Link to="/app/albums"> */}
                     <Icon type="book" />
                     <span className="nav-text">Albums</span>

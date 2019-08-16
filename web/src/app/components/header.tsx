@@ -37,9 +37,9 @@ function PageHeader() {
 
     const menu = (
         <Menu>
-            <Menu.Item>
+            {/* <Menu.Item>
                 <Link to="/app/profile">Profile</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item>
                 <AuthMenuItem signedIn={signedIn} />
             </Menu.Item>

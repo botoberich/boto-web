@@ -1,18 +1,23 @@
 import React from 'react';
+
+// State
 import { getUser } from '../services/auth.service';
 
-const Profile = () => {
+// UI
+import { Typography } from 'antd';
+
+const { Title, Text } = Typography;
+
+const ProfileScreen = () => {
     const user = getUser();
-    console.log({ profileUser: user });
     return (
         <>
-            <h1>Your profile</h1>
-            <ul>
-                <li>Name: {user.username && user.profile.name}</li>
-                <li>E-mail: {user.email}</li>
-            </ul>
+            <Title>Your profile</Title>
+            <Text>Name: {user.username && user.profile.name}</Text>
+            <br></br>
+            <Text>Email: {user.email}</Text>
         </>
     );
 };
 
-export default Profile;
+export default ProfileScreen;
