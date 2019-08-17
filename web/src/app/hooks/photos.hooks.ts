@@ -45,7 +45,7 @@ export const useGetThumbnails = () => {
         }
 
         run();
-    }, [thumbnails]);
+    }, []);
 
     return { data: thumbnails, loading, error };
 };
