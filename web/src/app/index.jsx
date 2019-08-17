@@ -7,9 +7,9 @@ function AppProvider() {
     return (
         <ThemeProvider>
             <OverlayProvider>
-                <App></App>
-            </OverlayProvider>
-        </ThemeProvider>
+                <App />
+          </OverlayProvider>
+      </ThemeProvider>
     );
 }
 

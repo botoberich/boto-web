@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link, navigate } from 'gatsby';
-import PropTypes from 'prop-types';
 
 // State
+import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
-import { useFileUpload } from '../hooks/photos.hooks';
+import { handleFileUpload } from '../hooks/photos.hooks';
 
 // UI
-import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown } from 'antd';
 import styles from './header.module.css';
 
 const { Header } = Layout;
@@ -40,38 +39,40 @@ function PageHeader() {
             {/* <Menu.Item>
                 <Link to="/app/profile">Profile</Link>
             </Menu.Item> */}
-            <Menu.Item>
+        <Menu.Item>
                 <AuthMenuItem signedIn={signedIn} />
             </Menu.Item>
-        </Menu>
+      </Menu>
     );
 
     return (
         <Header className={styles.header}>
-            <span className={styles.headerTitle}>Photos</span>
+        <span className={styles.headerTitle}>Photos</span>
             {checking && (
-                <div className={styles.indicator}>
+          <div className={styles.indicator}>
                     <Icon type="loading" />
                 </div>
             )}
-            <nav className={`${styles.desktopOnly} ${styles.nav}`}>
+        <nav className={`${styles.desktopOnly} ${styles.nav}`}>
                 <div className={styles.navItem}>
-                    <Upload listType="picture" multiple onChange={useFileUpload} showUploadList={false}>
+            <Upload listType="picture" multiple onChange={e => handleFileUpload(e)} showUploadList={false}>
                         <Button>
-                            <Icon type="upload" /> Upload
+                <Icon type="upload" />
+                {' '}
+Upload
                         </Button>
                     </Upload>
-                </div>
+          </div>
                 <div className={styles.navItem}>
-                    <Dropdown overlay={menu}>
+            <Dropdown overlay={menu}>
                         <div>
-                            <Avatar className={styles.avatar} icon="user" />
+                <Avatar className={styles.avatar} icon="user" />
                             <span className={styles.userName}>{userName}</span>
-                        </div>
+              </div>
                     </Dropdown>
-                </div>
+          </div>
             </nav>
-        </Header>
+      </Header>
     );
 }
 
@@ -79,13 +80,13 @@ function AuthMenuItem({ signedIn }) {
     if (signedIn) {
         return (
             <Link
-                to="/"
+            to="/"
                 onClick={async event => {
                     event.preventDefault();
                     logout(() => navigate(`/app/login`));
                 }}>
                 Logout
-            </Link>
+          </Link>
         );
     }
 
@@ -98,16 +99,8 @@ function AuthMenuItem({ signedIn }) {
                 });
             }}>
             Logout
-        </Link>
+      </Link>
     );
 }
-
-PageHeader.propTypes = {
-    siteTitle: PropTypes.string,
-};
-
-PageHeader.defaultProps = {
-    siteTitle: ``,
-};
 
 export default PageHeader;

@@ -1,46 +1,199 @@
 import React from 'react';
-import { getOwnPhotos, postPhotos, deletePhoto, postMiniPhoto, getMiniPhotos } from '../services/photo.service';
-import { getBase64 } from '../utils/encoding';
-import { PhotoResponse } from '../utils/apiResponse';
-import { getExif } from '../utils/exif';
+// import { getBase64 } from '../utils/encoding';
+// import { PhotoResponse } from '../utils/apiResponse';
+// import { getExif } from '../utils/exif';
+import { getPhotoById, postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 
-export const useFileUpload = (e, callback = () => {}) => {
-    async function run(e) {
-        console.log('file upload event', e);
-        if (e.file.status === 'done') {
-            const fileObj: File = e.file.originFile || e.file.originFileObj;
-            const b64: string = await getBase64(fileObj);
-            console.log({ b64 });
-            const exifData = await getExif(b64);
-            console.log({ exifData });
+export type Thumbnail = {
+    id: string;
+    src: string;
+};
 
-            const metaData = { title: fileObj.name, archived: false, trashed: false };
-            console.log('post meta data', { metaData });
-            let postRes = await postPhotos([{ metaData, b64 }]);
-            console.log('post res:', { postRes });
-            if (postRes.status === 'success') {
-                let $postPhotos = postRes.data.$postPhotos;
-                let photoIds = postRes.data.photoIds;
+export const useDeletePhotos = (ids: string[]) => {
+    const [success, setSuccess] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState<Error | boolean>(null);
 
-                // Keep the original photo Id for our mini photo
-                postMiniPhoto(fileObj, photoIds[0]).then((resp: PhotoResponse) => {
-                    console.log({ resp });
-                });
-
-                console.log('Uploading $postPhotos', $postPhotos);
-                console.log('UPLOADING PHOTO IDS: ', photoIds);
-                $postPhotos.subscribe({
-                    next: res => {
-                        console.log('PHOTO UPLOADED: ', res.photoId);
+    React.useEffect(() => {
+        async function run() {
+            console.log('DELETING PHOTO IDs:', ids);
+            setLoading(true);
+            let deleteRes = await deletePhotos(ids);
+            if (deleteRes.status === 'success') {
+                deleteRes.data.$deletes.subscribe({
+                    next: id => {
+                        // We're only deleting one photo at a time right now, so it's only to just track
+                        // success for the entire subscription. Later, a new method needs to be devised. Maybe a map
+                        setSuccess(true);
+                        console.log('Deleted photo id: ', id);
+                    },
+                    error: err => {
+                        setError(err);
+                        console.log('Delete photo err: ', err);
                     },
                     complete: () => {
-                        console.log('ALL PHOTOS UPLOADED!');
-                        callback();
+                        setLoading(false);
+                        console.log('Deletes Completed.');
                     },
                 });
+            } else {
+                setLoading(false);
+                setError(true);
+                console.log('Error: ', deleteRes.data);
             }
         }
-    }
 
-    run(e);
+        run();
+    }, []);
+
+    return { success, error, loading };
 };
+
+export const useGetThumbnails = () => {
+    const [thumbnails, setThumbnails] = React.useState<Thumbnail[]>([]);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState<Error | boolean>(null);
+
+    React.useEffect(() => {
+        async function run() {
+            setLoading(true);
+            const getRes = await getThumbnails();
+            if (getRes.status === 'success') {
+                let $thumbnails = getRes.data.$thumbnails;
+                $thumbnails.subscribe({
+                    next: res => {
+                        console.log(`Thumbnail downloaded for photo: ${res}`);
+                        setThumbnails([
+                            ...thumbnails,
+                            {
+                                id: res.photoId,
+                                src: res.b64,
+                            },
+                        ]);
+                    },
+                    error: err => {
+                        console.log(`Error downloading thumbnail: ${err}`);
+                        setLoading(false);
+                        setError(err);
+                    },
+                    complete: () => {
+                        setLoading(false);
+                        console.log(`Thumbnails download completed.`);
+                    },
+                });
+            } else {
+                setError(true);
+                console.log(`Error downloading thumbnail: ${getRes.data}`);
+            }
+        }
+
+        run();
+    }, []);
+
+    return { data: thumbnails, loading, error };
+};
+
+export const handleFileUpload = async e => {
+    // const [success, setSuccess] = React.useState(null);
+    // const [error, setError] = React.useState(null);
+    // const [loading, setLoading] = React.useState(false);
+
+    // React.useEffect(() => {
+    // async function run() {
+    // setLoading(true);
+    if (e.file.status === 'done') {
+        const file: File = e.file.originFile || e.file.originFileObj;
+        const metaData = { title: file.name, archived: false, trashed: false };
+
+        let postRes = await postPhotos([{ metaData, file }]);
+        if (postRes.status === 'success') {
+            let $postPhotos = postRes.data.$photos;
+            let photoIds = postRes.data.photoIds;
+
+            $postPhotos.subscribe({
+                next: res => {
+                    // TODO: We'll look to tracking upload progress here
+                    // Also look to fetching the thumbnail here
+                    console.log('Uploaded photo id: ', res.photoId);
+                },
+                error: err => {
+                    // setError(err);
+                    // setLoading(false);
+                    console.log('Upload error: ', err);
+                },
+                complete: () => {
+                    // setSuccess(true);
+                    // setLoading(false);
+                    console.log('Uploads completed.');
+                },
+            });
+        } else {
+            // setError(false);
+            // setLoading(false);
+            console.log('Error: ', postRes.data);
+        }
+    }
+    // }
+    // run();
+    // });
+    // return { success, error, loading };
+};
+
+// export const useFetch = (url, options) => {
+//     const [response, setResponse] = React.useState(null);
+//     const [error, setError] = React.useState(null);
+//     React.useEffect(() => {
+//         const fetchData = async () => {
+//             try {
+//                 const res = await fetch(url, options);
+//                 const json = await res.json();
+//                 setResponse(json);
+//             } catch (error) {
+//                 setError(error);
+//             }
+//         };
+//         fetchData();
+//     }, []);
+//     return { response, error };
+// };
+
+// export const useFileUpload = (e, callback = () => {}) => {
+//     async function run(e) {
+//         console.log('file upload event', e);
+//         if (e.file.status === 'done') {
+//             const fileObj: File = e.file.originFile || e.file.originFileObj;
+//             const b64: string = await getBase64(fileObj);
+//             console.log({ b64 });
+//             const exifData = await getExif(b64);
+//             console.log({ exifData });
+
+//             const metaData = { title: fileObj.name, archived: false, trashed: false };
+//             console.log('post meta data', { metaData });
+//             let postRes = await postPhotos([{ metaData, b64 }]);
+//             console.log('post res:', { postRes });
+//             if (postRes.status === 'success') {
+//                 let $postPhotos = postRes.data.$postPhotos;
+//                 let photoIds = postRes.data.photoIds;
+
+//                 // Keep the original photo Id for our mini photo
+//                 postMiniPhoto(fileObj, photoIds[0]).then((resp: PhotoResponse) => {
+//                     console.log({ resp });
+//                 });
+
+//                 console.log('Uploading $postPhotos', $postPhotos);
+//                 console.log('UPLOADING PHOTO IDS: ', photoIds);
+//                 $postPhotos.subscribe({
+//                     next: res => {
+//                         console.log('PHOTO UPLOADED: ', res.photoId);
+//                     },
+//                     complete: () => {
+//                         console.log('ALL PHOTOS UPLOADED!');
+//                         callback();
+//                     },
+//                 });
+//             }
+//         }
+//     }
+
+//     run(e);
+// };

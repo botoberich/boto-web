@@ -5,9 +5,9 @@ export interface PhotoMetaData {
     archived: boolean;
     title: string;
     trashed: boolean;
-    updatedAt: number;
-    createdAt: number;
-    _id: string;
+    updatedAt?: number;
+    createdAt?: number;
+    _id?: string;
 }
 
 export interface Photo {

@@ -117,10 +117,14 @@ export const getPhotos = async () => {
         };
 
         let getChunkedPhotos = chunkedPhotos
-            .map(chunkGroup => chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`)))
+            .map(chunkGroup =>
+                chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`))
+            )
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
-        let getUnchunkedPhotos = photos.filter(photo => !photo.attrs.chunked).map(photo => getFile(`${BASE_PATH}/${photo._id}`));
+        let getUnchunkedPhotos = photos
+            .filter(photo => !photo.attrs.chunked)
+            .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
 
         let $chunkedPhotos = of
             .apply(this, getChunkedPhotos)

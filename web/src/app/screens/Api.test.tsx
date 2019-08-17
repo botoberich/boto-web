@@ -99,7 +99,10 @@ class ApiTestScreen extends React.Component<Props, State> {
 
     async handleFileDelete(e) {
         console.log('DELETING PHOTO ID:', this.state.photoId);
-        let deleteRes = await deletePhotos(['af352c98-65d2-40bd-8b5f-531cbc9b9813', 'fe86aff6-0c7e-4fbf-b791-178e4ea47feb']);
+        let deleteRes = await deletePhotos([
+            'af352c98-65d2-40bd-8b5f-531cbc9b9813',
+            'fe86aff6-0c7e-4fbf-b791-178e4ea47feb',
+        ]);
         if (deleteRes.status === 'success') {
             deleteRes.data.$deletes.subscribe({
                 next: id => {
@@ -122,7 +125,9 @@ class ApiTestScreen extends React.Component<Props, State> {
 
         return (
             <div>
-                {uploadError && <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />}
+                {uploadError && (
+                    <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />
+                )}
 
                 <div>
                     <Upload listType="picture" multiple onChange={this.handleFileUpload}>

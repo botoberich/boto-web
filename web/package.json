@@ -24,7 +24,7 @@
     },
     "lint-staged": {
         "*.{ts, tsx, js, jsx}": [
-            "prettier-eslint --write",
+            "prettier-eslint --write --fix",
             "git add"
         ]
     },
@@ -86,10 +86,6 @@
         "typescript": "^3.5.2",
         "workerize-loader": "^1.0.4"
     },
-    "keywords": [
-        "gatsby"
-    ],
-    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/sw-yx/jamstack-hackathon-starter"
