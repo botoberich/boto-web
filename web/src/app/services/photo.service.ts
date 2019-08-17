@@ -1,109 +1,28 @@
-import PhotoModel from '../models/photo.model';
-import MiniPhotoModel from '../models/mini-photo.model';
-import { putFile, getFile } from 'blockstack';
-import ChunkModel from '../models/chunk.model';
+import { PhotoModel, ChunkModel } from '../models';
+import { putFile, getFile, deleteFile } from 'blockstack';
 import { chunkB64, getBase64 } from '../utils/encoding';
 import { success, error } from '../utils/apiResponse';
-// import * as EXIF from 'exif-js';
 import { of, Subject } from 'rxjs';
-import { mergeAll } from 'rxjs/operators';
+import { mergeAll, map } from 'rxjs/operators';
 import PhotoWorker from './photo.worker';
 import imageCompression from 'browser-image-compression';
+import uuid from 'uuid/v4';
+import {
+    Photo,
+    PhotoMetaData,
+    PostPhotoInput,
+    PostPhotoResult,
+    PostPhotosResult,
+    GetThumbnailsResult,
+    DeletePhotosResult,
+    DeletePhotoResult,
+} from '../interfaces/photos.interface';
+import { ResponseStatus, ApiResponse } from '../interfaces/response.interface';
+import { string } from 'prop-types';
 
 const BASE_PATH = `user/photos`;
-const GAIA_LIMIT = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
+const CHUNK_SIZE = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
 const worker = typeof window !== 'undefined' && PhotoWorker();
-
-export interface Photo {
-    b64: string;
-    metaData: MetaData;
-}
-
-export interface MetaData {
-    archived: boolean;
-    title: string;
-    trashed: boolean;
-}
-
-export const getMiniPhotos = async () => {
-    try {
-        const miniPhotos = await MiniPhotoModel.fetchOwnList();
-        console.log('Fetched all mini photos successfully');
-        console.log(miniPhotos);
-        if (miniPhotos) {
-            const metaData = miniPhotos.map(mini => mini.attrs);
-            const photos = miniPhotos.map(mini => {
-                return {
-                    photoId: mini.attrs.photoId,
-                    src: mini.attrs.src,
-                    id: mini._id,
-                };
-            });
-            console.log({ photos });
-            return success({ metaData, photos });
-        }
-    } catch (e) {
-        console.error('Failed to fetch all mini photos');
-        return error(e);
-    }
-};
-
-export const postMiniPhoto = async (photo: File, originalPhotoId: string) => {
-    /**
-     * We need to set a threshold on when we should compress - Example: above 25MB
-     * Because photos that are small in size end up looking jagged and poor quality.
-     */
-    const miniFile = await compressPhoto(photo);
-    const miniBase64: string = await getBase64(miniFile);
-
-    // Have Radiks index our files for us
-    const radiksMiniPhoto = new MiniPhotoModel({
-        src: miniBase64,
-        photoId: originalPhotoId,
-    });
-
-    /**
-     * You don't wanna store base64 in our radiks database.
-     * 1 - Even if it's compressed, the load could add up and cause our db to blow up
-     * 2 - Use radiks as a tool to index into our actual b64 stored in Gaia | how current fetch is doing it
-     */
-
-    radiksMiniPhoto.save();
-
-    // But we...also store the actual content. Can't Radiks just do this for us as well?
-    const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
-    try {
-        /**
-         * Now you have two sources of truth for all b64 data - one in our radiks db and one in gaia
-         * Let's not do that. Let's store b64 in gaia and store ONLY metadata in our radiks db then use id to index into gaia and fetch the b64
-         */
-
-        const resp = await putFile(gaiaPath, miniBase64);
-        console.log('Mini photo post successful');
-        return success(resp);
-    } catch (e) {
-        console.error('Mini photo post failed');
-        return error(e);
-    }
-};
-
-export const deleteMiniPhoto = async (miniPhotoId: string) => {
-    try {
-        const mini = await MiniPhotoModel.findById(miniPhotoId);
-        if (mini) {
-            console.log('mini photo found by id', mini);
-            const originalPhotoId = mini.attrs.photoId;
-            const gaiaPath = `${BASE_PATH}/${originalPhotoId}/mini`;
-            // Just let Aaron's delete method do its thing
-            deletePhoto(originalPhotoId);
-            await mini.destroy();
-            return deleteFile(gaiaPath).then(res => success(res));
-        }
-    } catch (e) {
-        console.error('Failed to find mini photo id');
-        return error(e);
-    }
-};
 
 /**
  * @param chunkGroup - An array of chunks retrieved from gaia, when combined creates a complete b64 representation of a photo
@@ -117,18 +36,72 @@ const _combineChunks = async chunkGroup => {
     return chunks;
 };
 
+/** @returns a b64 string representing a photo smaller in size than the actual photo */
+const _generateThumbnail = async (file: File) => {
+    const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
+    };
+
+    try {
+        const compressedFile = await imageCompression(file, options);
+        const b64 = await getBase64(compressedFile);
+        return b64;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>> => {
+    try {
+        let photos = await PhotoModel.fetchOwnList();
+        let photoIds = photos.map(photo => photo._id);
+        let fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
+        let $thumbnails = of
+            .apply(this, fetchThumbnails)
+            .pipe(mergeAll())
+            .pipe(map((json: string) => JSON.parse(json)));
+        return success({ photoIds, $thumbnails });
+    } catch (err) {
+        return error(err);
+    }
+};
+
+export const getPhotoById = async (id: string): Promise<ApiResponse<Photo>> => {
+    try {
+        let photo = await PhotoModel.findById(id);
+        let metaData = photo.attrs;
+        if (photo.attrs.chunked) {
+            let chunks = await ChunkModel.fetchOwnList({
+                photoId: id,
+            });
+            let chunkGroup = await Promise.all(chunks.map(c => getFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));
+            let combinedPhoto = await worker.combineChunks(chunkGroup);
+            return success({ b64: combinedPhoto.b64, metaData });
+        } else {
+            let gaiaRes = await getFile(`${BASE_PATH}/${id}`);
+            let b64 = typeof gaiaRes === 'string' && JSON.parse(gaiaRes).b64;
+
+            return success({ b64, metaData });
+        }
+    } catch (err) {
+        return error(err);
+    }
+};
+
 /**
  * @returns If not err, a success response with data - { metaData, $photos }
  * - metaData: an array of photo metadata fetched from radiks server
  * - $photos: an observable that streams { photoId , b64 }
  */
-export const getOwnPhotos = async () => {
+export const getPhotos = async () => {
     let $photos = new Subject();
     try {
         let photos = await PhotoModel.fetchOwnList();
         let fetchedCtr = 0;
         let metaData = photos.map(photo => photo.attrs);
-        let chunkedPhotos = await Promise.all(
+        let chunkedPhotos: any[] = await Promise.all(
             photos
                 .filter(photo => photo.attrs.chunked)
                 .map(photo =>
@@ -144,14 +117,10 @@ export const getOwnPhotos = async () => {
         };
 
         let getChunkedPhotos = chunkedPhotos
-            .map(chunkGroup =>
-                chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`))
-            )
+            .map(chunkGroup => chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`)))
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
-        let getUnchunkedPhotos = photos
-            .filter(photo => !photo.attrs.chunked)
-            .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
+        let getUnchunkedPhotos = photos.filter(photo => !photo.attrs.chunked).map(photo => getFile(`${BASE_PATH}/${photo._id}`));
 
         let $chunkedPhotos = of
             .apply(this, getChunkedPhotos)
@@ -168,7 +137,7 @@ export const getOwnPhotos = async () => {
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
                 if (unchunkedPhoto && unchunkedPhoto.length) {
-                    let [_, photoId, b64] = unchunkedPhoto.split('|');
+                    let { photoId, b64 } = JSON.parse(unchunkedPhoto);
                     fetchedCtr++;
                     $photos.next({
                         photoId,
@@ -183,65 +152,86 @@ export const getOwnPhotos = async () => {
     }
 };
 
-export const postPhotos = async (photos: Photo[]) => {
+export const postPhotos = async (photos: PostPhotoInput[]): Promise<ApiResponse<PostPhotosResult>> => {
     try {
+        let postCtr = 0;
+        const $photos = new Subject<PostPhotoResult>();
         const postResponses = await Promise.all(
             photos.map(photo => {
-                return _postPhoto(photo.metaData, photo.b64);
+                return _postPhoto({ metaData: photo.metaData, file: photo.file });
             })
         );
-        let postPhotos = postResponses.map(res => res.data.postPhoto);
-        let photoIds = postResponses.map(res => res.data.photoId);
-        let $postPhotos = of.apply(this, postPhotos).pipe(mergeAll());
-        return success({ photoIds, $postPhotos });
+
+        let postPhotos = postResponses.map(res => res.postPhoto);
+        let photoIds = postResponses.map(res => res.photoId);
+        const checkComplete = () => {
+            if (photos.length === postCtr) $photos.complete();
+        };
+        let $postPhotos = of
+            .apply(this, postPhotos)
+            .pipe(mergeAll())
+            .subscribe({
+                next: (postRes: PostPhotoResult) => {
+                    $photos.next(postRes);
+                    postCtr++;
+                    checkComplete();
+                },
+                error: async errRes => {
+                    /** Remove thumbnail */
+                    await deleteFile(`${BASE_PATH}/${errRes.photoId}/thumbnail`);
+                    $photos.error(errRes.error);
+                },
+            });
+        return success({ photoIds, $photos });
     } catch (err) {
         return error(err);
-    }
-};
-
-export const compressPhoto = async (file: File) => {
-    const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 300,
-        useWebWorker: true,
-    };
-
-    try {
-        const compressedFile = await imageCompression(file, options);
-        console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-        console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-        return compressedFile;
-    } catch (error) {
-        console.log(error);
     }
 };
 
 /**
  * @returns If not err, a success response with data: { metadata, $photo }
  * @param {*} metadata Photo metadata: refer to the photo model@ /models/photo
- * @param {*} b64 Base64 data representation of the photo
+ * @param {*} file File to upload
  */
-export const _postPhoto = async (metaData: MetaData, b64: string) => {
-    /** Store all metadata in the database, get the ID and store blob in gaia */
+export const _postPhoto = async ({
+    metaData,
+    file,
+}: PostPhotoInput): Promise<{ photoId: string; postPhoto: Promise<PostPhotoResult> }> => {
+    /** Store all metadata in the database and store b64 in gaia */
+    const photoId: string = uuid();
+    const gaiaPath = `${BASE_PATH}/${photoId}`;
+    let thumbnailUploaded = false;
     try {
-        const chunkedBlobTexts = await chunkB64(b64, GAIA_LIMIT);
+        const [thumbnail, original]: [string, string] = await Promise.all([_generateThumbnail(file), getBase64(file)]);
+        const b64Chunks = await chunkB64(original, CHUNK_SIZE);
 
+        /** Upload thumbnail */
+        await putFile(`${gaiaPath}/thumbnail`, JSON.stringify({ photoId, b64: thumbnail }));
+        thumbnailUploaded = true;
+
+        /** Upload original photo */
         const photo = new PhotoModel({
+            _id: photoId,
             ...metaData,
-            chunked: chunkedBlobTexts.length > 1,
+            chunked: b64Chunks.length > 1,
         });
         const saveRes = await photo.save();
-        const photoId = saveRes._id;
-        const gaiaPath = `${BASE_PATH}/${photoId}`;
-        const resolveWithId = promise => {
-            return new Promise(async (resolve, reject) => {
-                await promise;
-                resolve({ photoId });
+
+        /** @return a promise that awaits all posts (radiks, gaia), and resolves with photoId and thumnail if successful */
+        const handlePosts = posts => {
+            return new Promise<{ photoId: string; thumbnail: string }>(async (resolve, reject) => {
+                try {
+                    await posts;
+                    resolve({ photoId, thumbnail });
+                } catch (error) {
+                    reject({ photoId, error });
+                }
             });
         };
-        if (chunkedBlobTexts.length > 1) {
+
+        if (b64Chunks.length > 1) {
             /** store chunks in radik */
-            const dbPosts = chunkedBlobTexts.map((txt, i) =>
+            const radiksPosts = b64Chunks.map((txt, i) =>
                 new ChunkModel({
                     chunkNumber: i,
                     photoId,
@@ -249,47 +239,61 @@ export const _postPhoto = async (metaData: MetaData, b64: string) => {
             );
 
             /** store chunks in gaia */
-            try {
-                const gaiaPosts = chunkedBlobTexts.map((txt, i) => (`${gaiaPath}/${i}`, `${i}|${photoId}|${txt}`));
-            } catch (e) {}
-
-            const postPhoto = resolveWithId(Promise.all([...dbPosts, ...gaiaPosts]));
-            return success({ photoId, postPhoto });
+            const gaiaPosts = b64Chunks.map((chunk, i) =>
+                putFile(`${gaiaPath}/${i}`, JSON.stringify({ photoId, chunkNumber: i, b64: chunk }))
+            );
+            const postPhoto = handlePosts(Promise.all([...radiksPosts, ...gaiaPosts]));
+            return { photoId, postPhoto };
         } else {
-            const postPhoto = resolveWithId(putFile(gaiaPath, `-|${photoId}|${chunkedBlobTexts[0]}`));
-            return success({ photoId, postPhoto });
+            const postPhoto = handlePosts(putFile(gaiaPath, JSON.stringify({ photoId, b64: b64Chunks[0] })));
+            return { photoId, postPhoto };
         }
     } catch (err) {
-        throw new Error(`Photo post error: ${err}`);
+        if (thumbnailUploaded) {
+            await deleteFile(`${BASE_PATH}/${photoId}/thumbnail`);
+        }
+        throw new Error(err);
     }
 };
 
-export const deletePhoto = async (id: string) => {
+export const deletePhotos = async (ids: string[]): Promise<ApiResponse<DeletePhotosResult>> => {
+    try {
+        let deletes = ids.map(id => _deletePhoto(id));
+        let $deletes = of.apply(this, deletes).pipe(mergeAll());
+        return success({ $deletes });
+    } catch (err) {
+        return error(err);
+    }
+};
+
+export const _deletePhoto = async (id: string): Promise<string> => {
     try {
         const photo = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };
         if (photo) {
-            let deleteInRadik = await photo.destroy(); /** you only wanna delete in GAIA if the entry is deleted in radiks */
+            let deleteInRadik = await photo.destroy();
             if (deleteInRadik) {
-                deletes.photo = deleteInRadik;
-            }
-            `${BASE_PATH}/${photo._id}`;
-
-            if (photo.attrs.chunked) {
-                let chunks = await ChunkModel.fetchOwnList({
-                    photoId: photo._id,
-                });
-                let deleteChunksInRadik = await Promise.all(chunks.map(chunk => ChunkModel.destroy()));
-                if (deleteChunksInRadik.length === chunks.length) {
-                    for (let i = 0; i < chunks.length; i++) {}
-                    deletes.chunks = deleteChunksInRadik;
-                    `${BASE_PATH}/${photo._id}/${chunks[i].attrs.chunkNumber}`;
+                /** you only wanna delete in GAIA if the entry is deleted in radiks */
+                await deleteFile(`${BASE_PATH}/${id}/thumbnail`);
+                if (photo.attrs.chunked) {
+                    let chunks = await ChunkModel.fetchOwnList({
+                        photoId: id,
+                    });
+                    let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
+                    if (deleteChunksInRadik.length === chunks.length) {
+                        /** you only wanna delete in GAIA if the chunks are deleted in radiks */
+                        await Promise.all(chunks.map(c => deleteFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));
+                        deletes.chunks = deleteChunksInRadik;
+                    }
+                } else {
+                    await deleteFile(`${BASE_PATH}/${id}`);
+                    deletes.photo = deleteInRadik;
                 }
             }
-            return success(deletes);
+            return id;
         }
-        return error(`Photo with id: ${id} not found.`);
+        throw new Error(`Photo with id: ${id} not found.`);
     } catch (err) {
-        return error('Delete photo err:', err);
+        throw new Error(`Delete photo err: ${err}`);
     }
 };

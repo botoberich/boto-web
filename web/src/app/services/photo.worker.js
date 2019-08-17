@@ -23,17 +23,11 @@
 export const combineChunks = chunkGroup => {
     let photoId = null;
     let b64 = chunkGroup
-        .sort((a, b) => {
-            if (a.split('|')[0] < b.split('|')[0]) {
-                return -1;
-            } else {
-                return 1;
-            }
-        })
-        .map(chunk => {
-            let split = chunk.split('|');
-            if (!photoId) photoId = split[1];
-            return split[2];
+        .map(chunk => JSON.parse(chunk))
+        .sort((a, b) => (a.chunkNumber < b.chunkNumber ? -1 : 1))
+        .map(sorted => {
+            if (!photoId) photoId = sorted.photoId;
+            return sorted.b64;
         })
         .join('');
 

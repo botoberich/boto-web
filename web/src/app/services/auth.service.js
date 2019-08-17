@@ -1,5 +1,5 @@
 import { UserSession, AppConfig } from 'blockstack';
-import { configure, User } from 'radiks';
+import { configure, User } from 'radiks/src';
 
 // helpful for debugging
 const logAuth = process.env.NODE_ENV === 'development' && true; // set to true to turn on logging
@@ -17,8 +17,6 @@ configure({
     apiServer: process.env.GATSBY_RADIKS_SERVER_URL || 'http://localhost:3000',
     userSession,
 });
-
-(async () => {})();
 
 export const isBrowser = () => typeof window !== 'undefined';
 

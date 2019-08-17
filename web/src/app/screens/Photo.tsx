@@ -54,7 +54,6 @@ function PhotoScreen() {
             <UploadOverlay></UploadOverlay>
         </div>
     );
-    // }
 }
 
 export default PhotoScreen;

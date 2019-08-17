@@ -1,5 +1,4 @@
-import { Model } from 'radiks';
-
+import { Model } from 'radiks/src';
 class Chunk extends Model {
     constructor(...args) {
         super(...args);

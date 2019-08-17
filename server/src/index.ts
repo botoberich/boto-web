@@ -13,6 +13,12 @@ app.use(
     })
 );
 
+app.use((req, res, next) => {
+    console.log('VERIFY TOKEN MIDDLEWARE');
+    console.log(req.headers);
+    next();
+});
+
 app.get('/', (req, res) => {
     res.status(200).json({ ['March to Web3']: 'Alive' });
 });
