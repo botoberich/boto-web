@@ -62,6 +62,6 @@ export const checkIsSignedIn = async () => {
 };
 
 export const logout = callback => {
-    userSession.signUserOut('/app/login');
+    userSession.signUserOut('/');
     callback();
 };

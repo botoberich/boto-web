@@ -13,7 +13,6 @@ import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 
 // Types
-import { PhotoResponse } from '../utils/apiResponse';
 // import { Photo } from '../services/photo.service';
 
 type State = {

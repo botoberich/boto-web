@@ -81,7 +81,7 @@ function AuthMenuItem({ signedIn }) {
                 to="/"
                 onClick={async event => {
                     event.preventDefault();
-                    logout(() => navigate(`/app/login`));
+                    logout(() => navigate(`/`));
                 }}>
                 Logout
             </Link>

@@ -15,7 +15,6 @@ import {
     PostPhotosResult,
     GetThumbnailsResult,
     DeletePhotosResult,
-    DeletePhotoResult,
 } from '../interfaces/photos.interface';
 import { ResponseStatus, ApiResponse } from '../interfaces/response.interface';
 import { string } from 'prop-types';

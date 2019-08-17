@@ -67,7 +67,7 @@ const Sidebar = () => {
                                 to="/"
                                 onClick={async event => {
                                     event.preventDefault();
-                                    logout(() => navigate(`/app/login`));
+                                    logout(() => navigate(`/`));
                                 }}>
                                 Logout
                             </Link>
