@@ -3,7 +3,17 @@ module.exports = {
         browser: true,
         es6: true,
     },
-    extends: ['plugin:prettier/recommended', ], // 'plugin:@typescript-eslint/recommended' // 'airbnb'
+    extends: [
+        // 'prettier',
+        'eslint:recommended',
+        // 'plugin:@typescript-eslint/eslint-recommended',
+        // 'plugin:@typescript-eslint/recommended',
+        // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        // 'plugin:prettier/recommended',
+        'prettier/@typescript-eslint',
+        // 'plugin:@typescript-eslint/recommended',
+        // 'airbnb',
+    ],
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
@@ -16,10 +26,10 @@ module.exports = {
         ecmaVersion: 2018,
         sourceType: 'module',
     },
-    plugins: ['react', 'react-hooks', '@typescript-eslint'],
+    plugins: ['@typescript-eslint', 'react', 'react-hooks'],
     rules: {
-        'prettier/prettier': 'error',
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
+        // "@typescript-eslint/rule-name": "error"
     },
 };

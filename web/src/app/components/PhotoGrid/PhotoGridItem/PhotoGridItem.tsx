@@ -36,15 +36,17 @@ function PhotoGridItem({ id, src }) {
     const timeoutId = React.useRef(null);
 
     const handlePhotoDownload = React.useCallback(async () => {
-        if (originalSrc.current === '') {
+        // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
+        if (originalSrc.current === '' && photoDownloading === false) {
             setPhotoDownloading(true);
             const photo = await getPhotoById(id);
             if (photo.status === 'success') {
+                // eslint-disable-next-line
                 originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
             }
             setPhotoDownloading(false);
         }
-    }, [id]);
+    }, [id, photoDownloading]);
 
     const handleDownload = React.useCallback(async () => {
         if (deleting) return;
