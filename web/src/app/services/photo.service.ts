@@ -126,8 +126,8 @@ export const getPhotos = async () => {
             .filter(photo => !photo.attrs.chunked)
             .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
 
-        let $chunkedPhotos = of
-            .apply(this, getChunkedPhotos)
+        /** Stream chunked photos */
+        of.apply(this, getChunkedPhotos)
             .pipe(mergeAll())
             .subscribe(async chunks => {
                 let photo = await _combineChunks(chunks);
@@ -136,8 +136,8 @@ export const getPhotos = async () => {
                 checkComplete();
             });
 
-        let $unchunkedPhotos = of
-            .apply(this, getUnchunkedPhotos)
+        /** Stream unchunked photos */
+        of.apply(this, getUnchunkedPhotos)
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
                 if (unchunkedPhoto && unchunkedPhoto.length) {
