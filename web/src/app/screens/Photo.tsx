@@ -7,17 +7,10 @@ import 'react-image-lightbox/style.css';
 
 function PhotoScreen() {
     return (
-        <div>
-            {/* {uploadError && (
-                <Alert style={{ marginTop: '16px', marginBottom: '16px' }} message={uploadError} type="error" />
-            )} */}
-
-            <div className="photoGrid">
-                <PhotoGrid />
-            </div>
-
+        <>
+            <PhotoGrid />
             <UploadOverlay />
-        </div>
+        </>
     );
 }
 

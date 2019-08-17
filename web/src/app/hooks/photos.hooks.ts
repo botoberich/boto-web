@@ -1,5 +1,5 @@
 import React from 'react';
-import { getPhotoById, postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
+import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 
 export type Thumbnail = {
     id: string;
@@ -19,7 +19,7 @@ export const useGetThumbnails = () => {
                 const $thumbnails = getRes.data.$thumbnails;
                 $thumbnails.subscribe({
                     next: res => {
-                        console.log(`Thumbnail downloaded for photo: ${res}`);
+                        console.log(`Thumbnail downloaded for photo:`, res);
                         setThumbnails([
                             ...thumbnails,
                             {
@@ -45,7 +45,7 @@ export const useGetThumbnails = () => {
         }
 
         run();
-    }, []);
+    }, [thumbnails]);
 
     return { data: thumbnails, loading, error };
 };
@@ -118,21 +118,3 @@ export const handleFileUpload = async (
         }
     }
 };
-
-// export const useFetch = (url, options) => {
-//     const [response, setResponse] = React.useState(null);
-//     const [error, setError] = React.useState(null);
-//     React.useEffect(() => {
-//         const fetchData = async () => {
-//             try {
-//                 const res = await fetch(url, options);
-//                 const json = await res.json();
-//                 setResponse(json);
-//             } catch (error) {
-//                 setError(error);
-//             }
-//         };
-//         fetchData();
-//     }, []);
-//     return { response, error };
-// };

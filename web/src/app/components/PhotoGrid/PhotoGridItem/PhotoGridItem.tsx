@@ -8,6 +8,7 @@ import styles from './PhotoGridItem.module.css';
 
 // state
 import { handleDeletePhotos } from '../../../hooks/photos.hooks';
+import { getPhotoById } from '../../../services/photo.service';
 
 // Framer animations
 const variants = {
@@ -22,22 +23,39 @@ const variants = {
     },
 };
 
+const TIME_TO_DOWNLOAD = 300;
+
 function PhotoGridItem({ id, src }) {
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(false);
     const [deleting, setDeleting] = React.useState(false);
     const [deleted, setDeleted] = React.useState(false);
     const [deleteError, setDeleteError] = React.useState(null);
+    const [photoDownloading, setPhotoDownloading] = React.useState(false);
+    const originalSrc = React.useRef('');
+    const timeoutId = React.useRef(null);
 
-    const handleDownload = React.useCallback(() => {
+    const handlePhotoDownload = React.useCallback(async () => {
+        if (originalSrc.current === '') {
+            setPhotoDownloading(true);
+            const photo = await getPhotoById(id);
+            if (photo.status === 'success') {
+                originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
+            }
+            setPhotoDownloading(false);
+        }
+    }, [id]);
+
+    const handleDownload = React.useCallback(async () => {
         if (deleting) return;
+        if (photoDownloading) return;
         const downloadableImg = document.createElement('a');
         downloadableImg.download = `${id}.jpg`;
-        downloadableImg.href = src;
+        downloadableImg.href = originalSrc.current;
         document.body.appendChild(downloadableImg);
         downloadableImg.click();
         document.body.removeChild(downloadableImg);
-    }, [deleting, id, src]);
+    }, [deleting, id, photoDownloading]);
 
     const handleDelete = React.useCallback(() => {
         handleDeletePhotos([id], {
@@ -54,7 +72,21 @@ function PhotoGridItem({ id, src }) {
             className={`${styles.editableContainer} 
                 ${selected ? styles.editing : ''} 
                 ${deleting ? styles.deleting : ''}`}
-            key={id}>
+            key={id}
+            onClick={handlePhotoDownload}
+            onTouchStart={() => {
+                timeoutId.current = setTimeout(() => {
+                    handlePhotoDownload();
+                }, TIME_TO_DOWNLOAD);
+            }}
+            onMouseOver={() => {
+                timeoutId.current = setTimeout(() => {
+                    handlePhotoDownload();
+                }, TIME_TO_DOWNLOAD);
+            }}
+            onMouseLeave={() => {
+                clearTimeout(timeoutId.current);
+            }}>
             <motion.div
                 aria-checked={selected}
                 className={styles.triggerBox}
@@ -65,7 +97,6 @@ function PhotoGridItem({ id, src }) {
                 }}>
                 <Icon type="check-circle" theme={selected ? 'twoTone' : 'outlined'} />
             </motion.div>
-
             <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
                 <motion.button
                     aria-label="Download Photo"
@@ -82,7 +113,6 @@ function PhotoGridItem({ id, src }) {
                     <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
                 </motion.button>
             </motion.div>
-
             <div
                 onClick={() => setOpen(true)}
                 className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
@@ -93,15 +123,13 @@ function PhotoGridItem({ id, src }) {
                         backgroundImage: `url("${src}")`,
                     }}
                 />
-                {open && <Lightbox mainSrc={src} onCloseRequest={() => setOpen(false)} />}
+                {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
             </div>
-
-            {deleting && (
+            {(deleting || photoDownloading) && (
                 <div className={styles.inProgress}>
                     <Icon type="loading" spin />
                 </div>
             )}
-
             <div className={styles.hoverOverlay} />
         </div>
     );

@@ -3,7 +3,7 @@ module.exports = {
         browser: true,
         es6: true,
     },
-    extends: ['plugin:prettier/recommended', 'plugin:@typescript-eslint/recommended'], // 'airbnb'
+    extends: ['plugin:prettier/recommended', ], // 'plugin:@typescript-eslint/recommended' // 'airbnb'
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
