@@ -20,7 +20,7 @@ export const useGetThumbnails = () => {
                 $thumbnails.subscribe({
                     next: res => {
                         console.log(`Thumbnail downloaded for photo:`, res);
-                        setThumbnails([
+                        setThumbnails(thumbnails => [
                             ...thumbnails,
                             {
                                 id: res.photoId,
@@ -45,7 +45,7 @@ export const useGetThumbnails = () => {
         }
 
         run();
-    }, [thumbnails]);
+    }, []);
 
     return { data: thumbnails, loading, error };
 };
