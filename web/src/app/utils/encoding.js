@@ -38,8 +38,6 @@ export const getBlobAsText = async blob => {
 
 export const chunkB64 = (b64, chunkSize) => {
     let chunks;
-    console.log('chunkng b64');
-    console.log({ worker });
     if (worker) {
         chunks = worker.chunkB64(b64, chunkSize);
     }

@@ -84,7 +84,7 @@
         "prettier": "^1.18.2",
         "prettier-eslint": "^9.0.0",
         "typescript": "^3.5.2",
-        "workerize-loader": "^1.0.4"
+        "workerize-loader": "^1.1.0"
     },
     "repository": {
         "type": "git",

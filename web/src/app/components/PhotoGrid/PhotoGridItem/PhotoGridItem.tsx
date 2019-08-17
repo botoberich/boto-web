@@ -7,19 +7,13 @@ import { motion } from 'framer-motion';
 import styles from './PhotoGridItem.module.css';
 
 // state
-import { useDeletePhotos } from '../../../hooks/photos.hooks';
+import { handleDeletePhotos } from '../../../hooks/photos.hooks';
 
 // Framer animations
 const variants = {
     open: {
         y: 0,
         opacity: 1,
-        transition: {
-            duration: 0.3,
-            staggerChildren: 0.1,
-            staggerDirection: 1,
-            y: { stiffness: 500 },
-        },
     },
     closed: {
         y: 30,
@@ -33,10 +27,10 @@ function PhotoGridItem({ id, src }) {
     const [selected, setSelected] = React.useState(false);
     const [deleting, setDeleting] = React.useState(false);
     const [deleted, setDeleted] = React.useState(false);
+    const [deleteError, setDeleteError] = React.useState(null);
 
     const handleDownload = React.useCallback(() => {
         if (deleting) return;
-
         const downloadableImg = document.createElement('a');
         downloadableImg.download = `${id}.jpg`;
         downloadableImg.href = src;
@@ -46,9 +40,11 @@ function PhotoGridItem({ id, src }) {
     }, [deleting, id, src]);
 
     const handleDelete = React.useCallback(() => {
-        const { success, error, loading } = useDeletePhotos([id]);
-        setDeleted(success);
-        setDeleting(loading);
+        handleDeletePhotos([id], {
+            onLoading: loading => setDeleting(loading),
+            onError: err => setDeleteError(err),
+            onComplete: () => setDeleted(true),
+        });
     }, [id]);
 
     if (deleted) return null;
@@ -58,60 +54,56 @@ function PhotoGridItem({ id, src }) {
             className={`${styles.editableContainer} 
                 ${selected ? styles.editing : ''} 
                 ${deleting ? styles.deleting : ''}`}
-        key={id}
-      >
-        <motion.div
+            key={id}>
+            <motion.div
                 aria-checked={selected}
-            className={styles.triggerBox}
+                className={styles.triggerBox}
                 onClick={() => setSelected(!selected)}
-            role="checkbox"
-            transition={{
+                role="checkbox"
+                transition={{
                     duration: 0.133,
                 }}>
-                <Icon type="check-circle" theme={selected ? 'twoTone' : ''} />
-          </motion.div>
+                <Icon type="check-circle" theme={selected ? 'twoTone' : 'outlined'} />
+            </motion.div>
 
-        <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
+            <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
                 <motion.button
-                aria-label="Download Photo"
-                className={styles.btn}
-                onClick={handleDownload}
-                whileHover={{ scale: 1.1 }}
-              >
-                <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-              </motion.button>
-            <motion.button
-                    aria-label="Delete Photo"
-                  className={styles.btn}
-                  onClick={handleDelete}
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                    aria-label="Download Photo"
+                    className={styles.btn}
+                    onClick={handleDownload}
+                    whileHover={{ scale: 1.1 }}>
+                    <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                 </motion.button>
-          </motion.div>
+                <motion.button
+                    aria-label="Delete Photo"
+                    className={styles.btn}
+                    onClick={handleDelete}
+                    whileHover={{ scale: 1.1 }}>
+                    <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                </motion.button>
+            </motion.div>
 
             <div
-            onClick={() => setOpen(true)}
-            className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}
-          >
-            <div
-                aria-label={`PhotoId: ${id}`}
-                className={styles.img}
+                onClick={() => setOpen(true)}
+                className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
+                <div
+                    aria-label={`PhotoId: ${id}`}
+                    className={styles.img}
                     style={{
                         backgroundImage: `url("${src}")`,
                     }}
-              />
-            {open && <Lightbox mainSrc={src} onCloseRequest={() => setOpen(false)} />}
-          </div>
+                />
+                {open && <Lightbox mainSrc={src} onCloseRequest={() => setOpen(false)} />}
+            </div>
 
-        {deleting && (
+            {deleting && (
                 <div className={styles.inProgress}>
                     <Icon type="loading" spin />
-            </div>
+                </div>
             )}
 
             <div className={styles.hoverOverlay} />
-      </div>
+        </div>
     );
 }
 

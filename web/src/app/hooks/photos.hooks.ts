@@ -9,51 +9,6 @@ export type Thumbnail = {
     src: string;
 };
 
-// export const useGetPhotoById = (id) => {
-//     let getRes = await getPhotoById(this.state.photoId);
-//         console.log({ getRes });
-// }
-
-export const useDeletePhotos = (ids: string[]) => {
-    const [success, setSuccess] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState<Error | boolean>(null);
-
-    React.useEffect(() => {
-        async function run() {
-            console.log('DELETING PHOTO IDs:', ids);
-            setLoading(true);
-            let deleteRes = await deletePhotos(ids);
-            if (deleteRes.status === 'success') {
-                deleteRes.data.$deletes.subscribe({
-                    next: id => {
-                        // We're only deleting one photo at a time right now, so it's only to just track
-                        // success for the entire subscription. Later, a new method needs to be devised. Maybe a map
-                        setSuccess(true);
-                        console.log('Deleted photo id: ', id);
-                    },
-                    error: err => {
-                        setError(err);
-                        console.log('Delete photo err: ', err);
-                    },
-                    complete: () => {
-                        setLoading(false);
-                        console.log('Deletes Completed.');
-                    },
-                });
-            } else {
-                setLoading(false);
-                setError(true);
-                console.log('Error: ', deleteRes.data);
-            }
-        }
-
-        run();
-    }, []);
-
-    return { success, error, loading };
-};
-
 export const useGetThumbnails = () => {
     const [thumbnails, setThumbnails] = React.useState<Thumbnail[]>([]);
     const [loading, setLoading] = React.useState(false);
@@ -72,7 +27,7 @@ export const useGetThumbnails = () => {
                             ...thumbnails,
                             {
                                 id: res.photoId,
-                                src: res.b64,
+                                src: `data:image/png;base64,${res.b64}`,
                             },
                         ]);
                     },
@@ -98,29 +53,71 @@ export const useGetThumbnails = () => {
     return { data: thumbnails, loading, error };
 };
 
-export const handleFileUpload = async e => {
+export const handleDeletePhotos = async (
+    ids: string[],
+    { onNext = (id: string) => {}, onComplete = () => {}, onError = err => {}, onLoading = (state: boolean) => {} } = {}
+) => {
+    console.log('DELETING PHOTO IDS:', ids);
+    onLoading(true);
+    let deleteRes = await deletePhotos(ids);
+    if (deleteRes.status === 'success') {
+        deleteRes.data.$deletes.subscribe({
+            next: id => {
+                console.log('Deleted photo id: ', id);
+                onNext(id);
+            },
+            error: err => {
+                console.log('Delete photo err: ', err);
+                onError(err);
+                onLoading(false);
+            },
+            complete: () => {
+                console.log('Deletes Completed.');
+                onComplete();
+                onLoading(false);
+            },
+        });
+    } else {
+        console.log('Error: ', deleteRes.data);
+        onError(deleteRes.data);
+        onLoading(false);
+    }
+};
+
+export const handleFileUpload = async (
+    e,
+    { onNext = (id: string) => {}, onComplete = () => {}, onError = err => {}, onLoading = (state: boolean) => {} } = {}
+) => {
     if (e.file.status === 'done') {
         const file: File = e.file.originFile || e.file.originFileObj;
         const metaData = { title: file.name, archived: false, trashed: false };
 
+        onLoading(true);
         let postRes = await postPhotos([{ metaData, file }]);
         if (postRes.status === 'success') {
             let $postPhotos = postRes.data.$photos;
-            let photoIds = postRes.data.photoIds;
+            // let photoIds = postRes.data.photoIds;
 
             $postPhotos.subscribe({
                 next: res => {
                     console.log('Uploaded photo id: ', res.photoId);
+                    onNext(res.photoId);
                 },
                 error: err => {
                     console.log('Upload error: ', err);
+                    onError(err);
+                    onLoading(false);
                 },
                 complete: () => {
                     console.log('Uploads completed.');
+                    onComplete();
+                    onLoading(false);
                 },
             });
         } else {
             console.log('Error: ', postRes.data);
+            onError(postRes.data);
+            onLoading(false);
         }
     }
 };
