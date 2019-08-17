@@ -9,6 +9,11 @@ export type Thumbnail = {
     src: string;
 };
 
+// export const useGetPhotoById = (id) => {
+//     let getRes = await getPhotoById(this.state.photoId);
+//         console.log({ getRes });
+// }
+
 export const useDeletePhotos = (ids: string[]) => {
     const [success, setSuccess] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
@@ -94,13 +99,6 @@ export const useGetThumbnails = () => {
 };
 
 export const handleFileUpload = async e => {
-    // const [success, setSuccess] = React.useState(null);
-    // const [error, setError] = React.useState(null);
-    // const [loading, setLoading] = React.useState(false);
-
-    // React.useEffect(() => {
-    // async function run() {
-    // setLoading(true);
     if (e.file.status === 'done') {
         const file: File = e.file.originFile || e.file.originFileObj;
         const metaData = { title: file.name, archived: false, trashed: false };
@@ -112,31 +110,19 @@ export const handleFileUpload = async e => {
 
             $postPhotos.subscribe({
                 next: res => {
-                    // TODO: We'll look to tracking upload progress here
-                    // Also look to fetching the thumbnail here
                     console.log('Uploaded photo id: ', res.photoId);
                 },
                 error: err => {
-                    // setError(err);
-                    // setLoading(false);
                     console.log('Upload error: ', err);
                 },
                 complete: () => {
-                    // setSuccess(true);
-                    // setLoading(false);
                     console.log('Uploads completed.');
                 },
             });
         } else {
-            // setError(false);
-            // setLoading(false);
             console.log('Error: ', postRes.data);
         }
     }
-    // }
-    // run();
-    // });
-    // return { success, error, loading };
 };
 
 // export const useFetch = (url, options) => {
@@ -155,45 +141,4 @@ export const handleFileUpload = async e => {
 //         fetchData();
 //     }, []);
 //     return { response, error };
-// };
-
-// export const useFileUpload = (e, callback = () => {}) => {
-//     async function run(e) {
-//         console.log('file upload event', e);
-//         if (e.file.status === 'done') {
-//             const fileObj: File = e.file.originFile || e.file.originFileObj;
-//             const b64: string = await getBase64(fileObj);
-//             console.log({ b64 });
-//             const exifData = await getExif(b64);
-//             console.log({ exifData });
-
-//             const metaData = { title: fileObj.name, archived: false, trashed: false };
-//             console.log('post meta data', { metaData });
-//             let postRes = await postPhotos([{ metaData, b64 }]);
-//             console.log('post res:', { postRes });
-//             if (postRes.status === 'success') {
-//                 let $postPhotos = postRes.data.$postPhotos;
-//                 let photoIds = postRes.data.photoIds;
-
-//                 // Keep the original photo Id for our mini photo
-//                 postMiniPhoto(fileObj, photoIds[0]).then((resp: PhotoResponse) => {
-//                     console.log({ resp });
-//                 });
-
-//                 console.log('Uploading $postPhotos', $postPhotos);
-//                 console.log('UPLOADING PHOTO IDS: ', photoIds);
-//                 $postPhotos.subscribe({
-//                     next: res => {
-//                         console.log('PHOTO UPLOADED: ', res.photoId);
-//                     },
-//                     complete: () => {
-//                         console.log('ALL PHOTOS UPLOADED!');
-//                         callback();
-//                     },
-//                 });
-//             }
-//         }
-//     }
-
-//     run(e);
 // };
