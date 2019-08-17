@@ -3,11 +3,12 @@ module.exports = {
         browser: true,
         es6: true,
     },
-    extends: ['airbnb', 'plugin:prettier/recommended'],
+    extends: ['plugin:prettier/recommended', 'plugin:@typescript-eslint/recommended'], // 'airbnb'
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
     },
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaFeatures: {
             jsx: true,
@@ -15,7 +16,7 @@ module.exports = {
         ecmaVersion: 2018,
         sourceType: 'module',
     },
-    plugins: ['react', 'react-hooks'],
+    plugins: ['react', 'react-hooks', '@typescript-eslint'],
     rules: {
         'prettier/prettier': 'error',
         'react-hooks/rules-of-hooks': 'error',

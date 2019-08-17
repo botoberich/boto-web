@@ -48,7 +48,7 @@ class ApiTestScreen extends React.Component<Props, State> {
     async componentDidMount() {
         const getRes = await getThumbnails();
         if (getRes.status === 'success') {
-            let $thumbnails = getRes.data.$thumbnails;
+            const $thumbnails = getRes.data.$thumbnails;
             $thumbnails.subscribe({
                 next: res => {
                     console.log(`Thumbnail downloaded for photo: ${res.photoId}`);
@@ -66,7 +66,7 @@ class ApiTestScreen extends React.Component<Props, State> {
     }
 
     async handleGetById() {
-        let getRes = await getPhotoById(this.state.photoId);
+        const getRes = await getPhotoById(this.state.photoId);
         console.log({ getRes });
     }
 
@@ -75,10 +75,10 @@ class ApiTestScreen extends React.Component<Props, State> {
             const file: File = e.file.originFile || e.file.originFileObj;
             const metaData = { title: file.name, archived: false, trashed: false };
 
-            let postRes = await postPhotos([{ metaData, file }]);
+            const postRes = await postPhotos([{ metaData, file }]);
             if (postRes.status === 'success') {
-                let $postPhotos = postRes.data.$photos;
-                let photoIds = postRes.data.photoIds;
+                const $postPhotos = postRes.data.$photos;
+                const photoIds = postRes.data.photoIds;
 
                 $postPhotos.subscribe({
                     next: res => {
@@ -99,7 +99,7 @@ class ApiTestScreen extends React.Component<Props, State> {
 
     async handleFileDelete(e) {
         console.log('DELETING PHOTO ID:', this.state.photoId);
-        let deleteRes = await deletePhotos([
+        const deleteRes = await deletePhotos([
             'af352c98-65d2-40bd-8b5f-531cbc9b9813',
             'fe86aff6-0c7e-4fbf-b791-178e4ea47feb',
         ]);

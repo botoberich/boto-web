@@ -8,8 +8,8 @@ function AppProvider() {
         <ThemeProvider>
             <OverlayProvider>
                 <App />
-          </OverlayProvider>
-      </ThemeProvider>
+            </OverlayProvider>
+        </ThemeProvider>
     );
 }
 

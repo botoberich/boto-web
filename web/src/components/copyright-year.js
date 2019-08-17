@@ -20,9 +20,7 @@ export default () => {
 
     return (
         <span>
-        {d.getFullYear()} 
-        {' '}
-        {months[d.getMonth()]}
-      </span>
+            {d.getFullYear()} {months[d.getMonth()]}
+        </span>
     );
 };

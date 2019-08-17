@@ -55,10 +55,10 @@ const _generateThumbnail = async (file: File) => {
 
 export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>> => {
     try {
-        let photos = await PhotoModel.fetchOwnList();
-        let photoIds = photos.map(photo => photo._id);
-        let fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
-        let $thumbnails = of
+        const photos = await PhotoModel.fetchOwnList();
+        const photoIds = photos.map(photo => photo._id);
+        const fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
+        const $thumbnails = of
             .apply(this, fetchThumbnails)
             .pipe(mergeAll())
             .pipe(map((json: string) => JSON.parse(json)));
@@ -70,18 +70,18 @@ export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>>
 
 export const getPhotoById = async (id: string): Promise<ApiResponse<Photo>> => {
     try {
-        let photo = await PhotoModel.findById(id);
-        let metaData = photo.attrs;
+        const photo = await PhotoModel.findById(id);
+        const metaData = photo.attrs;
         if (photo.attrs.chunked) {
-            let chunks = await ChunkModel.fetchOwnList({
+            const chunks = await ChunkModel.fetchOwnList({
                 photoId: id,
             });
-            let chunkGroup = await Promise.all(chunks.map(c => getFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));
-            let combinedPhoto = await worker.combineChunks(chunkGroup);
+            const chunkGroup = await Promise.all(chunks.map(c => getFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));
+            const combinedPhoto = await worker.combineChunks(chunkGroup);
             return success({ b64: combinedPhoto.b64, metaData });
         } else {
-            let gaiaRes = await getFile(`${BASE_PATH}/${id}`);
-            let b64 = typeof gaiaRes === 'string' && JSON.parse(gaiaRes).b64;
+            const gaiaRes = await getFile(`${BASE_PATH}/${id}`);
+            const b64 = typeof gaiaRes === 'string' && JSON.parse(gaiaRes).b64;
 
             return success({ b64, metaData });
         }
@@ -96,12 +96,12 @@ export const getPhotoById = async (id: string): Promise<ApiResponse<Photo>> => {
  * - $photos: an observable that streams { photoId , b64 }
  */
 export const getPhotos = async () => {
-    let $photos = new Subject();
+    const $photos = new Subject();
     try {
-        let photos = await PhotoModel.fetchOwnList();
+        const photos = await PhotoModel.fetchOwnList();
         let fetchedCtr = 0;
-        let metaData = photos.map(photo => photo.attrs);
-        let chunkedPhotos: any[] = await Promise.all(
+        const metaData = photos.map(photo => photo.attrs);
+        const chunkedPhotos: any[] = await Promise.all(
             photos
                 .filter(photo => photo.attrs.chunked)
                 .map(photo =>
@@ -116,13 +116,13 @@ export const getPhotos = async () => {
             if (photos.length === fetchedCtr) $photos.complete();
         };
 
-        let getChunkedPhotos = chunkedPhotos
+        const getChunkedPhotos = chunkedPhotos
             .map(chunkGroup =>
                 chunkGroup.map(chunk => getFile(`${BASE_PATH}/${chunk.attrs.photoId}/${chunk.attrs.chunkNumber}`))
             )
             .map(getChunkGroup => Promise.all(getChunkGroup));
 
-        let getUnchunkedPhotos = photos
+        const getUnchunkedPhotos = photos
             .filter(photo => !photo.attrs.chunked)
             .map(photo => getFile(`${BASE_PATH}/${photo._id}`));
 
@@ -130,7 +130,7 @@ export const getPhotos = async () => {
         of.apply(this, getChunkedPhotos)
             .pipe(mergeAll())
             .subscribe(async chunks => {
-                let photo = await _combineChunks(chunks);
+                const photo = await _combineChunks(chunks);
                 $photos.next(photo);
                 fetchedCtr++;
                 checkComplete();
@@ -141,7 +141,7 @@ export const getPhotos = async () => {
             .pipe(mergeAll())
             .subscribe(unchunkedPhoto => {
                 if (unchunkedPhoto && unchunkedPhoto.length) {
-                    let { photoId, b64 } = JSON.parse(unchunkedPhoto);
+                    const { photoId, b64 } = JSON.parse(unchunkedPhoto);
                     fetchedCtr++;
                     $photos.next({
                         photoId,
@@ -166,12 +166,12 @@ export const postPhotos = async (photos: PostPhotoInput[]): Promise<ApiResponse<
             })
         );
 
-        let postPhotos = postResponses.map(res => res.postPhoto);
-        let photoIds = postResponses.map(res => res.photoId);
+        const postPhotos = postResponses.map(res => res.postPhoto);
+        const photoIds = postResponses.map(res => res.photoId);
         const checkComplete = () => {
             if (photos.length === postCtr) $photos.complete();
         };
-        let $postPhotos = of
+        const $postPhotos = of
             .apply(this, postPhotos)
             .pipe(mergeAll())
             .subscribe({
@@ -262,8 +262,8 @@ export const _postPhoto = async ({
 
 export const deletePhotos = async (ids: string[]): Promise<ApiResponse<DeletePhotosResult>> => {
     try {
-        let deletes = ids.map(id => _deletePhoto(id));
-        let $deletes = of.apply(this, deletes).pipe(mergeAll());
+        const deletes = ids.map(id => _deletePhoto(id));
+        const $deletes = of.apply(this, deletes).pipe(mergeAll());
         return success({ $deletes });
     } catch (err) {
         return error(err);
@@ -275,15 +275,15 @@ export const _deletePhoto = async (id: string): Promise<string> => {
         const photo = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };
         if (photo) {
-            let deleteInRadik = await photo.destroy();
+            const deleteInRadik = await photo.destroy();
             if (deleteInRadik) {
                 /** you only wanna delete in GAIA if the entry is deleted in radiks */
                 await deleteFile(`${BASE_PATH}/${id}/thumbnail`);
                 if (photo.attrs.chunked) {
-                    let chunks = await ChunkModel.fetchOwnList({
+                    const chunks = await ChunkModel.fetchOwnList({
                         photoId: id,
                     });
-                    let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
+                    const deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
                     if (deleteChunksInRadik.length === chunks.length) {
                         /** you only wanna delete in GAIA if the chunks are deleted in radiks */
                         await Promise.all(chunks.map(c => deleteFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));

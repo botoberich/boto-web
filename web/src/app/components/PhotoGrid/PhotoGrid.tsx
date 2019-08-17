@@ -13,7 +13,7 @@ function PhotoGrid() {
 
     return (
         <div className={styles.gridContainer}>
-        <div className={styles.grid}>
+            <div className={styles.grid}>
                 {photos.map(({ src, id }) => {
                     if (!src && loading === false) {
                         return null;
@@ -24,7 +24,7 @@ function PhotoGrid() {
                     return <PhotoGridItem id={id} key={id} src={src} />;
                 })}
             </div>
-      </div>
+        </div>
     );
 }
 

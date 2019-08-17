@@ -1,7 +1,4 @@
 import React from 'react';
-// import { getBase64 } from '../utils/encoding';
-// import { PhotoResponse } from '../utils/apiResponse';
-// import { getExif } from '../utils/exif';
 import { getPhotoById, postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 
 export type Thumbnail = {
@@ -19,7 +16,7 @@ export const useGetThumbnails = () => {
             setLoading(true);
             const getRes = await getThumbnails();
             if (getRes.status === 'success') {
-                let $thumbnails = getRes.data.$thumbnails;
+                const $thumbnails = getRes.data.$thumbnails;
                 $thumbnails.subscribe({
                     next: res => {
                         console.log(`Thumbnail downloaded for photo: ${res}`);
@@ -48,7 +45,7 @@ export const useGetThumbnails = () => {
         }
 
         run();
-    }, []);
+    }, [thumbnails]);
 
     return { data: thumbnails, loading, error };
 };
@@ -59,7 +56,7 @@ export const handleDeletePhotos = async (
 ) => {
     console.log('DELETING PHOTO IDS:', ids);
     onLoading(true);
-    let deleteRes = await deletePhotos(ids);
+    const deleteRes = await deletePhotos(ids);
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
             next: id => {
@@ -93,9 +90,9 @@ export const handleFileUpload = async (
         const metaData = { title: file.name, archived: false, trashed: false };
 
         onLoading(true);
-        let postRes = await postPhotos([{ metaData, file }]);
+        const postRes = await postPhotos([{ metaData, file }]);
         if (postRes.status === 'success') {
-            let $postPhotos = postRes.data.$photos;
+            const $postPhotos = postRes.data.$photos;
             // let photoIds = postRes.data.photoIds;
 
             $postPhotos.subscribe({
