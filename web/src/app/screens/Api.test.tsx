@@ -8,7 +8,7 @@ import 'react-image-lightbox/style.css';
 
 // State
 import { getExif } from '../utils/exif';
-import { getPhotoById, postPhotos, deletePhoto, getThumbnails } from '../services/photo.service';
+import { getPhotoById, postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 import { getBase64 } from '../utils/encoding';
 import PhotoWorker from '../services/photo.worker';
 
@@ -99,7 +99,22 @@ class ApiTestScreen extends React.Component<Props, State> {
 
     async handleFileDelete(e) {
         console.log('DELETING PHOTO ID:', this.state.photoId);
-        // await deletePhoto(this.state.photoId);
+        let deleteRes = await deletePhotos(['af352c98-65d2-40bd-8b5f-531cbc9b9813', 'fe86aff6-0c7e-4fbf-b791-178e4ea47feb']);
+        if (deleteRes.status === 'success') {
+            deleteRes.data.$deletes.subscribe({
+                next: id => {
+                    console.log('Deleted photo id: ', id);
+                },
+                error: err => {
+                    console.log('Delete photo err: ', err);
+                },
+                complete: () => {
+                    console.log('Deletes Completed.');
+                },
+            });
+        } else {
+            console.log('Error: ', deleteRes.data);
+        }
     }
 
     render() {
@@ -127,10 +142,6 @@ class ApiTestScreen extends React.Component<Props, State> {
                 />
                 <Button onClick={this.handleFileDelete}>Delete</Button>
                 <Button onClick={this.handleGetById}>Get by ID</Button>
-
-                <div className="photoGrid">
-                    <PhotoGrid deletePhoto={deletePhoto} downloadComplete={downloadComplete} photos={fetchedPhotos}></PhotoGrid>
-                </div>
             </div>
         );
     }

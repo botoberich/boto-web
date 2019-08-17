@@ -14,6 +14,8 @@ import {
     PostPhotoResult,
     PostPhotosResult,
     GetThumbnailsResult,
+    DeletePhotosResult,
+    DeletePhotoResult,
 } from '../interfaces/photos.interface';
 import { ResponseStatus, ApiResponse } from '../interfaces/response.interface';
 import { string } from 'prop-types';
@@ -79,7 +81,8 @@ export const getPhotoById = async (id: string): Promise<ApiResponse<Photo>> => {
             return success({ b64: combinedPhoto.b64, metaData });
         } else {
             let gaiaRes = await getFile(`${BASE_PATH}/${id}`);
-            let b64 = JSON.parse(gaiaRes).b64;
+            let b64 = typeof gaiaRes === 'string' && JSON.parse(gaiaRes).b64;
+
             return success({ b64, metaData });
         }
     } catch (err) {
@@ -253,35 +256,44 @@ export const _postPhoto = async ({
     }
 };
 
-export const deletePhoto = async (id: string) => {
+export const deletePhotos = async (ids: string[]): Promise<ApiResponse<DeletePhotosResult>> => {
+    try {
+        let deletes = ids.map(id => _deletePhoto(id));
+        let $deletes = of.apply(this, deletes).pipe(mergeAll());
+        return success({ $deletes });
+    } catch (err) {
+        return error(err);
+    }
+};
+
+export const _deletePhoto = async (id: string): Promise<string> => {
     try {
         const photo = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };
         if (photo) {
-            // let deleteInRadik = await photo.destroy(); /** you only wanna delete in GAIA if the entry is deleted in radiks */
-            // if (deleteInRadik) {
-            //     deleteFile(`${BASE_PATH}/${photo._id}`);
-            //     deletes.photo = deleteInRadik;
-            // }
-
-            if (photo.attrs.chunked) {
-                let chunks = await ChunkModel.fetchOwnList({
-                    photoId: photo._id,
-                });
-                // console.log(chunks.map(chunk => chunk.destroy()));
-                let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
-                if (deleteChunksInRadik.length === chunks.length) {
-                    // for (let i = 0; i < chunks.length; i++) {
-                    // console.log(`${BASE_PATH}/${id}/${chunks[i].attrs.chunkNumber}`);
-                    await Promise.all(chunks.map(c => deleteFile(`${BASE_PATH}/${photo._id}/${c.attrs.chunkNumber}`)));
-                    // }
-                    deletes.chunks = deleteChunksInRadik;
+            let deleteInRadik = await photo.destroy();
+            if (deleteInRadik) {
+                /** you only wanna delete in GAIA if the entry is deleted in radiks */
+                await deleteFile(`${BASE_PATH}/${id}/thumbnail`);
+                if (photo.attrs.chunked) {
+                    let chunks = await ChunkModel.fetchOwnList({
+                        photoId: id,
+                    });
+                    let deleteChunksInRadik = await Promise.all(chunks.map(chunk => chunk.destroy()));
+                    if (deleteChunksInRadik.length === chunks.length) {
+                        /** you only wanna delete in GAIA if the chunks are deleted in radiks */
+                        await Promise.all(chunks.map(c => deleteFile(`${BASE_PATH}/${id}/${c.attrs.chunkNumber}`)));
+                        deletes.chunks = deleteChunksInRadik;
+                    }
+                } else {
+                    await deleteFile(`${BASE_PATH}/${id}`);
+                    deletes.photo = deleteInRadik;
                 }
             }
-            return success(deletes);
+            return id;
         }
-        return error(`Photo with id: ${id} not found.`);
+        throw new Error(`Photo with id: ${id} not found.`);
     } catch (err) {
-        return error(`Delete photo err: ${err}`);
+        throw new Error(`Delete photo err: ${err}`);
     }
 };
