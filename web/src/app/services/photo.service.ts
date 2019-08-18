@@ -1,6 +1,7 @@
 import { PhotoModel, ChunkModel } from '../models';
 import { putFile, getFile, deleteFile } from 'blockstack';
 import { chunkB64, getBase64 } from '../utils/encoding';
+import { getPhotoMetaData } from '../utils/metadata';
 import { success, error } from '../utils/apiResponse';
 import { of, Subject } from 'rxjs';
 import { mergeAll, map } from 'rxjs/operators';
@@ -10,7 +11,6 @@ import uuid from 'uuid/v4';
 import {
     Photo,
     PhotoMetaData,
-    PostPhotoInput,
     PostPhotoResult,
     PostPhotosResult,
     GetThumbnailsResult,
@@ -39,7 +39,7 @@ const _combineChunks = async chunkGroup => {
 const _generateThumbnail = async (file: File) => {
     const options = {
         maxSizeMB: 1,
-        maxWidthOrHeight: 300,
+        maxWidthOrHeight: 600,
         useWebWorker: true,
     };
 
@@ -155,15 +155,11 @@ export const getPhotos = async () => {
     }
 };
 
-export const postPhotos = async (photos: PostPhotoInput[]): Promise<ApiResponse<PostPhotosResult>> => {
+export const postPhotos = async (photos: File[]): Promise<ApiResponse<PostPhotosResult>> => {
     try {
         let postCtr = 0;
         const $photos = new Subject<PostPhotoResult>();
-        const postResponses = await Promise.all(
-            photos.map(photo => {
-                return _postPhoto({ metaData: photo.metaData, file: photo.file });
-            })
-        );
+        const postResponses = await Promise.all(photos.map(file => _postPhoto(file)));
 
         const postPhotos = postResponses.map(res => res.postPhoto);
         const photoIds = postResponses.map(res => res.photoId);
@@ -179,10 +175,10 @@ export const postPhotos = async (photos: PostPhotoInput[]): Promise<ApiResponse<
                     postCtr++;
                     checkComplete();
                 },
-                error: async errRes => {
+                error: async err => {
                     /** Remove thumbnail */
-                    await deleteFile(`${BASE_PATH}/${errRes.photoId}/thumbnail`);
-                    $photos.error(errRes.error);
+                    await deleteFile(`${BASE_PATH}/${err.photoId}/thumbnail`);
+                    $photos.error(err.error);
                 },
             });
         return success({ photoIds, $photos });
@@ -191,18 +187,11 @@ export const postPhotos = async (photos: PostPhotoInput[]): Promise<ApiResponse<
     }
 };
 
-/**
- * @returns If not err, a success response with data: { metadata, $photo }
- * @param {*} metadata Photo metadata: refer to the photo model@ /models/photo
- * @param {*} file File to upload
- */
-export const _postPhoto = async ({
-    metaData,
-    file,
-}: PostPhotoInput): Promise<{ photoId: string; postPhoto: Promise<PostPhotoResult> }> => {
+export const _postPhoto = async (file: File): Promise<{ photoId: string; postPhoto: Promise<PostPhotoResult> }> => {
     /** Store all metadata in the database and store b64 in gaia */
     const photoId: string = uuid();
     const gaiaPath = `${BASE_PATH}/${photoId}`;
+    let metaData = await getPhotoMetaData(file); /** if you want data from exif, use metaData.exif */
     let thumbnailUploaded = false;
     try {
         const [thumbnail, original]: [string, string] = await Promise.all([_generateThumbnail(file), getBase64(file)]);
@@ -215,7 +204,7 @@ export const _postPhoto = async ({
         /** Upload original photo */
         const photo = new PhotoModel({
             _id: photoId,
-            ...metaData,
+            ...metaData.base,
             chunked: b64Chunks.length > 1,
         });
         const saveRes = await photo.save();

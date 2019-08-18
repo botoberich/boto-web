@@ -13,7 +13,6 @@ class Photo extends Model {
         },
         archived: Boolean,
         chunked: Boolean,
-        compressed: String,
         title: String,
         trashed: Boolean,
         lat: Number,

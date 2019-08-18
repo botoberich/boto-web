@@ -8,7 +8,7 @@ import { OVERLAY_ROOT } from '../app';
 import styles from './UploadOverlay.module.css';
 
 // State
-import { getExif } from '../utils/exif';
+import { getExif } from '../utils/metadata.ts';
 import { useOverlay } from '../contexts/OverlayContext';
 import { getBase64 } from '../utils/encoding';
 import { postPhotos } from '../services/photo.service';

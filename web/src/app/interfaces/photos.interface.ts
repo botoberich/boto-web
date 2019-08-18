@@ -24,12 +24,6 @@ export interface PostPhotoResult {
     photoId: string;
     thumbnail: string;
 }
-
-export interface PostPhotoInput {
-    metaData: PhotoMetaData;
-    file: File;
-}
-
 export interface DeletePhotosResult {
     $deletes: Subject<string>;
 }
@@ -38,7 +32,6 @@ export interface GetThumbnailsResult {
     photoIds: string[];
     $thumbnails: Subject<Thumbnail>;
 }
-
 export interface Thumbnail {
     photoId: string;
     b64: string;

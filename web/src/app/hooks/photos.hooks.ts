@@ -1,5 +1,6 @@
 import React from 'react';
 import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
+import { getPhotoMetaData } from '../utils/metadata';
 
 export type Thumbnail = {
     id: string;
@@ -91,34 +92,30 @@ export const handleFileUpload = async (
     e,
     { onNext = (id: string) => {}, onComplete = () => {}, onError = err => {}, onLoading = (state: boolean) => {} } = {}
 ) => {
-    if (e.file.status === 'done') {
-        const file: File = e.file.originFile || e.file.originFileObj;
-        const metaData = { title: file.name, archived: false, trashed: false };
-        console.log({ metaData });
-        onLoading(true);
-        const postRes = await postPhotos([{ metaData, file }]);
-        if (postRes.status === 'success') {
-            const $postPhotos = postRes.data.$photos;
-            $postPhotos.subscribe({
-                next: res => {
-                    console.log('Uploaded photo id: ', res.photoId);
-                    onNext(res.photoId);
-                },
-                error: err => {
-                    console.log('Upload error: ', err);
-                    onError(err);
-                    onLoading(false);
-                },
-                complete: () => {
-                    console.log('Uploads completed.');
-                    onComplete();
-                    onLoading(false);
-                },
-            });
-        } else {
-            console.log('Error: ', postRes.data);
-            onError(postRes.data);
-            onLoading(false);
-        }
+    onLoading(true);
+    const files: File[] = [...e.target.files];
+    const postRes = await postPhotos(files);
+    if (postRes.status === 'success') {
+        const $postPhotos = postRes.data.$photos;
+        $postPhotos.subscribe({
+            next: res => {
+                console.log('Uploaded photo id: ', res.photoId);
+                onNext(res.photoId);
+            },
+            error: err => {
+                console.log('Upload error: ', err);
+                onError(err);
+                onLoading(false);
+            },
+            complete: () => {
+                console.log('Uploads completed.');
+                onComplete();
+                onLoading(false);
+            },
+        });
+    } else {
+        console.log('Error: ', postRes.data);
+        onError(postRes.data);
+        onLoading(false);
     }
 };
