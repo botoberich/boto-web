@@ -151,7 +151,7 @@ function PhotoGridItem({ id, src }) {
                 />
                 {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
             </div>
-            {(deleting || photoDownloading) && (
+            {deleting && (
                 <div className={styles.inProgress}>
                     <Icon type="loading" spin />
                 </div>
