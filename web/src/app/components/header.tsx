@@ -34,7 +34,7 @@ function PageHeader() {
         signin();
     }, []);
 
-    // const progressCtx = useProgressContext();
+    const progressCtx = useProgressContext();
     // Cool, you got notification, now create hook completion rate into progress somehow
     // Message: Show progress bar
     // Description: Display number of items completed
