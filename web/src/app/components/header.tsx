@@ -35,11 +35,22 @@ function PageHeader() {
     }, []);
 
     const { progressDispatch } = useProgressContext();
+    // If you want to see the progress bar go, uncomment this
     // React.useEffect(() => {
+    //     let counter = 0;
     //     progressDispatch({ type: 'TOTAL', payload: 10 });
-    //     setInterval(() => {
+    //     const timer = setInterval(() => {
+    //         counter++;
+    //         if (counter > 10) {
+    //             progressDispatch({ type: 'END' });
+    //             return;
+    //         }
     //         progressDispatch({ type: 'NEXT' });
-    //     }, 3000);
+    //     }, 1000);
+
+    //     return () => {
+    //         clearInterval(timer);
+    //     };
     // }, []);
 
     return (
