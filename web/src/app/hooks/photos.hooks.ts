@@ -52,10 +52,16 @@ export const useGetThumbnails = () => {
 
 export const handleDeletePhotos = async (
     ids: string[],
-    { onNext = (id: string) => {}, onComplete = () => {}, onError = err => {}, onLoading = (state: boolean) => {} } = {}
+    {
+        onNext = (id: string) => {},
+        onComplete = () => {},
+        onError = err => {},
+        onStart = () => {},
+        onEnd = () => {},
+    } = {}
 ) => {
     console.log('DELETING PHOTO IDS:', ids);
-    onLoading(true);
+    onStart();
     const deleteRes = await deletePhotos(ids);
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
@@ -66,18 +72,18 @@ export const handleDeletePhotos = async (
             error: err => {
                 console.log('Delete photo err: ', err);
                 onError(err);
-                onLoading(false);
+                onEnd();
             },
             complete: () => {
                 console.log('Deletes Completed.');
                 onComplete();
-                onLoading(false);
+                onEnd();
             },
         });
     } else {
         console.log('Error: ', deleteRes.data);
         onError(deleteRes.data);
-        onLoading(false);
+        onEnd();
     }
 };
 
@@ -88,13 +94,11 @@ export const handleFileUpload = async (
     if (e.file.status === 'done') {
         const file: File = e.file.originFile || e.file.originFileObj;
         const metaData = { title: file.name, archived: false, trashed: false };
-
+        console.log({ metaData });
         onLoading(true);
         const postRes = await postPhotos([{ metaData, file }]);
         if (postRes.status === 'success') {
             const $postPhotos = postRes.data.$photos;
-            // let photoIds = postRes.data.photoIds;
-
             $postPhotos.subscribe({
                 next: res => {
                     console.log('Uploaded photo id: ', res.photoId);

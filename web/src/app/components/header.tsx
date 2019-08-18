@@ -9,6 +9,7 @@ import { useProgressContext } from '../contexts/ProgressContext';
 
 // UI
 import styles from './header.module.css';
+import { dispatch } from 'rxjs/internal/observable/pairs';
 
 const { Header } = Layout;
 
@@ -34,26 +35,11 @@ function PageHeader() {
         signin();
     }, []);
 
-    const progressCtx = useProgressContext();
-    // Cool, you got notification, now create hook completion rate into progress somehow
-    // Message: Show progress bar
-    // Description: Display number of items completed
-    // progressCtx.notify({
-    //     message: (
-    //         <div>
-    //             Message<Progress percent={50}></Progress>
-    //         </div>
-    //     ),
-    //     description: (
-    //         <div>
-    //             Description<Progress percent={100}></Progress>
-    //         </div>
-    //     ),
-    //     onClick: () => {
-    //         console.log('Notification Clicked!');
-    //     },
-    //     duration: 0,
-    // });
+    const { progressDispatch, notify } = useProgressContext();
+
+    React.useEffect(() => {
+        notify();
+    }, []);
 
     return (
         <Header className={styles.header}>
@@ -65,7 +51,16 @@ function PageHeader() {
             )}
             <nav className={`${styles.desktopOnly} ${styles.nav}`}>
                 <div className={styles.navItem}>
-                    <Upload listType="picture" multiple onChange={e => handleFileUpload(e)} showUploadList={false}>
+                    <Upload
+                        listType="picture"
+                        multiple
+                        onChange={e =>
+                            handleFileUpload(e, {
+                                onNext: () => progressDispatch({ type: 'NEXT' }),
+                                onComplete: () => progressDispatch({ type: 'END' }),
+                            })
+                        }
+                        showUploadList={false}>
                         <Button>
                             <Icon type="upload" /> Upload
                         </Button>

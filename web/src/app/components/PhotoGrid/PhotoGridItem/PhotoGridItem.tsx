@@ -62,9 +62,10 @@ function PhotoGridItem({ id, src }) {
 
     const handleDelete = React.useCallback(() => {
         handleDeletePhotos([id], {
-            onLoading: loading => setDeleting(loading),
-            onError: err => setDeleteError(err),
             onComplete: () => setDeleted(true),
+            onError: err => setDeleteError(err),
+            onEnd: () => setDeleting(false),
+            onStart: () => setDeleting(true),
         });
     }, [id]);
 
