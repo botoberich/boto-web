@@ -47,6 +47,7 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
             return {
                 ...state,
                 loading: true,
+                complete: false,
                 total: action.payload,
             };
         }
@@ -60,6 +61,7 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
         case 'END': {
             return {
                 ...state,
+                current: 0,
                 loading: false,
                 complete: true,
             };
@@ -73,7 +75,7 @@ function ProgressProvider(props) {
     const [progressState, progressDispatch] = React.useReducer(progressReducer, initialProgress);
 
     React.useEffect(() => {
-        if (progressState.loading) {
+        if (progressState.loading && progressState.current !== progressState.total) {
             const current = progressState.current;
             const total = progressState.total;
             const percentage = Math.floor(((current + 1) / total) * 100);
