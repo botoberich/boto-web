@@ -51,29 +51,6 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
             };
         }
         case 'NEXT': {
-            // const current = state.current;
-            // const total = state.total;
-            // const percentage = Math.floor(((current + 1) / total) * 100);
-            // notification.open({
-            //     key: 'ProgressNotificationKey',
-            //     message: (
-            //         <div>
-            //             <Paragraph>
-            //                 Uploading file {current + 1} of {total}
-            //             </Paragraph>
-            //         </div>
-            //     ),
-            //     description: (
-            //         <div>
-            //             <Progress
-            //                 percent={percentage}
-            //                 strokeColor={{
-            //                     '0%': '#108ee9',
-            //                     '100%': '#87d068',
-            //                 }}></Progress>
-            //         </div>
-            //     ),
-            // });
             return {
                 ...state,
                 loading: true,
@@ -100,6 +77,7 @@ function ProgressProvider(props) {
             const current = progressState.current;
             const total = progressState.total;
             const percentage = Math.floor(((current + 1) / total) * 100);
+            console.log({ current, total, percentage });
             notification.open({
                 key: 'ProgressNotificationKey',
                 message: (

@@ -20,7 +20,6 @@ export const useGetThumbnails = () => {
                 const $thumbnails = getRes.data.$thumbnails;
                 $thumbnails.subscribe({
                     next: res => {
-                        console.log(`Thumbnail downloaded for photo:`, res);
                         setThumbnails(thumbnails => [
                             ...thumbnails,
                             {
