@@ -2,7 +2,6 @@ import React from 'react';
 
 // UI
 import { notification, Progress, Typography } from 'antd';
-import { NotificationApi } from 'antd/lib/notification';
 
 const { Paragraph } = Typography;
 
@@ -16,12 +15,11 @@ type ProgressState = {
 
 type ProgressAction = {
     payload?: any;
-    type: 'START' | 'END' | 'NEXT' | 'TOTAL';
+    type: 'START' | 'END' | 'NEXT' | 'TOTAL' | 'NOTIFY';
 };
 
 type ProgressValue = {
     inProgress: boolean;
-    notify: () => void;
     progressDispatch: React.Dispatch<ProgressAction>;
 };
 
@@ -45,6 +43,11 @@ const initialProgress: ProgressState = {
 function progressReducer(state: ProgressState, action: ProgressAction) {
     console.log('action', action);
     switch (action.type) {
+        // case 'NOTIFY': {
+        //     return {
+        //         ...state,
+        //     };
+        // }
         case 'START': {
             return {
                 ...state,
@@ -59,15 +62,32 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
             };
         }
         case 'NEXT': {
-            if (state.current + 1 === state.total) {
-                return {
-                    ...state,
-                    current: state.total,
-                    complete: true,
-                };
-            }
+            const current = state.current;
+            const total = state.total;
+            const percentage = Math.floor(((current + 1) / total) * 100);
+            notification.open({
+                key: 'ProgressNotificationKey',
+                message: (
+                    <div>
+                        <Paragraph>
+                            Uploading file {current + 1} of {total}
+                        </Paragraph>
+                    </div>
+                ),
+                description: (
+                    <div>
+                        <Progress
+                            percent={percentage}
+                            strokeColor={{
+                                '0%': '#108ee9',
+                                '100%': '#87d068',
+                            }}></Progress>
+                    </div>
+                ),
+            });
             return {
                 ...state,
+                loading: true,
                 current: state.current + 1,
             };
         }
@@ -84,29 +104,6 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
 function ProgressProvider(props) {
     const [progressState, progressDispatch] = React.useReducer(progressReducer, initialProgress);
 
-    const notify = React.useCallback(() => {
-        const current = progressState.current;
-        const total = progressState.total;
-        const percentage = Math.floor(current + 1 / total) * 100;
-        notification.open({
-            message: (
-                <div>
-                    <Paragraph>
-                        Uploading file {current + 1} of {total}
-                    </Paragraph>
-                </div>
-            ),
-            description: (
-                <div>
-                    <Progress percent={percentage}></Progress>
-                </div>
-            ),
-            onClick: () => {
-                console.log('Notification Clicked!');
-            },
-        });
-    }, [progressState.current, progressState.total]);
-
     React.useEffect(() => {
         if (progressState.complete) {
             notification.destroy();
@@ -122,7 +119,6 @@ function ProgressProvider(props) {
     }, [progressState.loading]);
 
     const value: ProgressValue = {
-        notify,
         inProgress: progressState.loading,
         progressDispatch,
     };

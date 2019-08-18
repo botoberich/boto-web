@@ -9,7 +9,6 @@ import styles from './PhotoGridItem.module.css';
 // state
 import { handleDeletePhotos } from '../../../hooks/photos.hooks';
 import { getPhotoById } from '../../../services/photo.service';
-import { usePhotoContext } from '../../../contexts/ProgressContext';
 
 // Framer animations
 const variants = {

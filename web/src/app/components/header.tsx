@@ -2,14 +2,13 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown, Progress } from 'antd';
+import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
 
 // UI
 import styles from './header.module.css';
-import { dispatch } from 'rxjs/internal/observable/pairs';
 
 const { Header } = Layout;
 
@@ -35,11 +34,13 @@ function PageHeader() {
         signin();
     }, []);
 
-    const { progressDispatch, notify } = useProgressContext();
-
-    React.useEffect(() => {
-        notify();
-    }, []);
+    const { progressDispatch } = useProgressContext();
+    // React.useEffect(() => {
+    //     progressDispatch({ type: 'TOTAL', payload: 10 });
+    //     setInterval(() => {
+    //         progressDispatch({ type: 'NEXT' });
+    //     }, 3000);
+    // }, []);
 
     return (
         <Header className={styles.header}>
