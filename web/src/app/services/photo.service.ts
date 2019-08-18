@@ -6,7 +6,7 @@ import { success, error } from '../utils/apiResponse';
 import { of, Subject } from 'rxjs';
 import { mergeAll, map } from 'rxjs/operators';
 import PhotoWorker from './photo.worker';
-import imageCompression from 'browser-image-compression';
+import Compressor from 'compressorjs';
 import uuid from 'uuid/v4';
 import {
     Photo,
@@ -37,19 +37,19 @@ const _combineChunks = async chunkGroup => {
 
 /** @returns a b64 string representing a photo smaller in size than the actual photo */
 const _generateThumbnail = async (file: File) => {
-    const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 600,
-        useWebWorker: true,
-    };
-
-    try {
-        const compressedFile = await imageCompression(file, options);
-        const b64 = await getBase64(compressedFile);
-        return b64;
-    } catch (error) {
-        throw new Error(error);
-    }
+    const quality = 0.4;
+    return new Promise((resolve, reject) => {
+        new Compressor(file, {
+            quality,
+            async success(result) {
+                let b64 = await getBase64(result);
+                resolve(b64);
+            },
+            error(err) {
+                reject(err);
+            },
+        });
+    });
 };
 
 export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>> => {
