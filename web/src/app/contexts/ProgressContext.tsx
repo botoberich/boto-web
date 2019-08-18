@@ -15,7 +15,7 @@ type ProgressState = {
 
 type ProgressAction = {
     payload?: any;
-    type: 'START' | 'END' | 'NEXT' | 'TOTAL' | 'NOTIFY';
+    type: 'START' | 'END' | 'NEXT' | 'TOTAL';
 };
 
 type ProgressValue = {
@@ -43,15 +43,41 @@ const initialProgress: ProgressState = {
 function progressReducer(state: ProgressState, action: ProgressAction) {
     console.log('action', action);
     switch (action.type) {
-        // case 'NOTIFY': {
-        //     return {
-        //         ...state,
-        //     };
-        // }
         case 'START': {
             return {
                 ...state,
                 loading: true,
+                total: action.payload,
+            };
+        }
+        case 'NEXT': {
+            // const current = state.current;
+            // const total = state.total;
+            // const percentage = Math.floor(((current + 1) / total) * 100);
+            // notification.open({
+            //     key: 'ProgressNotificationKey',
+            //     message: (
+            //         <div>
+            //             <Paragraph>
+            //                 Uploading file {current + 1} of {total}
+            //             </Paragraph>
+            //         </div>
+            //     ),
+            //     description: (
+            //         <div>
+            //             <Progress
+            //                 percent={percentage}
+            //                 strokeColor={{
+            //                     '0%': '#108ee9',
+            //                     '100%': '#87d068',
+            //                 }}></Progress>
+            //         </div>
+            //     ),
+            // });
+            return {
+                ...state,
+                loading: true,
+                current: state.current + 1,
             };
         }
         case 'END': {
@@ -61,9 +87,18 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
                 complete: true,
             };
         }
-        case 'NEXT': {
-            const current = state.current;
-            const total = state.total;
+        default:
+            throw new Error(`${action.type} is not a valid type in progressReducer`);
+    }
+}
+
+function ProgressProvider(props) {
+    const [progressState, progressDispatch] = React.useReducer(progressReducer, initialProgress);
+
+    React.useEffect(() => {
+        if (progressState.loading) {
+            const current = progressState.current;
+            const total = progressState.total;
             const percentage = Math.floor(((current + 1) / total) * 100);
             notification.open({
                 key: 'ProgressNotificationKey',
@@ -77,6 +112,7 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
                 description: (
                     <div>
                         <Progress
+                            status={progressState.loading ? 'active' : 'normal'}
                             percent={percentage}
                             strokeColor={{
                                 '0%': '#108ee9',
@@ -85,24 +121,8 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
                     </div>
                 ),
             });
-            return {
-                ...state,
-                loading: true,
-                current: state.current + 1,
-            };
         }
-        case 'TOTAL':
-            return {
-                ...state,
-                total: action.payload,
-            };
-        default:
-            throw new Error(`${action.type} is not a valid type in progressReducer`);
-    }
-}
-
-function ProgressProvider(props) {
-    const [progressState, progressDispatch] = React.useReducer(progressReducer, initialProgress);
+    }, [progressState.current, progressState.total, progressState.loading]);
 
     React.useEffect(() => {
         if (progressState.complete) {

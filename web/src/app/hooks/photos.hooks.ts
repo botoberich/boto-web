@@ -90,10 +90,18 @@ export const handleDeletePhotos = async (
 
 export const handleFileUpload = async (
     e,
-    { onNext = (id: string) => {}, onComplete = () => {}, onError = err => {}, onLoading = (state: boolean) => {} } = {}
+    {
+        onNext = (id: string) => {},
+        onComplete = () => {},
+        onError = err => {},
+        onStart = (length: number) => {},
+        onEnd = () => {},
+    } = {}
 ) => {
-    onLoading(true);
     const files: File[] = [...e.target.files];
+    onStart(files.length);
+    console.log({ files });
+    console.log('file length', files.length);
     const postRes = await postPhotos(files);
     if (postRes.status === 'success') {
         const $postPhotos = postRes.data.$photos;
@@ -105,17 +113,17 @@ export const handleFileUpload = async (
             error: err => {
                 console.log('Upload error: ', err);
                 onError(err);
-                onLoading(false);
+                onEnd();
             },
             complete: () => {
                 console.log('Uploads completed.');
                 onComplete();
-                onLoading(false);
+                onEnd();
             },
         });
     } else {
         console.log('Error: ', postRes.data);
         onError(postRes.data);
-        onLoading(false);
+        onEnd();
     }
 };

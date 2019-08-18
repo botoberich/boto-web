@@ -2,7 +2,7 @@ import React from 'react';
 
 // UI
 import Lightbox from 'react-image-lightbox';
-import { Icon, Progress } from 'antd';
+import { Icon, Button } from 'antd';
 import { motion } from 'framer-motion';
 import styles from './PhotoGridItem.module.css';
 
@@ -23,7 +23,7 @@ const variants = {
     },
 };
 
-const TIME_TO_DOWNLOAD = 300;
+const TIME_TO_DOWNLOAD = 1000;
 
 function PhotoGridItem({ id, src }) {
     const [open, setOpen] = React.useState(false);
@@ -32,21 +32,30 @@ function PhotoGridItem({ id, src }) {
     const [deleted, setDeleted] = React.useState(false);
     const [deleteError, setDeleteError] = React.useState(null);
     const [photoDownloading, setPhotoDownloading] = React.useState(false);
+    const editButton = React.useRef(null);
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
 
-    const handlePhotoDownload = React.useCallback(async () => {
-        // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
-        if (originalSrc.current === '' && photoDownloading === false) {
-            setPhotoDownloading(true);
-            const photo = await getPhotoById(id);
-            if (photo.status === 'success') {
-                // eslint-disable-next-line
-                originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
+    const handlePhotoDownload = React.useCallback(
+        async e => {
+            e.persist();
+            // We don't want to download the photo if the user is only selecting the photo
+            if (editButton.current !== null && editButton.current.buttonNode === e.target) {
+                return;
             }
-            setPhotoDownloading(false);
-        }
-    }, [id, photoDownloading]);
+            // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
+            if (originalSrc.current === '' && photoDownloading === false) {
+                setPhotoDownloading(true);
+                const photo = await getPhotoById(id);
+                if (photo.status === 'success') {
+                    // eslint-disable-next-line
+                    originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
+                }
+                setPhotoDownloading(false);
+            }
+        },
+        [id, photoDownloading]
+    );
 
     const handleDownload = React.useCallback(async () => {
         if (deleting) return;
@@ -68,11 +77,14 @@ function PhotoGridItem({ id, src }) {
         });
     }, [id]);
 
-    const handleInitiateDownload = React.useCallback(() => {
-        timeoutId.current = setTimeout(() => {
-            handlePhotoDownload();
-        }, TIME_TO_DOWNLOAD);
-    }, [timeoutId.current]);
+    const handleInitiateDownload = React.useCallback(
+        e => {
+            timeoutId.current = setTimeout(() => {
+                handlePhotoDownload(e);
+            }, TIME_TO_DOWNLOAD);
+        },
+        [timeoutId.current]
+    );
 
     if (deleted) return null;
 
@@ -83,19 +95,19 @@ function PhotoGridItem({ id, src }) {
                 ${deleting ? styles.deleting : ''}`}
             key={id}
             onClick={handlePhotoDownload}
-            onMouseOver={handleInitiateDownload}
+            // onMouseOver={handleInitiateDownload}
             onMouseLeave={() => clearTimeout(timeoutId.current)}
+            onTouchCancel={() => clearTimeout(timeoutId.current)}
             onTouchStart={handleInitiateDownload}>
-            <motion.div
+            <Button
                 aria-checked={selected}
                 className={styles.triggerBox}
+                icon="check-circle"
                 onClick={() => setSelected(!selected)}
+                ref={editButton}
                 role="checkbox"
-                transition={{
-                    duration: 0.133,
-                }}>
-                <Icon type="check-circle" theme={selected ? 'twoTone' : 'outlined'} />
-            </motion.div>
+                shape="circle"
+                type="link"></Button>
             <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
                 <motion.button
                     aria-label="Download Photo"

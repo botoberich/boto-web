@@ -69,13 +69,14 @@ function PageHeader() {
                             multiple
                             onChange={e =>
                                 handleFileUpload(e, {
+                                    onStart: (length) => progressDispatch({ type: "START", payload: length}),
                                     onNext: () => progressDispatch({ type: 'NEXT' }),
                                     onComplete: () => progressDispatch({ type: 'END' }),
                                 })
                             }
                             type="file"
                         />
-                        <i aria-label="icon: upload" className="anticon anticon-upload">
+                        <i aria-label="Upload Icon" className="anticon anticon-upload">
                             <svg
                                 viewBox="64 64 896 896"
                                 data-icon="upload"
@@ -89,20 +90,6 @@ function PageHeader() {
                         </i>
                         <span style={{ marginLeft: '8px' }}>Upload</span>
                     </label>
-                    {/* <Upload
-                        listType="picture"
-                        multiple={true}
-                        onChange={e => {
-                            handleFileUpload(e, {
-                                onNext: () => progressDispatch({ type: 'NEXT' }),
-                                onComplete: () => progressDispatch({ type: 'END' }),
-                            });
-                        }}
-                        showUploadList={false}>
-                        <Button>
-                            <Icon type="upload" /> Upload
-                        </Button>
-                    </Upload> */}
                 </div>
                 <div className={styles.navItem}>
                     <Dropdown
