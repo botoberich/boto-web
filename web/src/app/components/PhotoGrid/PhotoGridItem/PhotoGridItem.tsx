@@ -27,29 +27,6 @@ const variants = {
 const TIME_TO_DOWNLOAD = 300;
 
 function PhotoGridItem({ id, src }) {
-    const progressCtx = usePhotoContext();
-    console.log({ progressCtx });
-    // Cool, you got notification, now create hook completion rate into progress somehow
-    // Message: Show progress bar
-    // Description: Display number of items completed
-
-    progressCtx.notify({
-        message: (
-            <div>
-                Message<Progress percent={50}></Progress>
-            </div>
-        ),
-        description: (
-            <div>
-                Description<Progress percent={100}></Progress>
-            </div>
-        ),
-        onClick: () => {
-            console.log('Notification Clicked!');
-        },
-        duration: 0,
-    });
-
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(false);
     const [deleting, setDeleting] = React.useState(false);

@@ -33,13 +33,13 @@ function ProgressProvider(props) {
     return <ProgressContext.Provider value={value} {...props} />;
 }
 
-function usePhotoContext() {
+function useProgressContext() {
     const context: ProgressContextValue = React.useContext(ProgressContext);
     if (!context) {
-        throw new Error(`usePhotoContext must be used within an ProgressProvider`);
+        throw new Error(`useProgressContext must be used within an ProgressProvider`);
     }
     return context;
 }
 
-export { ProgressProvider, usePhotoContext };
+export { ProgressProvider, useProgressContext };
 export default ProgressContext;
