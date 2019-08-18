@@ -91,6 +91,12 @@ function PhotoGridItem({ id, src }) {
         });
     }, [id]);
 
+    const handleInitiateDownload = React.useCallback(() => {
+        timeoutId.current = setTimeout(() => {
+            handlePhotoDownload();
+        }, TIME_TO_DOWNLOAD);
+    }, [timeoutId.current]);
+
     if (deleted) return null;
 
     return (
@@ -100,19 +106,9 @@ function PhotoGridItem({ id, src }) {
                 ${deleting ? styles.deleting : ''}`}
             key={id}
             onClick={handlePhotoDownload}
-            onTouchStart={() => {
-                timeoutId.current = setTimeout(() => {
-                    handlePhotoDownload();
-                }, TIME_TO_DOWNLOAD);
-            }}
-            onMouseOver={() => {
-                timeoutId.current = setTimeout(() => {
-                    handlePhotoDownload();
-                }, TIME_TO_DOWNLOAD);
-            }}
-            onMouseLeave={() => {
-                clearTimeout(timeoutId.current);
-            }}>
+            onMouseOver={handleInitiateDownload}
+            onMouseLeave={() => clearTimeout(timeoutId.current)}
+            onTouchStart={handleInitiateDownload}>
             <motion.div
                 aria-checked={selected}
                 className={styles.triggerBox}
