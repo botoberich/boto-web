@@ -2,11 +2,21 @@ import React from 'react';
 
 // UI
 import { notification, Progress } from 'antd';
+import { NotificationApi } from 'antd/lib/notification';
 
-const ProgressContext = React.createContext();
+// types
+type ProgressContextValue = {
+    notify: NotificationApi['open'];
+    inProgress: boolean;
+};
+
+const ProgressContext = React.createContext(null);
 
 function ProgressProvider(props) {
-    const [inProgress, setInProgress] = React.useState(true);
+    const [inProgress, setInProgress] = React.useState(false);
+    const stopProgress = React.useCallback(() => setInProgress(false), []);
+    const startProgress = React.useCallback(() => setInProgress(true), []);
+
     React.useEffect(() => {
         window.onbeforeunload = () => {
             if (inProgress) {
@@ -15,15 +25,16 @@ function ProgressProvider(props) {
         };
     }, [inProgress]);
 
-    const value = {
-        notification,
+    const value: ProgressContextValue = {
+        notify: notification.open,
+        inProgress,
     };
 
     return <ProgressContext.Provider value={value} {...props} />;
 }
 
 function usePhotoContext() {
-    const context = React.useContext(ProgressContext);
+    const context: ProgressContextValue = React.useContext(ProgressContext);
     if (!context) {
         throw new Error(`usePhotoContext must be used within an ProgressProvider`);
     }
