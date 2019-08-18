@@ -69,7 +69,7 @@ function PageHeader() {
                             multiple
                             onChange={e =>
                                 handleFileUpload(e, {
-                                    onStart: (length) => progressDispatch({ type: "START", payload: length}),
+                                    onStart: payload => progressDispatch({ type: 'START', payload }),
                                     onNext: () => progressDispatch({ type: 'NEXT' }),
                                     onComplete: () => progressDispatch({ type: 'END' }),
                                 })

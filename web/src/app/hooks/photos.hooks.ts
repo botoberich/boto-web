@@ -1,7 +1,9 @@
 import React from 'react';
 import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 import { getPhotoMetaData } from '../utils/metadata';
+import { ProgressStartingPayload } from '../interfaces/ui.interface';
 
+/** @todo use the one from interfaces/photos.interface.ts */
 export type Thumbnail = {
     id: string;
     src: string;
@@ -93,14 +95,15 @@ export const handleFileUpload = async (
         onNext = (id: string) => {},
         onComplete = () => {},
         onError = err => {},
-        onStart = (length: number) => {},
+        onStart = (payload: ProgressStartingPayload) => {},
         onEnd = () => {},
     } = {}
 ) => {
     const files: File[] = [...e.target.files];
-    onStart(files.length);
-    console.log({ files });
-    console.log('file length', files.length);
+    onStart({
+        length: files.length,
+        cmd: 'Upload',
+    });
     const postRes = await postPhotos(files);
     if (postRes.status === 'success') {
         const $postPhotos = postRes.data.$photos;

@@ -2,6 +2,7 @@ import React from 'react';
 
 // UI
 import { notification, Progress, Typography } from 'antd';
+import { ProgressStartingPayload } from '../interfaces/ui.interface';
 
 const { Paragraph } = Typography;
 
@@ -11,6 +12,7 @@ type ProgressState = {
     current: number;
     loading: boolean;
     total: number;
+    cmd: 'Upload' | 'Delete' | 'Download' | 'Update';
 };
 
 type ProgressAction = {
@@ -26,11 +28,17 @@ type ProgressValue = {
 type ProgressContextValue = ProgressState & ProgressValue;
 
 // Sets global config for all notifications
-notification.config({
+const notificationProgressConfig = {
     placement: 'bottomRight',
     bottom: 50,
     duration: null,
-});
+};
+
+const notificationCompleteConfig = {
+    placement: 'bottomRight',
+    bottom: 50,
+    duration: 2,
+};
 
 // Progress State
 const ProgressContext = React.createContext(null);
@@ -48,7 +56,8 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
                 ...state,
                 loading: true,
                 complete: false,
-                total: action.payload,
+                total: action.payload.length,
+                cmd: action.payload.cmd,
             };
         }
         case 'NEXT': {
@@ -81,11 +90,12 @@ function ProgressProvider(props) {
             const percentage = Math.floor(((current + 1) / total) * 100);
             console.log({ current, total, percentage });
             notification.open({
+                ...notificationProgressConfig,
                 key: 'ProgressNotificationKey',
                 message: (
                     <div>
                         <Paragraph>
-                            Uploading file {current + 1} of {total}
+                            {progressState.cmd}ing file {current + 1} of {total}
                         </Paragraph>
                     </div>
                 ),
@@ -107,6 +117,17 @@ function ProgressProvider(props) {
     React.useEffect(() => {
         if (progressState.complete) {
             notification.destroy();
+            notification.success({
+                ...notificationCompleteConfig,
+                message: (
+                    <div>
+                        <Paragraph>
+                            Successfully {progressState.cmd.toLowerCase()}ed {progressState.total}{' '}
+                            {progressState.total > 1 ? 'files' : 'file'}.
+                        </Paragraph>
+                    </div>
+                ),
+            });
         }
     }, [progressState.complete]);
 
