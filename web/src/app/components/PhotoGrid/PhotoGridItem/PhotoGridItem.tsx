@@ -9,6 +9,7 @@ import styles from './PhotoGridItem.module.css';
 // state
 import { handleDeletePhotos } from '../../../hooks/photos.hooks';
 import { getPhotoById } from '../../../services/photo.service';
+import { usePhotoContext } from '../../../contexts/ProgressContext';
 
 // Framer animations
 const variants = {
@@ -26,6 +27,9 @@ const variants = {
 const TIME_TO_DOWNLOAD = 300;
 
 function PhotoGridItem({ id, src }) {
+    const progressCtx = usePhotoContext();
+    console.log({ progressCtx });
+
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(false);
     const [deleting, setDeleting] = React.useState(false);
