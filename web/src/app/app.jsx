@@ -5,7 +5,7 @@ import styles from './app.module.css';
 
 // UI
 import Layout from './components/layout';
-import PrivateRoute from './components/PrivateRoute.tsx';
+import PrivateRoute from './components/privateRoute.tsx';
 import { useOverlay } from './contexts/OverlayContext';
 
 // Screens

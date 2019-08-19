@@ -2,14 +2,14 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown, Input } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
+import { usePhotoContext } from '../contexts/PhotoContext';
 
 // UI
 import styles from './header.module.css';
-import { usePhotoContext } from '../contexts/PhotoContext';
 
 const { Header } = Layout;
 
@@ -44,23 +44,6 @@ function PageHeader() {
     }, []);
 
     const { progressDispatch } = useProgressContext();
-    // If you want to see the progress bar go, uncomment this
-    // React.useEffect(() => {
-    //     let counter = 0;
-    //     progressDispatch({ type: 'TOTAL', payload: 10 });
-    //     const timer = setInterval(() => {
-    //         counter++;
-    //         if (counter > 10) {
-    //             progressDispatch({ type: 'END' });
-    //             return;
-    //         }
-    //         progressDispatch({ type: 'NEXT' });
-    //     }, 1000);
-
-    //     return () => {
-    //         clearInterval(timer);
-    //     };
-    // }, []);
 
     return (
         <Header className={styles.header}>
