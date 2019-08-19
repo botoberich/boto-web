@@ -2,8 +2,7 @@ import React from 'react';
 
 // UI
 import { notification, Progress, Typography } from 'antd';
-import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { NotificationPlacement } from 'antd/lib/notification';
+import { ConfigProps } from 'antd/lib/notification';
 
 const { Paragraph } = Typography;
 
@@ -29,13 +28,13 @@ type ProgressValue = {
 type ProgressContextValue = ProgressState & ProgressValue;
 
 // Sets global config for all notifications
-const notificationProgressConfig = {
+const notificationProgressConfig: ConfigProps = {
     placement: 'bottomRight',
     bottom: 50,
     duration: null,
 };
 
-const notificationCompleteConfig = {
+const notificationCompleteConfig: ConfigProps = {
     placement: 'bottomRight',
     bottom: 50,
     duration: 2,
@@ -97,7 +96,6 @@ function ProgressProvider(props) {
             const current = progressState.current;
             const total = progressState.total;
             const percentage = Math.floor(((current + 1) / total) * 100);
-            console.log({ current, total, percentage });
             notification.open({
                 ...notificationProgressConfig,
                 key: 'ProgressNotificationKey',
@@ -121,7 +119,7 @@ function ProgressProvider(props) {
                 ),
             });
         }
-    }, [progressState.current, progressState.total, progressState.loading]);
+    }, [progressState.total, progressState.loading, progressState]);
 
     React.useEffect(() => {
         if (progressState.complete) {
@@ -138,7 +136,7 @@ function ProgressProvider(props) {
                 ),
             });
         }
-    }, [progressState.complete]);
+    }, [progressState.cmd, progressState.complete, progressState.total]);
 
     React.useEffect(() => {
         window.onbeforeunload = () => {

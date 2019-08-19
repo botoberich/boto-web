@@ -1,59 +1,10 @@
-import React from 'react';
+// import React from 'react';
 import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
-import { getPhotoMetaData } from '../utils/metadata';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { usePhotoContext } from '../contexts/PhotoContext';
-import { setServers } from 'dns';
-import { PostPhotoResult } from '../interfaces/photos.interface';
-
-/** @todo use the one from interfaces/photos.interface.ts */
-export type Thumbnail = {
-    id: string;
-    src: string;
-};
-
-// export const useGetThumbnails = () => {
-//     const [thumbnails, setThumbnails] = React.useState<Thumbnail[]>([]);
-//     const [loading, setLoading] = React.useState(false);
-//     const [error, setError] = React.useState<Error | boolean>(null);
-
-//     React.useEffect(() => {
-//         async function run() {
-//             setLoading(true);
-//             const getRes = await getThumbnails();
-//             if (getRes.status === 'success') {
-//                 const $thumbnails = getRes.data.$thumbnails;
-//                 $thumbnails.subscribe({
-//                     next: res => {
-//                         setThumbnails(thumbnails => [
-//                             ...thumbnails,
-//                             {
-//                                 id: res.photoId,
-//                                 src: `data:image/png;base64,${res.b64}`,
-//                             },
-//                         ]);
-//                     },
-//                     error: err => {
-//                         console.log(`Error downloading thumbnail: ${err}`);
-//                         setLoading(false);
-//                         setError(err);
-//                     },
-//                     complete: () => {
-//                         setLoading(false);
-//                         console.log(`Thumbnails download completed.`);
-//                     },
-//                 });
-//             } else {
-//                 setError(true);
-//                 console.log(`Error downloading thumbnail: ${getRes.data}`);
-//             }
-//         }
-
-//         run();
-//     }, []);
-
-//     return { data: thumbnails, loading, error };
-// };
+import { PostPhotoResult, Thumbnail } from '../interfaces/photos.interface';
+// import { getPhotoMetaData } from '../utils/metadata';
+// import { usePhotoContext } from '../contexts/PhotoContext';
+// import { setServers } from 'dns';
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},
