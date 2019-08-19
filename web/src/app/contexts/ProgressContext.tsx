@@ -3,6 +3,7 @@ import React from 'react';
 // UI
 import { notification, Progress, Typography } from 'antd';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
+import { NotificationPlacement } from 'antd/lib/notification';
 
 const { Paragraph } = Typography;
 
@@ -12,7 +13,7 @@ type ProgressState = {
     current: number;
     loading: boolean;
     total: number;
-    cmd: 'Upload' | 'Delete' | 'Download' | 'Update';
+    cmd: 'Upload' | 'Delete' | 'Download' | 'Update' | 'None';
 };
 
 type ProgressAction = {
@@ -47,6 +48,7 @@ const initialProgress: ProgressState = {
     current: 0,
     loading: false,
     total: 1,
+    cmd: 'None',
 };
 function progressReducer(state: ProgressState, action: ProgressAction) {
     console.log('action', action);
@@ -80,6 +82,13 @@ function progressReducer(state: ProgressState, action: ProgressAction) {
     }
 }
 
+const cmdVerbageMap = {
+    Upload: ['Uploading', 'uploaded'],
+    Delete: ['Deleting', 'deleted'],
+    Download: ['Downloading', 'downloaded'],
+    Update: ['Updating', 'updated'],
+};
+
 function ProgressProvider(props) {
     const [progressState, progressDispatch] = React.useReducer(progressReducer, initialProgress);
 
@@ -95,7 +104,7 @@ function ProgressProvider(props) {
                 message: (
                     <div>
                         <Paragraph>
-                            {progressState.cmd}ing file {current + 1} of {total}
+                            {cmdVerbageMap[progressState.cmd][0]} file {current + 1} of {total}
                         </Paragraph>
                     </div>
                 ),
@@ -122,7 +131,7 @@ function ProgressProvider(props) {
                 message: (
                     <div>
                         <Paragraph>
-                            Successfully {progressState.cmd.toLowerCase()}ed {progressState.total}{' '}
+                            Successfully {cmdVerbageMap[progressState.cmd][1]} {progressState.total}{' '}
                             {progressState.total > 1 ? 'files' : 'file'}.
                         </Paragraph>
                     </div>

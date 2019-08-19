@@ -2,6 +2,9 @@ import React from 'react';
 import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 import { getPhotoMetaData } from '../utils/metadata';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
+import { usePhotoContext } from '../contexts/PhotoContext';
+import { setServers } from 'dns';
+import { PostPhotoResult } from '../interfaces/photos.interface';
 
 /** @todo use the one from interfaces/photos.interface.ts */
 export type Thumbnail = {
@@ -9,47 +12,76 @@ export type Thumbnail = {
     src: string;
 };
 
-export const useGetThumbnails = () => {
-    const [thumbnails, setThumbnails] = React.useState<Thumbnail[]>([]);
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState<Error | boolean>(null);
+// export const useGetThumbnails = () => {
+//     const [thumbnails, setThumbnails] = React.useState<Thumbnail[]>([]);
+//     const [loading, setLoading] = React.useState(false);
+//     const [error, setError] = React.useState<Error | boolean>(null);
 
-    React.useEffect(() => {
-        async function run() {
-            setLoading(true);
-            const getRes = await getThumbnails();
-            if (getRes.status === 'success') {
-                const $thumbnails = getRes.data.$thumbnails;
-                $thumbnails.subscribe({
-                    next: res => {
-                        setThumbnails(thumbnails => [
-                            ...thumbnails,
-                            {
-                                id: res.photoId,
-                                src: `data:image/png;base64,${res.b64}`,
-                            },
-                        ]);
-                    },
-                    error: err => {
-                        console.log(`Error downloading thumbnail: ${err}`);
-                        setLoading(false);
-                        setError(err);
-                    },
-                    complete: () => {
-                        setLoading(false);
-                        console.log(`Thumbnails download completed.`);
-                    },
-                });
-            } else {
-                setError(true);
-                console.log(`Error downloading thumbnail: ${getRes.data}`);
-            }
-        }
+//     React.useEffect(() => {
+//         async function run() {
+//             setLoading(true);
+//             const getRes = await getThumbnails();
+//             if (getRes.status === 'success') {
+//                 const $thumbnails = getRes.data.$thumbnails;
+//                 $thumbnails.subscribe({
+//                     next: res => {
+//                         setThumbnails(thumbnails => [
+//                             ...thumbnails,
+//                             {
+//                                 id: res.photoId,
+//                                 src: `data:image/png;base64,${res.b64}`,
+//                             },
+//                         ]);
+//                     },
+//                     error: err => {
+//                         console.log(`Error downloading thumbnail: ${err}`);
+//                         setLoading(false);
+//                         setError(err);
+//                     },
+//                     complete: () => {
+//                         setLoading(false);
+//                         console.log(`Thumbnails download completed.`);
+//                     },
+//                 });
+//             } else {
+//                 setError(true);
+//                 console.log(`Error downloading thumbnail: ${getRes.data}`);
+//             }
+//         }
 
-        run();
-    }, []);
+//         run();
+//     }, []);
 
-    return { data: thumbnails, loading, error };
+//     return { data: thumbnails, loading, error };
+// };
+
+export const handleFetchThumbnails = async ({
+    onNext = (thumbnail: Thumbnail) => {},
+    onComplete = () => {},
+    onError = err => {},
+    onStart = () => {},
+    onEnd = () => {},
+} = {}) => {
+    const thumbnailsRes = await getThumbnails();
+    if (thumbnailsRes.status === 'success') {
+        thumbnailsRes.data.$thumbnails.subscribe({
+            next: res => {
+                onNext(res);
+            },
+            error: err => {
+                onError(err);
+                onEnd();
+            },
+            complete: () => {
+                onComplete();
+                onEnd();
+            },
+        });
+    } else {
+        console.log('Error: ', thumbnailsRes.data);
+        onError(thumbnailsRes.data);
+        onEnd();
+    }
 };
 
 export const handleDeletePhotos = async (
@@ -58,12 +90,15 @@ export const handleDeletePhotos = async (
         onNext = (id: string) => {},
         onComplete = () => {},
         onError = err => {},
-        onStart = () => {},
+        onStart = (payload: ProgressStartingPayload) => {},
         onEnd = () => {},
     } = {}
 ) => {
-    console.log('DELETING PHOTO IDS:', ids);
-    onStart();
+    onStart({
+        length: ids.length,
+        cmd: 'Delete',
+    });
+
     const deleteRes = await deletePhotos(ids);
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
@@ -92,7 +127,7 @@ export const handleDeletePhotos = async (
 export const handleFileUpload = async (
     e,
     {
-        onNext = (id: string) => {},
+        onNext = (res: PostPhotoResult) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},
@@ -110,7 +145,7 @@ export const handleFileUpload = async (
         $postPhotos.subscribe({
             next: res => {
                 console.log('Uploaded photo id: ', res.photoId);
-                onNext(res.photoId);
+                onNext(res);
             },
             error: err => {
                 console.log('Upload error: ', err);
