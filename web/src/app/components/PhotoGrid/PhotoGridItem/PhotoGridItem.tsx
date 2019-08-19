@@ -9,6 +9,7 @@ import styles from './PhotoGridItem.module.css';
 // state
 import { handleDeletePhotos } from '../../../hooks/photos.hooks';
 import { getPhotoById } from '../../../services/photo.service';
+import { usePhotoContext } from '../../../contexts/PhotoContext';
 
 // Framer animations
 const variants = {
@@ -35,6 +36,8 @@ function PhotoGridItem({ id, src }) {
     const editButton = React.useRef(null);
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
+
+    const { selectedThumbnails, setSelectedThumbnails, loadingThumbnails } = usePhotoContext();
 
     const handlePhotoDownload = React.useCallback(
         async e => {
@@ -103,12 +106,22 @@ function PhotoGridItem({ id, src }) {
                 aria-checked={selected}
                 className={styles.triggerBox}
                 icon="check-circle"
-                onClick={() => setSelected(!selected)}
+                onClick={() => {
+                    setSelected(!selected);
+                    let selectIndex = selectedThumbnails.indexOf(id);
+                    if (selectIndex === -1) {
+                        setSelectedThumbnails([...selectedThumbnails, id]);
+                    } else {
+                        let copy = [...selectedThumbnails];
+                        copy.splice(selectIndex, 1);
+                        setSelectedThumbnails(copy);
+                    }
+                }}
                 ref={editButton}
                 role="checkbox"
                 shape="circle"
                 type="link"></Button>
-            <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
+            {/* <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
                 <motion.button
                     aria-label="Download Photo"
                     className={styles.btn}
@@ -123,7 +136,7 @@ function PhotoGridItem({ id, src }) {
                     whileHover={{ scale: 1.1 }}>
                     <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
                 </motion.button>
-            </motion.div>
+            </motion.div> */}
             <div
                 onClick={() => setOpen(true)}
                 className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
@@ -136,7 +149,7 @@ function PhotoGridItem({ id, src }) {
                 />
                 {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
             </div>
-            {deleting && (
+            {loadingThumbnails.indexOf(id) !== -1 && (
                 <div className={styles.inProgress}>
                     <Icon type="loading" spin />
                 </div>

@@ -4,11 +4,12 @@ import { Link, navigate } from 'gatsby';
 // State
 import { Button, Layout, Icon, Upload, Avatar, Menu, Dropdown, Input } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
-import { handleFileUpload } from '../hooks/photos.hooks';
+import { handleFileUpload, handleDeletePhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
 
 // UI
 import styles from './header.module.css';
+import { usePhotoContext } from '../contexts/PhotoContext';
 
 const { Header } = Layout;
 
@@ -17,6 +18,14 @@ function PageHeader() {
     const [signedIn, setSignedIn] = React.useState(false);
     const userData = getUser();
     const userName = userData.username !== undefined && userData.username.split('.')[0];
+    const {
+        selectedThumbnails,
+        setSelectedThumbnails,
+        thumbnails,
+        setThumbnails,
+        loadingThumbnails,
+        setloadingThumbnails,
+    } = usePhotoContext();
 
     React.useEffect(() => {
         async function signin() {
@@ -67,13 +76,26 @@ function PageHeader() {
                         <input
                             className={styles.uploadFile}
                             multiple
-                            onChange={e =>
+                            onChange={e => {
+                                let uploadedThumbnails = [];
                                 handleFileUpload(e, {
                                     onStart: payload => progressDispatch({ type: 'START', payload }),
-                                    onNext: () => progressDispatch({ type: 'NEXT' }),
-                                    onComplete: () => progressDispatch({ type: 'END' }),
-                                })
-                            }
+                                    onNext: res => {
+                                        uploadedThumbnails.push({
+                                            id: res.photoId,
+                                            src: `data:image/png;base64,${res.thumbnail}`,
+                                        });
+                                        progressDispatch({ type: 'NEXT' });
+                                    },
+                                    onComplete: () => {
+                                        /** only update after all uploads complete*/
+                                        setThumbnails(prev => {
+                                            return [...prev, ...uploadedThumbnails];
+                                        });
+                                        progressDispatch({ type: 'END' });
+                                    },
+                                });
+                            }}
                             type="file"
                         />
                         <i aria-label="Upload Icon" className="anticon anticon-upload">
@@ -90,6 +112,48 @@ function PageHeader() {
                         </i>
                         <span style={{ marginLeft: '8px' }}>Upload</span>
                     </label>
+
+                    <Button
+                        style={{ marginLeft: '5px' }}
+                        onClick={e => {
+                            let deletedIds = [];
+                            handleDeletePhotos([...selectedThumbnails], {
+                                onStart: payload => {
+                                    setloadingThumbnails(selectedThumbnails);
+                                    progressDispatch({ type: 'START', payload });
+                                },
+                                onNext: id => {
+                                    /** have to do this because thumbnails could get set after the next photo is deleted */
+                                    deletedIds.push(id);
+                                    let newList = thumbnails.filter(
+                                        thumbnail => deletedIds.indexOf(thumbnail.id) === -1
+                                    );
+                                    setThumbnails(newList);
+                                    progressDispatch({ type: 'NEXT' });
+                                },
+                                onComplete: () => {
+                                    progressDispatch({ type: 'END' });
+                                    setloadingThumbnails([]);
+                                    setSelectedThumbnails([]);
+                                },
+                                onError: () => {
+                                    setloadingThumbnails([]);
+                                    setSelectedThumbnails([]);
+                                },
+                            });
+                        }}>
+                        <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                        Delete
+                    </Button>
+
+                    <Button
+                        style={{ marginLeft: '5px' }}
+                        onClick={e => {
+                            console.log('Downloading:', selectedThumbnails);
+                        }}>
+                        <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
+                        Download
+                    </Button>
                 </div>
                 <div className={styles.navItem}>
                     <Dropdown
