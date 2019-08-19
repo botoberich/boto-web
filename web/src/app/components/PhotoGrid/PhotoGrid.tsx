@@ -2,17 +2,18 @@ import React from 'react';
 
 // UI
 import { Skeleton, notification, Typography } from 'antd';
+import { ArgsProps } from 'antd/lib/notification';
 import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
 // Types
-import { useGetThumbnails, handleFetchThumbnails } from '../../hooks/photos.hooks';
+import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 
 function PhotoGrid() {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const { Paragraph } = Typography;
-    const notificationConfig = msg => ({
+    const notificationConfig = (msg: string): ArgsProps => ({
         placement: 'bottomRight',
         bottom: 50,
         duration: 2,
@@ -26,6 +27,10 @@ function PhotoGrid() {
     React.useEffect(() => {
         handleFetchThumbnails({
             onNext: res => {
+                if (res == null || res == undefined) {
+                    return;
+                }
+
                 setThumbnails(thumbnails => [
                     ...thumbnails,
                     {
@@ -47,9 +52,6 @@ function PhotoGrid() {
         <div className={styles.gridContainer}>
             <div className={styles.grid}>
                 {thumbnails.map(({ src, id }) => {
-                    if (!src && loading === false) {
-                        return null;
-                    }
                     if (!src) {
                         return <Skeleton key={id} active />;
                     }

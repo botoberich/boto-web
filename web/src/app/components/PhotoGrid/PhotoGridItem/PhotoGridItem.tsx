@@ -3,35 +3,17 @@ import React from 'react';
 // UI
 import Lightbox from 'react-image-lightbox';
 import { Icon, Button } from 'antd';
-import { motion } from 'framer-motion';
 import styles from './PhotoGridItem.module.css';
 
 // state
-import { handleDeletePhotos } from '../../../hooks/photos.hooks';
 import { getPhotoById } from '../../../services/photo.service';
 import { usePhotoContext } from '../../../contexts/PhotoContext';
-
-// Framer animations
-const variants = {
-    open: {
-        y: 0,
-        opacity: 1,
-    },
-    closed: {
-        y: 30,
-        opacity: 0,
-        transition: { staggerChildren: 0.05, y: { stiffness: 500 } },
-    },
-};
 
 const TIME_TO_DOWNLOAD = 1000;
 
 function PhotoGridItem({ id, src }) {
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(false);
-    const [deleting, setDeleting] = React.useState(false);
-    const [deleted, setDeleted] = React.useState(false);
-    const [deleteError, setDeleteError] = React.useState(null);
     const [photoDownloading, setPhotoDownloading] = React.useState(false);
     const editButton = React.useRef(null);
     const originalSrc = React.useRef('');
@@ -60,26 +42,6 @@ function PhotoGridItem({ id, src }) {
         [id, photoDownloading]
     );
 
-    const handleDownload = React.useCallback(async () => {
-        if (deleting) return;
-        if (photoDownloading) return;
-        const downloadableImg = document.createElement('a');
-        downloadableImg.download = `${id}.jpg`;
-        downloadableImg.href = originalSrc.current;
-        document.body.appendChild(downloadableImg);
-        downloadableImg.click();
-        document.body.removeChild(downloadableImg);
-    }, [deleting, id, photoDownloading]);
-
-    const handleDelete = React.useCallback(() => {
-        handleDeletePhotos([id], {
-            onComplete: () => setDeleted(true),
-            onError: err => setDeleteError(err),
-            onEnd: () => setDeleting(false),
-            onStart: () => setDeleting(true),
-        });
-    }, [id]);
-
     const handleInitiateDownload = React.useCallback(
         e => {
             timeoutId.current = setTimeout(() => {
@@ -89,16 +51,12 @@ function PhotoGridItem({ id, src }) {
         [timeoutId.current]
     );
 
-    if (deleted) return null;
-
     return (
         <div
             className={`${styles.editableContainer} 
-                ${selected ? styles.editing : ''} 
-                ${deleting ? styles.deleting : ''}`}
+                ${selected ? styles.editing : ''}`}
             key={id}
             onClick={handlePhotoDownload}
-            // onMouseOver={handleInitiateDownload}
             onMouseLeave={() => clearTimeout(timeoutId.current)}
             onTouchCancel={() => clearTimeout(timeoutId.current)}
             onTouchStart={handleInitiateDownload}>
@@ -121,22 +79,6 @@ function PhotoGridItem({ id, src }) {
                 role="checkbox"
                 shape="circle"
                 type="link"></Button>
-            {/* <motion.div animate={selected ? 'open' : 'closed'} className={styles.editBox} variants={variants}>
-                <motion.button
-                    aria-label="Download Photo"
-                    className={styles.btn}
-                    onClick={handleDownload}
-                    whileHover={{ scale: 1.1 }}>
-                    <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                </motion.button>
-                <motion.button
-                    aria-label="Delete Photo"
-                    className={styles.btn}
-                    onClick={handleDelete}
-                    whileHover={{ scale: 1.1 }}>
-                    <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                </motion.button>
-            </motion.div> */}
             <div
                 onClick={() => setOpen(true)}
                 className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
