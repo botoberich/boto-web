@@ -5,9 +5,9 @@ import Lightbox from 'react-image-lightbox';
 import { Icon, Button } from 'antd';
 import styles from './PhotoGridItem.module.css';
 
-// state
-import { getPhotoById } from '../../../services/photo.service';
-import { usePhotoContext } from '../../../contexts/PhotoContext';
+// State
+import { getPhotoById } from '../../services/photo.service';
+import { usePhotoContext } from '../../contexts/PhotoContext';
 
 const TIME_TO_DOWNLOAD = 1000;
 
