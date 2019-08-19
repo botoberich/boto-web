@@ -7,7 +7,7 @@ import { checkIsSignedIn } from '../services/auth.service';
 
 // UI
 import { Icon, Layout, Menu, Button } from 'antd';
-import Logo from './Logo';
+import Logo from './logo';
 import styles from './sideNav.module.css';
 
 const { Sider } = Layout;
