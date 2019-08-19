@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Avatar, Menu, Dropdown } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
@@ -95,48 +95,51 @@ function PageHeader() {
                         </i>
                         <span style={{ marginLeft: '8px' }}>Upload</span>
                     </label>
+                    <Badge count={selectedThumbnails.length}>
+                        <Button
+                            style={{ marginLeft: '5px' }}
+                            onClick={e => {
+                                let deletedIds = [];
+                                handleDeletePhotos([...selectedThumbnails], {
+                                    onStart: payload => {
+                                        setloadingThumbnails(selectedThumbnails);
+                                        progressDispatch({ type: 'START', payload });
+                                    },
+                                    onNext: id => {
+                                        /** have to do this because thumbnails could get set after the next photo is deleted */
+                                        deletedIds.push(id);
+                                        let newList = thumbnails.filter(
+                                            thumbnail => deletedIds.indexOf(thumbnail.id) === -1
+                                        );
+                                        setThumbnails(newList);
+                                        progressDispatch({ type: 'NEXT' });
+                                    },
+                                    onComplete: () => {
+                                        progressDispatch({ type: 'END' });
+                                        setloadingThumbnails([]);
+                                        setSelectedThumbnails([]);
+                                    },
+                                    onError: () => {
+                                        setloadingThumbnails([]);
+                                        setSelectedThumbnails([]);
+                                    },
+                                });
+                            }}>
+                            <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                            Delete
+                        </Button>
+                    </Badge>
 
-                    <Button
-                        style={{ marginLeft: '5px' }}
-                        onClick={e => {
-                            let deletedIds = [];
-                            handleDeletePhotos([...selectedThumbnails], {
-                                onStart: payload => {
-                                    setloadingThumbnails(selectedThumbnails);
-                                    progressDispatch({ type: 'START', payload });
-                                },
-                                onNext: id => {
-                                    /** have to do this because thumbnails could get set after the next photo is deleted */
-                                    deletedIds.push(id);
-                                    let newList = thumbnails.filter(
-                                        thumbnail => deletedIds.indexOf(thumbnail.id) === -1
-                                    );
-                                    setThumbnails(newList);
-                                    progressDispatch({ type: 'NEXT' });
-                                },
-                                onComplete: () => {
-                                    progressDispatch({ type: 'END' });
-                                    setloadingThumbnails([]);
-                                    setSelectedThumbnails([]);
-                                },
-                                onError: () => {
-                                    setloadingThumbnails([]);
-                                    setSelectedThumbnails([]);
-                                },
-                            });
-                        }}>
-                        <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                        Delete
-                    </Button>
-
-                    <Button
-                        style={{ marginLeft: '5px' }}
-                        onClick={e => {
-                            console.log('Downloading:', selectedThumbnails);
-                        }}>
-                        <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                        Download
-                    </Button>
+                    <Badge style={{ backgroundColor: '#52c41a' }} count={selectedThumbnails.length}>
+                        <Button
+                            style={{ marginLeft: '5px' }}
+                            onClick={e => {
+                                console.log('Downloading:', selectedThumbnails);
+                            }}>
+                            <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
+                            Download
+                        </Button>
+                    </Badge>
                 </div>
                 <div className={styles.navItem}>
                     <Dropdown
