@@ -46,7 +46,7 @@ function PhotoGrid() {
                 notification.success(notificationConfig(`Successfully loaded all photos.`));
             },
         });
-    }, []);
+    }, [setThumbnails]);
 
     return (
         <div className={styles.gridContainer}>

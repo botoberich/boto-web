@@ -48,7 +48,7 @@ function PhotoGridItem({ id, src }) {
                 handlePhotoDownload(e);
             }, TIME_TO_DOWNLOAD);
         },
-        [timeoutId.current]
+        [handlePhotoDownload]
     );
 
     return (

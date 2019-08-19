@@ -119,7 +119,7 @@ function ProgressProvider(props) {
                 ),
             });
         }
-    }, [progressState.current, progressState.total, progressState.loading]);
+    }, [progressState.total, progressState.loading, progressState]);
 
     React.useEffect(() => {
         if (progressState.complete) {
@@ -136,7 +136,7 @@ function ProgressProvider(props) {
                 ),
             });
         }
-    }, [progressState.complete]);
+    }, [progressState.cmd, progressState.complete, progressState.total]);
 
     React.useEffect(() => {
         window.onbeforeunload = () => {
