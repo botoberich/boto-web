@@ -7,6 +7,8 @@ interface PhotoContext {
     setThumbnails: React.Dispatch<React.SetStateAction<any[]>>;
     loadingThumbnails: any[];
     setloadingThumbnails: React.Dispatch<React.SetStateAction<any[]>>;
+    loadingLightBox: any[];
+    setLoadingLightBox: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const PhotoContext = React.createContext(null);
@@ -23,6 +25,7 @@ function PhotoProvider(props) {
     const [selectedThumbnails, setSelectedThumbnails] = React.useState([]);
     const [thumbnails, setThumbnails] = React.useState([]);
     const [loadingThumbnails, setloadingThumbnails] = React.useState([]);
+    const [loadingLightBox, setLoadingLightBox] = React.useState(false);
 
     const value = {
         selectedThumbnails,
@@ -31,6 +34,8 @@ function PhotoProvider(props) {
         setThumbnails,
         loadingThumbnails,
         setloadingThumbnails,
+        loadingLightBox,
+        setLoadingLightBox,
     };
     return <PhotoContext.Provider value={value} {...props} />;
 }

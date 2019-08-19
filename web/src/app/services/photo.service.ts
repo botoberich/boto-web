@@ -37,7 +37,7 @@ const _combineChunks = async chunkGroup => {
 
 /** @returns a b64 string representing a photo smaller in size than the actual photo */
 const _generateThumbnail = async (file: File): Promise<string> => {
-    const quality = 0.4;
+    const quality = 0.6;
     return new Promise((resolve, reject) => {
         new Compressor(file, {
             quality,

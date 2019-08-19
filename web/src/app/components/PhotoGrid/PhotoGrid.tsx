@@ -11,7 +11,7 @@ import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 
 function PhotoGrid() {
-    const { thumbnails, setThumbnails } = usePhotoContext();
+    const { thumbnails, setThumbnails, loadingLightBox } = usePhotoContext();
     const { Paragraph } = Typography;
     const notificationConfig = (msg: string): ArgsProps => ({
         placement: 'bottomRight',
