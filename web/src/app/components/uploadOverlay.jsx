@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { motion } from 'framer-motion';
 import { Upload, Icon } from 'antd';
 import { OVERLAY_ROOT } from '../app';
-import styles from './UploadOverlay.module.css';
+import styles from './uploadOverlay.module.css';
 
 // State
 import { getExif } from '../utils/metadata.ts';

@@ -4,8 +4,8 @@ import loadable from '@loadable/component';
 import styles from './app.module.css';
 
 // UI
-import Layout from './components/Layout';
-import PrivateRoute from './components/privateRoute';
+import Layout from './components/layout';
+import PrivateRoute from './components/PrivateRoute.tsx';
 import { useOverlay } from './contexts/OverlayContext';
 
 // Screens
