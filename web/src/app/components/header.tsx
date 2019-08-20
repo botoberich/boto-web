@@ -4,7 +4,7 @@ import { Link, navigate } from 'gatsby';
 // State
 import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
-import { handleFileUpload, handleDeletePhotos } from '../hooks/photos.hooks';
+import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
 import { usePhotoContext } from '../contexts/PhotoContext';
 
@@ -124,6 +124,7 @@ function PageHeader() {
                     <Button
                         onClick={e => {
                             console.log('Downloading:', selectedThumbnails);
+                            handleDownloadPhotos(selectedThumbnails);
                         }}>
                         <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                         <span className={styles.hideMobile}>Download</span>

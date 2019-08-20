@@ -27,6 +27,8 @@ function PhotoProvider(props) {
     const [loadingThumbnails, setloadingThumbnails] = React.useState([]);
     const [loadingLightBox, setLoadingLightBox] = React.useState(false);
 
+    console.log({ selectedThumbnails, thumbnails });
+
     const value = {
         selectedThumbnails,
         setSelectedThumbnails,
