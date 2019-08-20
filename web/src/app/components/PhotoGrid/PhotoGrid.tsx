@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { format, isToday, compareDesc } from 'date-fns';
 
 // UI
 import { Skeleton, notification, Typography } from 'antd';
@@ -53,23 +53,29 @@ function PhotoGrid() {
 
     return (
         <div className={styles.gridContainer}>
-            {Object.keys(thumbnails).map(date => {
-                return (
-                    <div key={date}>
-                        <Title level={3}>{format(date, 'MM/DD/YYYY')}</Title>
-                        <div className={styles.grid}>
-                            {thumbnails[date].map(({ b64, photoId }) => {
-                                if (!b64) {
-                                    return <Skeleton key={photoId} active />;
-                                }
-                                return (
-                                    <PhotoGridItem id={photoId} key={photoId} src={`data:image/png;base64,${b64}`} />
-                                );
-                            })}
+            {Object.keys(thumbnails)
+                .sort(compareDesc)
+                .map(date => {
+                    return (
+                        <div key={date}>
+                            <Title level={3}>{isToday(date) ? 'Today' : format(date, 'D MMM YYYY')}</Title>
+                            <div className={styles.grid}>
+                                {thumbnails[date].map(({ b64, photoId }) => {
+                                    if (!b64) {
+                                        return <Skeleton key={photoId} active />;
+                                    }
+                                    return (
+                                        <PhotoGridItem
+                                            id={photoId}
+                                            key={photoId}
+                                            src={`data:image/png;base64,${b64}`}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
         </div>
     );
 }
