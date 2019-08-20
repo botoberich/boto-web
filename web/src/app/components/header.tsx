@@ -18,14 +18,7 @@ function PageHeader() {
     const [signedIn, setSignedIn] = React.useState(false);
     const userData = getUser();
     const userName = userData.username !== undefined && userData.username.split('.')[0];
-    const {
-        selectedThumbnails,
-        setSelectedThumbnails,
-        thumbnails,
-        setThumbnails,
-        loadingThumbnails,
-        setloadingThumbnails,
-    } = usePhotoContext();
+    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails } = usePhotoContext();
 
     React.useEffect(() => {
         async function signin() {
