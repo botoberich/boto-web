@@ -1,4 +1,5 @@
 import React from 'react';
+import { format } from 'date-fns';
 
 // UI
 import { Skeleton, notification, Typography } from 'antd';
@@ -10,6 +11,8 @@ import styles from './PhotoGrid.module.css';
 import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 import { Thumbnail } from '../../interfaces/photos.interface';
+
+const { Title } = Typography;
 
 function PhotoGrid() {
     const { thumbnails, setThumbnails, loadingLightBox } = usePhotoContext();
@@ -51,10 +54,11 @@ function PhotoGrid() {
 
     return (
         <div className={styles.gridContainer}>
-            {Object.keys(thumbnails).map((date, i) => {
+            {Object.keys(thumbnails).map(date => {
+                console.log({ date });
                 return (
-                    <div key={i}>
-                        <h3>{date}</h3>
+                    <div key={date}>
+                        <Title level={3}>{format(date, 'MM/DD/YYYY')}</Title>
                         <div className={styles.grid}>
                             {thumbnails[date].map(({ b64, photoId }) => {
                                 if (!b64) {

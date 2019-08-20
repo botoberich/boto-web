@@ -21,4 +21,8 @@
     .content {
         margin: 16px 32px;
     }
+
+    .children {
+        padding: 0;
+    }
 }
