@@ -9,32 +9,28 @@ import styles from './PhotoGridItem.module.css';
 import { getPhotoById } from '../../services/photo.service';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 
-const TIME_TO_DOWNLOAD = 1000;
-
 function PhotoGridItem({ id, src }) {
-    const [open, setOpen] = React.useState(false);
-    const [selected, setSelected] = React.useState(false);
+    const [openLightbox, setOpenLightbox] = React.useState(false);
+    const [photoSelected, setPhotoSelected] = React.useState(false);
     const [photoDownloading, setPhotoDownloading] = React.useState(false);
     const editButton = React.useRef(null);
     const originalSrc = React.useRef('');
-    const timeoutId = React.useRef(null);
 
     const {
         selectedThumbnails,
         setSelectedThumbnails,
         loadingThumbnails,
-        loadingLightBox,
         setLoadingLightBox,
     } = usePhotoContext();
 
     const handlePhotoDownload = React.useCallback(
         async e => {
             e.persist();
-            // We don't want to download the photo if the user is only selecting the photo
+            // Prevent photo from being downloaded on selection
             if (editButton.current !== null && editButton.current.buttonNode === e.target) {
                 return;
             }
-            // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
+            // Only fetch the original photo once
             if (originalSrc.current === '' && photoDownloading === false) {
                 setPhotoDownloading(true);
                 setLoadingLightBox(true);
@@ -47,33 +43,21 @@ function PhotoGridItem({ id, src }) {
                 setPhotoDownloading(false);
             }
         },
-        [id, photoDownloading]
-    );
-
-    const handleInitiateDownload = React.useCallback(
-        e => {
-            timeoutId.current = setTimeout(() => {
-                handlePhotoDownload(e);
-            }, TIME_TO_DOWNLOAD);
-        },
-        [handlePhotoDownload]
+        [id, photoDownloading, setLoadingLightBox]
     );
 
     return (
         <div
             className={`${styles.editableContainer} 
-                ${selected ? styles.editing : ''}`}
+                ${photoSelected ? styles.editing : ''}`}
             key={id}
-            onClick={handlePhotoDownload}
-            onMouseLeave={() => clearTimeout(timeoutId.current)}
-            onTouchCancel={() => clearTimeout(timeoutId.current)}
-            onTouchStart={handleInitiateDownload}>
+            onClick={handlePhotoDownload}>
             <Button
-                aria-checked={selected}
+                aria-checked={photoSelected}
                 className={styles.triggerBox}
                 icon="check-circle"
                 onClick={() => {
-                    setSelected(!selected);
+                    setPhotoSelected(!photoSelected);
                     let selectIndex = selectedThumbnails.indexOf(id);
                     if (selectIndex === -1) {
                         setSelectedThumbnails([...selectedThumbnails, id]);
@@ -88,8 +72,8 @@ function PhotoGridItem({ id, src }) {
                 shape="circle"
                 type="link"></Button>
             <div
-                onClick={() => setOpen(true)}
-                className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
+                onClick={() => setOpenLightbox(true)}
+                className={`${photoSelected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
                 <div
                     aria-label={`PhotoId: ${id}`}
                     className={styles.img}
@@ -98,14 +82,8 @@ function PhotoGridItem({ id, src }) {
                     }}
                 />
 
-                {open && (
-                    <Lightbox
-                        onImageLoad={(imageSrc, srcType, image) => {
-                            console.log({ imageSrc, srcType, image });
-                        }}
-                        mainSrc={originalSrc.current}
-                        onCloseRequest={() => setOpen(false)}
-                    />
+                {openLightbox && (
+                    <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpenLightbox(false)} />
                 )}
             </div>
             {loadingThumbnails.indexOf(id) !== -1 && (

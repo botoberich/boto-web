@@ -69,7 +69,7 @@
 
 .triggerBox,
 .triggerBox:focus,
-.triggeBox:active {
+.triggerBox:active {
     color: #fff;
     background: none;
     border: none;
@@ -78,7 +78,7 @@
     height: 50px;
     opacity: 0;
     outline: none;
-    padding-left: 16px;
+    padding-left: 8px;
     position: absolute;
     text-align: left;
     width: 100px;

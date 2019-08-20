@@ -14,7 +14,7 @@ interface PhotoContext {
 const PhotoContext = React.createContext(null);
 
 function usePhotoContext(): PhotoContext {
-    const context = React.useContext(PhotoContext);
+    const context: PhotoContext = React.useContext(PhotoContext);
     if (!context) {
         throw new Error(`usePhoto must be used within a PhotoProvider`);
     }
