@@ -55,7 +55,6 @@ function PhotoGrid() {
     return (
         <div className={styles.gridContainer}>
             {Object.keys(thumbnails).map(date => {
-                console.log({ date });
                 return (
                     <div key={date}>
                         <Title level={3}>{format(date, 'MM/DD/YYYY')}</Title>
