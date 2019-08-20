@@ -82,7 +82,7 @@ function PageHeader() {
                             type="file"
                         />
                         <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
-                        <span className={`${styles.ml8} ${styles.desktopOnly}`}>Upload</span>
+                        <span className={`${styles.ml8} ${styles.hideMobile}`}>Upload</span>
                     </label>
                 </div>
                 <div className={styles.navItem}>
@@ -117,7 +117,7 @@ function PageHeader() {
                             });
                         }}>
                         <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                        <span className={styles.desktopOnly}>Delete</span>
+                        <span className={styles.hideMobile}>Delete</span>
                     </Button>
                 </div>
                 <div className={styles.navItem}>
@@ -126,10 +126,10 @@ function PageHeader() {
                             console.log('Downloading:', selectedThumbnails);
                         }}>
                         <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                        <span className={styles.desktopOnly}>Download</span>
+                        <span className={styles.hideMobile}>Download</span>
                     </Button>
                 </div>
-                <div className={`${styles.desktopOnly} ${styles.navItem}`}>
+                <div className={styles.navItem}>
                     <Dropdown
                         overlay={
                             <Menu>
@@ -140,7 +140,7 @@ function PageHeader() {
                         }>
                         <div>
                             <Avatar className={styles.avatar} icon="user" />
-                            <span className={styles.userName}>{userName}</span>
+                            <span className={`${styles.hideMobile} ${styles.userName}`}>{userName}</span>
                         </div>
                     </Dropdown>
                 </div>

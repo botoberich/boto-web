@@ -79,9 +79,9 @@
     border-color: #40a9ff;
 }
 
-@media (max-width: 565px) {
-    .desktopOnly,
-    .navItem .desktopOnly {
+@media (max-width: 767px) {
+    .hideMobile,
+    .navItem .hideMobile {
         display: none;
     }
 }
