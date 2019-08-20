@@ -17,6 +17,7 @@ class Photo extends Model {
         trashed: Boolean,
         lat: Number,
         lng: Number,
+        exif: String,
     };
 }
 

@@ -19,13 +19,7 @@ function PhotoGridItem({ id, src }) {
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
 
-    const {
-        selectedThumbnails,
-        setSelectedThumbnails,
-        loadingThumbnails,
-        loadingLightBox,
-        setLoadingLightBox,
-    } = usePhotoContext();
+    const { selectedThumbnails, setSelectedThumbnails, loadingThumbnails } = usePhotoContext();
 
     const handlePhotoDownload = React.useCallback(
         async e => {
@@ -37,13 +31,11 @@ function PhotoGridItem({ id, src }) {
             // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
             if (originalSrc.current === '' && photoDownloading === false) {
                 setPhotoDownloading(true);
-                setLoadingLightBox(true);
                 const photo = await getPhotoById(id);
                 if (photo.status === 'success') {
                     // eslint-disable-next-line
                     originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
                 }
-                setLoadingLightBox(false);
                 setPhotoDownloading(false);
             }
         },
@@ -97,16 +89,7 @@ function PhotoGridItem({ id, src }) {
                         backgroundImage: `url("${src}")`,
                     }}
                 />
-
-                {open && (
-                    <Lightbox
-                        onImageLoad={(imageSrc, srcType, image) => {
-                            console.log({ imageSrc, srcType, image });
-                        }}
-                        mainSrc={originalSrc.current}
-                        onCloseRequest={() => setOpen(false)}
-                    />
-                )}
+                {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
             </div>
             {loadingThumbnails.indexOf(id) !== -1 && (
                 <div className={styles.inProgress}>

@@ -14,9 +14,15 @@
 
 .headerTitle {
     color: #5f6368;
-    font-size: 24px;
+    font-size: 20px;
     text-rendering: optimizeLegibility;
     margin-right: 16px;
+}
+
+@media (min-width: 576px) {
+    .headerTitle {
+        font-size: 24px;
+    }
 }
 
 .indicator {
@@ -31,7 +37,11 @@
 }
 
 .navItem {
-    margin-left: 16px;
+    margin-left: 8px;
+}
+
+.ml8 {
+    margin-left: 8px;
 }
 
 .menu {
@@ -69,8 +79,9 @@
     border-color: #40a9ff;
 }
 
-@media (max-width: 568px) {
-    .desktopOnly {
+@media (max-width: 625px) {
+    .hideMobile,
+    .navItem .hideMobile {
         display: none;
     }
 }
