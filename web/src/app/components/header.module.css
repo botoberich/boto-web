@@ -79,7 +79,7 @@
     border-color: #40a9ff;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 625px) {
     .hideMobile,
     .navItem .hideMobile {
         display: none;
