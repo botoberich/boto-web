@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns';
 
 // UI
 import { Skeleton, notification, Typography } from 'antd';
@@ -57,7 +57,7 @@ function PhotoGrid() {
             {Object.keys(thumbnails).map(date => {
                 return (
                     <div key={date}>
-                        <Title level={3}>{format(date, 'D MMM YYYY')}</Title>
+                        <Title level={3}>{isToday(date) ? 'Today' : format(date, 'D MMM YYYY')}</Title>
                         <div className={styles.grid}>
                             {thumbnails[date].map(({ b64, photoId }) => {
                                 if (!b64) {
