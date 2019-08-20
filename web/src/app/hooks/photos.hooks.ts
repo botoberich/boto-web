@@ -1,6 +1,7 @@
 import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
 import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
+import uuid from 'uuid/v4';
 
 type Photo = {
     src: string;
@@ -15,7 +16,7 @@ export const handleDownloadPhotos = async (ids: string[]) => {
             .map(res => {
                 if (res.status === 'success') {
                     console.log(res.data);
-                    return { src: `data:image/png;base64,${res.data.b64}`, title: res.data.metaData.title };
+                    return { src: `${res.data.b64}`, title: res.data.metaData.title };
                 }
                 return null;
             })
@@ -32,29 +33,42 @@ function triggerDownload(photos: Photo[]) {
     // If it's a single photo, trigger download without zipping file
     if (photos.length === 1 && photos[0].src !== '') {
         const photo = photos[0];
-        const downloadableImg = document.createElement('a');
-        const splitTitle = photo.title.split('.');
-        const title = splitTitle.slice(0, splitTitle.length - 1).join('');
-        downloadableImg.download = `${title}.png`;
-        downloadableImg.href = photo.src;
-        document.body.appendChild(downloadableImg);
-        downloadableImg.click();
-        document.body.removeChild(downloadableImg);
+        const title = removeFileExtension(photo.title);
+        generateDownloadable(`data:image/png;base64,${photo.src}`, `${title}.png`);
     } else {
-        console.log('Multi zip folder');
+        import('jszip').then(({ default: JSZip }) => {
+            console.log({ JSZip });
+            const zip = new JSZip();
+            photos.forEach(photo => {
+                const title = removeFileExtension(photo.title);
+                zip.file(`${title}.png`, photo.src, { base64: true });
+            });
+            const zipFileName = `boto-${uuid().slice(0, 6)}.zip`;
+            // Generate the zip file asynchronously
+            zip.generateAsync({ type: 'blob' }).then(function(content) {
+                // Force down of the Zip file
+                generateDownloadable(content, zipFileName);
+            });
+            // const folder = zip.folder(folderName);
+            // console.log({ folder });
+            // generateDownloadable(folder, folderName);
+        });
     }
 }
 
-// const handleDownload = React.useCallback(async () => {
-//     if (deleting) return;
-//     if (photoDownloading) return;
-//     const downloadableImg = document.createElement('a');
-//     downloadableImg.download = `${id}.jpg`;
-//     downloadableImg.href = originalSrc.current;
-//     document.body.appendChild(downloadableImg);
-//     downloadableImg.click();
-//     document.body.removeChild(downloadableImg);
-// }, [deleting, id, photoDownloading]);
+function removeFileExtension(title) {
+    const splitTitle = title.split('.');
+    return splitTitle.slice(0, splitTitle.length - 1).join('');
+}
+
+function generateDownloadable(source, name) {
+    const downloadableContent = document.createElement('a');
+    downloadableContent.download = name;
+    downloadableContent.href = source;
+    document.body.appendChild(downloadableContent);
+    downloadableContent.click();
+    document.body.removeChild(downloadableContent);
+}
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},

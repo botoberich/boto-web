@@ -57,7 +57,7 @@ function PhotoGrid() {
             {Object.keys(thumbnails).map(date => {
                 return (
                     <div key={date}>
-                        <Title level={3}>{format(date, 'MM/DD/YYYY')}</Title>
+                        <Title level={3}>{format(date, 'D MMM YYYY')}</Title>
                         <div className={styles.grid}>
                             {thumbnails[date].map(({ b64, photoId }) => {
                                 if (!b64) {
