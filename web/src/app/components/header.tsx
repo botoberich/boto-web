@@ -53,7 +53,7 @@ function PageHeader() {
                     <Icon type="loading" />
                 </div>
             )}
-            <nav className={`${styles.desktopOnly} ${styles.nav}`}>
+            <nav className={styles.nav}>
                 <div className={styles.navItem}>
                     <Badge count={selectedThumbnails.length}></Badge>
                 </div>
@@ -63,12 +63,11 @@ function PageHeader() {
                             className={styles.uploadFile}
                             multiple
                             onChange={e => {
-                                let uploadedThumbnails = [];
                                 handleFileUpload(e, {
                                     onStart: payload => progressDispatch({ type: 'START', payload }),
                                     onNext: res => {
                                         setThumbnails(thumbnails => {
-                                            let dateString = new Date(parseInt(res.metaData.createdAt)).toDateString();
+                                            let dateString = new Date(res.metaData.createdAt).toDateString();
                                             let copy = { ...thumbnails };
                                             copy[dateString] = copy[dateString] ? [...copy[dateString], res] : [res];
                                             return copy;
@@ -83,12 +82,12 @@ function PageHeader() {
                             type="file"
                         />
                         <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
-                        <span style={{ marginLeft: '8px' }}>Upload</span>
+                        <span className={`${styles.ml8} ${styles.desktopOnly}`}>Upload</span>
                     </label>
+                </div>
+                <div className={styles.navItem}>
                     <Button
-                        style={{ marginLeft: '5px' }}
-                        onClick={e => {
-                            let deletedIds = [];
+                        onClick={() => {
                             handleDeletePhotos([...selectedThumbnails], {
                                 onStart: payload => {
                                     setloadingThumbnails(selectedThumbnails);
@@ -96,7 +95,7 @@ function PageHeader() {
                                 },
                                 onNext: metaData => {
                                     setThumbnails(thumbnails => {
-                                        let dateString = new Date(parseInt(metaData.createdAt)).toDateString();
+                                        let dateString = new Date(metaData.createdAt).toDateString();
                                         let newThumbnailsList = thumbnails[dateString].filter(
                                             t => t.photoId !== metaData._id
                                         );
@@ -118,19 +117,19 @@ function PageHeader() {
                             });
                         }}>
                         <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                        Delete
+                        <span className={styles.desktopOnly}>Delete</span>
                     </Button>
-
+                </div>
+                <div className={styles.navItem}>
                     <Button
-                        style={{ marginLeft: '5px' }}
                         onClick={e => {
                             console.log('Downloading:', selectedThumbnails);
                         }}>
                         <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                        Download
+                        <span className={styles.desktopOnly}>Download</span>
                     </Button>
                 </div>
-                <div className={styles.navItem}>
+                <div className={`${styles.desktopOnly} ${styles.navItem}`}>
                     <Dropdown
                         overlay={
                             <Menu>
