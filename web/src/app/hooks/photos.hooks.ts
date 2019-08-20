@@ -1,8 +1,60 @@
-import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
+import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
 import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
 
-export const handleDownloadPhotos = async () => {};
+type Photo = {
+    src: string;
+    title: string;
+};
+
+export const handleDownloadPhotos = async (ids: string[]) => {
+    if (ids !== undefined && ids.length <= 0) return;
+    try {
+        const photoResponse = await Promise.all(ids.map(id => getPhotoById(id)));
+        const files = photoResponse
+            .map(res => {
+                if (res.status === 'success') {
+                    console.log(res.data);
+                    return { src: `data:image/png;base64,${res.data.b64}`, title: res.data.metaData.title };
+                }
+                return null;
+            })
+            .filter(src => src !== null);
+        triggerDownload(files);
+    } catch (e) {
+        console.error('Error downloading photos', e);
+    }
+};
+
+function triggerDownload(photos: Photo[]) {
+    if (photos === undefined) return;
+
+    // If it's a single photo, trigger download without zipping file
+    if (photos.length === 1 && photos[0].src !== '') {
+        const photo = photos[0];
+        const downloadableImg = document.createElement('a');
+        const splitTitle = photo.title.split('.');
+        const title = splitTitle.slice(0, splitTitle.length - 1).join('');
+        downloadableImg.download = `${title}.png`;
+        downloadableImg.href = photo.src;
+        document.body.appendChild(downloadableImg);
+        downloadableImg.click();
+        document.body.removeChild(downloadableImg);
+    } else {
+        console.log('Multi zip folder');
+    }
+}
+
+// const handleDownload = React.useCallback(async () => {
+//     if (deleting) return;
+//     if (photoDownloading) return;
+//     const downloadableImg = document.createElement('a');
+//     downloadableImg.download = `${id}.jpg`;
+//     downloadableImg.href = originalSrc.current;
+//     document.body.appendChild(downloadableImg);
+//     downloadableImg.click();
+//     document.body.removeChild(downloadableImg);
+// }, [deleting, id, photoDownloading]);
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},

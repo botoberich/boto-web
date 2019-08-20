@@ -14,7 +14,6 @@ import styles from './header.module.css';
 const { Header } = Layout;
 
 function PageHeader() {
-    const [checking, setChecking] = React.useState(true);
     const [signedIn, setSignedIn] = React.useState(false);
     const userData = getUser();
     const userName = userData.username !== undefined && userData.username.split('.')[0];
@@ -24,7 +23,6 @@ function PageHeader() {
         async function signin() {
             try {
                 checkIsSignedIn().then(signedIn => {
-                    setChecking(false);
                     setSignedIn(signedIn);
                 });
             } catch (e) {
@@ -41,11 +39,6 @@ function PageHeader() {
     return (
         <Header className={styles.header}>
             <span className={styles.headerTitle}>Photos</span>
-            {checking && (
-                <div className={styles.indicator}>
-                    <Icon type="loading" />
-                </div>
-            )}
             <nav className={styles.nav}>
                 <div className={styles.navItem}>
                     <Badge count={selectedThumbnails.length}></Badge>

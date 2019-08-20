@@ -10,15 +10,12 @@ import Compressor from 'compressorjs';
 import uuid from 'uuid/v4';
 import {
     Photo,
-    PhotoMetaData,
     PostPhotosResult,
     GetThumbnailsResult,
     DeletePhotosResult,
     Thumbnail,
 } from '../interfaces/photos.interface';
-import { ResponseStatus, ApiResponse } from '../interfaces/response.interface';
-import { string } from 'prop-types';
-import { Model } from 'radiks/src';
+import { ApiResponse } from '../interfaces/response.interface';
 
 const BASE_PATH = `user/photos`;
 const CHUNK_SIZE = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
