@@ -2,7 +2,7 @@ import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.servi
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
 import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
 
-export const handleDownloadPhotos = async () => {};
+export const handleDownloadPhotos = async photos => {};
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},
