@@ -9,6 +9,7 @@ import styles from './PhotoGrid.module.css';
 // Types
 import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
+import { Thumbnail } from '../../interfaces/photos.interface';
 
 function PhotoGrid() {
     const { thumbnails, setThumbnails, loadingLightBox } = usePhotoContext();
@@ -25,19 +26,19 @@ function PhotoGrid() {
     });
 
     React.useEffect(() => {
+        let allThumbnails: Thumbnail[] = [];
         handleFetchThumbnails({
             onNext: res => {
-                if (res == null || res == undefined) {
+                console.log(res);
+                if (res === null || res === undefined) {
                     return;
                 }
-
-                setThumbnails(thumbnails => [
-                    ...thumbnails,
-                    {
-                        id: res.photoId,
-                        src: `data:image/png;base64,${res.b64}`,
-                    },
-                ]);
+                setThumbnails(thumbnails => {
+                    let dateString = new Date(res.metaData.createdAt).toDateString();
+                    let copy = { ...thumbnails };
+                    copy[dateString] = copy[dateString] ? [...copy[dateString], res] : [res];
+                    return copy;
+                });
             },
             onError: err => {
                 notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
@@ -50,14 +51,23 @@ function PhotoGrid() {
 
     return (
         <div className={styles.gridContainer}>
-            <div className={styles.grid}>
-                {thumbnails.map(({ src, id }) => {
-                    if (!src) {
-                        return <Skeleton key={id} active />;
-                    }
-                    return <PhotoGridItem id={id} key={id} src={src} />;
-                })}
-            </div>
+            {Object.keys(thumbnails).map((date, i) => {
+                return (
+                    <div key={i}>
+                        <h3>{date}</h3>
+                        <div className={styles.grid}>
+                            {thumbnails[date].map(({ b64, photoId }) => {
+                                if (!b64) {
+                                    return <Skeleton key={photoId} active />;
+                                }
+                                return (
+                                    <PhotoGridItem id={photoId} key={photoId} src={`data:image/png;base64,${b64}`} />
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

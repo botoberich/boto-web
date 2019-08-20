@@ -8,6 +8,7 @@ export interface PhotoMetaData {
     updatedAt?: number;
     createdAt?: number;
     _id?: string;
+    exif?: string;
 }
 
 export interface Photo {
@@ -17,17 +18,12 @@ export interface Photo {
 
 export interface PostPhotosResult {
     photoIds: string[];
-    $photos: Subject<PostPhotoResult>;
-}
-
-export interface PostPhotoResult {
-    photoId: string;
-    thumbnail: string;
+    $photos: Subject<Thumbnail>;
 }
 export interface DeletePhotosResult {
-    $deletes: Subject<string>;
+    photoIds: string[];
+    $deletes: Subject<PhotoMetaData>;
 }
-
 export interface GetThumbnailsResult {
     photoIds: string[];
     $thumbnails: Subject<Thumbnail>;
@@ -35,4 +31,5 @@ export interface GetThumbnailsResult {
 export interface Thumbnail {
     photoId: string;
     b64: string;
+    metaData: PhotoMetaData;
 }

@@ -64,35 +64,22 @@ function PageHeader() {
                                 handleFileUpload(e, {
                                     onStart: payload => progressDispatch({ type: 'START', payload }),
                                     onNext: res => {
-                                        uploadedThumbnails.push({
-                                            id: res.photoId,
-                                            src: `data:image/png;base64,${res.thumbnail}`,
+                                        setThumbnails(thumbnails => {
+                                            let dateString = new Date(parseInt(res.metaData.createdAt)).toDateString();
+                                            let copy = { ...thumbnails };
+                                            copy[dateString] = copy[dateString] ? [...copy[dateString], res] : [res];
+                                            return copy;
                                         });
                                         progressDispatch({ type: 'NEXT' });
                                     },
                                     onComplete: () => {
-                                        /** only update after all uploads complete*/
-                                        setThumbnails(prev => {
-                                            return [...prev, ...uploadedThumbnails];
-                                        });
                                         progressDispatch({ type: 'END' });
                                     },
                                 });
                             }}
                             type="file"
                         />
-                        <i aria-label="Upload Icon" className="anticon anticon-upload">
-                            <svg
-                                viewBox="64 64 896 896"
-                                data-icon="upload"
-                                width="1em"
-                                height="1em"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                focusable="false">
-                                <path d="M400 317.7h73.9V656c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V317.7H624c6.7 0 10.4-7.7 6.3-12.9L518.3 163a8 8 0 0 0-12.6 0l-112 141.7c-4.1 5.3-.4 13 6.3 13zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"></path>
-                            </svg>
-                        </i>
+                        <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
                         <span style={{ marginLeft: '8px' }}>Upload</span>
                     </label>
                     <Badge count={selectedThumbnails.length}>
@@ -105,13 +92,16 @@ function PageHeader() {
                                         setloadingThumbnails(selectedThumbnails);
                                         progressDispatch({ type: 'START', payload });
                                     },
-                                    onNext: id => {
-                                        /** have to do this because thumbnails could get set after the next photo is deleted */
-                                        deletedIds.push(id);
-                                        let newList = thumbnails.filter(
-                                            thumbnail => deletedIds.indexOf(thumbnail.id) === -1
-                                        );
-                                        setThumbnails(newList);
+                                    onNext: metaData => {
+                                        setThumbnails(thumbnails => {
+                                            let dateString = new Date(parseInt(metaData.createdAt)).toDateString();
+                                            let newThumbnailsList = thumbnails[dateString].filter(
+                                                t => t.photoId !== metaData._id
+                                            );
+                                            let copy = { ...thumbnails };
+                                            copy[dateString] = newThumbnailsList;
+                                            return copy;
+                                        });
                                         progressDispatch({ type: 'NEXT' });
                                     },
                                     onComplete: () => {
