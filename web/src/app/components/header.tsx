@@ -55,6 +55,9 @@ function PageHeader() {
             )}
             <nav className={`${styles.desktopOnly} ${styles.nav}`}>
                 <div className={styles.navItem}>
+                    <Badge count={selectedThumbnails.length}></Badge>
+                </div>
+                <div className={styles.navItem}>
                     <label className={styles.uploadFileLabel}>
                         <input
                             className={styles.uploadFile}
@@ -82,54 +85,50 @@ function PageHeader() {
                         <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
                         <span style={{ marginLeft: '8px' }}>Upload</span>
                     </label>
-                    <Badge count={selectedThumbnails.length}>
-                        <Button
-                            style={{ marginLeft: '5px' }}
-                            onClick={e => {
-                                let deletedIds = [];
-                                handleDeletePhotos([...selectedThumbnails], {
-                                    onStart: payload => {
-                                        setloadingThumbnails(selectedThumbnails);
-                                        progressDispatch({ type: 'START', payload });
-                                    },
-                                    onNext: metaData => {
-                                        setThumbnails(thumbnails => {
-                                            let dateString = new Date(parseInt(metaData.createdAt)).toDateString();
-                                            let newThumbnailsList = thumbnails[dateString].filter(
-                                                t => t.photoId !== metaData._id
-                                            );
-                                            let copy = { ...thumbnails };
-                                            copy[dateString] = newThumbnailsList;
-                                            return copy;
-                                        });
-                                        progressDispatch({ type: 'NEXT' });
-                                    },
-                                    onComplete: () => {
-                                        progressDispatch({ type: 'END' });
-                                        setloadingThumbnails([]);
-                                        setSelectedThumbnails([]);
-                                    },
-                                    onError: () => {
-                                        setloadingThumbnails([]);
-                                        setSelectedThumbnails([]);
-                                    },
-                                });
-                            }}>
-                            <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                            Delete
-                        </Button>
-                    </Badge>
+                    <Button
+                        style={{ marginLeft: '5px' }}
+                        onClick={e => {
+                            let deletedIds = [];
+                            handleDeletePhotos([...selectedThumbnails], {
+                                onStart: payload => {
+                                    setloadingThumbnails(selectedThumbnails);
+                                    progressDispatch({ type: 'START', payload });
+                                },
+                                onNext: metaData => {
+                                    setThumbnails(thumbnails => {
+                                        let dateString = new Date(parseInt(metaData.createdAt)).toDateString();
+                                        let newThumbnailsList = thumbnails[dateString].filter(
+                                            t => t.photoId !== metaData._id
+                                        );
+                                        let copy = { ...thumbnails };
+                                        copy[dateString] = newThumbnailsList;
+                                        return copy;
+                                    });
+                                    progressDispatch({ type: 'NEXT' });
+                                },
+                                onComplete: () => {
+                                    progressDispatch({ type: 'END' });
+                                    setloadingThumbnails([]);
+                                    setSelectedThumbnails([]);
+                                },
+                                onError: () => {
+                                    setloadingThumbnails([]);
+                                    setSelectedThumbnails([]);
+                                },
+                            });
+                        }}>
+                        <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                        Delete
+                    </Button>
 
-                    <Badge style={{ backgroundColor: '#52c41a' }} count={selectedThumbnails.length}>
-                        <Button
-                            style={{ marginLeft: '5px' }}
-                            onClick={e => {
-                                console.log('Downloading:', selectedThumbnails);
-                            }}>
-                            <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                            Download
-                        </Button>
-                    </Badge>
+                    <Button
+                        style={{ marginLeft: '5px' }}
+                        onClick={e => {
+                            console.log('Downloading:', selectedThumbnails);
+                        }}>
+                        <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
+                        Download
+                    </Button>
                 </div>
                 <div className={styles.navItem}>
                     <Dropdown
