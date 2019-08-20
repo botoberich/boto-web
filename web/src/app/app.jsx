@@ -7,6 +7,8 @@ import styles from './app.module.css';
 import Layout from './components/layout';
 import PrivateRoute from './components/privateRoute.tsx';
 import { useOverlay } from './contexts/OverlayContext';
+import { usePhotoContext } from './contexts/PhotoContext';
+import { Icon } from 'antd';
 
 // Screens
 const Photo = loadable(() => import('./screens/Photo'));
@@ -18,9 +20,15 @@ export const OVERLAY_ROOT = 'OVERLAY_ROOT';
 
 function App() {
     const { setOverlayVisible } = useOverlay();
+    const { loadingLightBox } = usePhotoContext();
 
     return (
         <div className={styles.root}>
+            {loadingLightBox && (
+                <div className={styles.loadingOverlay}>
+                    <Icon className={styles.loadingIcon} type="loading" />
+                </div>
+            )}
             <div
                 id={APP_ROOT}
                 onDrop={e => e.preventDefault()}

@@ -1,16 +1,13 @@
-// import React from 'react';
 import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { PostPhotoResult, Thumbnail } from '../interfaces/photos.interface';
-// import { getPhotoMetaData } from '../utils/metadata';
-// import { usePhotoContext } from '../contexts/PhotoContext';
-// import { setServers } from 'dns';
+import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
+
+export const handleDownloadPhotos = async photos => {};
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},
     onComplete = () => {},
     onError = err => {},
-    onStart = () => {},
     onEnd = () => {},
 } = {}) => {
     const thumbnailsRes = await getThumbnails();
@@ -38,7 +35,7 @@ export const handleFetchThumbnails = async ({
 export const handleDeletePhotos = async (
     ids: string[],
     {
-        onNext = (id: string) => {},
+        onNext = (id: PhotoMetaData) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},
@@ -53,9 +50,9 @@ export const handleDeletePhotos = async (
     const deleteRes = await deletePhotos(ids);
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
-            next: id => {
-                console.log('Deleted photo id: ', id);
-                onNext(id);
+            next: metaData => {
+                console.log('Deleted photo id: ', metaData._id);
+                onNext(metaData);
             },
             error: err => {
                 console.log('Delete photo err: ', err);
@@ -78,7 +75,7 @@ export const handleDeletePhotos = async (
 export const handleFileUpload = async (
     e,
     {
-        onNext = (res: PostPhotoResult) => {},
+        onNext = (res: Thumbnail) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},

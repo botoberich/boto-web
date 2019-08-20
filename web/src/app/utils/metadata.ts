@@ -14,13 +14,14 @@ export const getExif = b64 => {
     });
 };
 
-export const getPhotoMetaData = async (file): Promise<{ base: PhotoMetaData; exif: any }> => {
+export const getPhotoMetaData = async (file): Promise<any> => {
     let b64 = await getBase64(file);
-    let exif = await getExif(b64);
+    let exif: any = await getExif(b64);
+    delete exif.thumbnail;
     let base = {
         title: file.name,
         archived: false,
         trashed: false,
     };
-    return { base, exif };
+    return { ...base, exif: JSON.stringify(exif) };
 };

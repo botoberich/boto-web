@@ -11,13 +11,14 @@ import uuid from 'uuid/v4';
 import {
     Photo,
     PhotoMetaData,
-    PostPhotoResult,
     PostPhotosResult,
     GetThumbnailsResult,
     DeletePhotosResult,
+    Thumbnail,
 } from '../interfaces/photos.interface';
 import { ResponseStatus, ApiResponse } from '../interfaces/response.interface';
 import { string } from 'prop-types';
+import { Model } from 'radiks/src';
 
 const BASE_PATH = `user/photos`;
 const CHUNK_SIZE = 12582912; /** 12.5 MB in bytes, size increases when turning blob bytes into storable text */
@@ -37,7 +38,7 @@ const _combineChunks = async chunkGroup => {
 
 /** @returns a b64 string representing a photo smaller in size than the actual photo */
 const _generateThumbnail = async (file: File): Promise<string> => {
-    const quality = 0.4;
+    const quality = 0.6;
     return new Promise((resolve, reject) => {
         new Compressor(file, {
             quality,
@@ -56,11 +57,22 @@ export const getThumbnails = async (): Promise<ApiResponse<GetThumbnailsResult>>
     try {
         const photos = await PhotoModel.fetchOwnList();
         const photoIds = photos.map(photo => photo._id);
+        const metaDatas = {};
+        photos.forEach(photo => (metaDatas[photo._id] = photo.attrs));
         const fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
         const $thumbnails = of
             .apply(this, fetchThumbnails)
             .pipe(mergeAll())
-            .pipe(map((json: string) => JSON.parse(json)));
+            .pipe(
+                map((json: string) => {
+                    let { photoId, b64 } = JSON.parse(json);
+                    return {
+                        photoId,
+                        b64,
+                        metaData: metaDatas[photoId],
+                    };
+                })
+            );
         return success({ photoIds, $thumbnails });
     } catch (err) {
         return error(err);
@@ -158,7 +170,7 @@ export const getPhotos = async () => {
 export const postPhotos = async (photos: File[]): Promise<ApiResponse<PostPhotosResult>> => {
     try {
         let postCtr = 0;
-        const $photos = new Subject<PostPhotoResult>();
+        const $photos = new Subject<Thumbnail>();
         const postResponses = await Promise.all(photos.map(file => _postPhoto(file)));
 
         const postPhotos = postResponses.map(res => res.postPhoto);
@@ -170,7 +182,7 @@ export const postPhotos = async (photos: File[]): Promise<ApiResponse<PostPhotos
             .apply(this, postPhotos)
             .pipe(mergeAll())
             .subscribe({
-                next: (postRes: PostPhotoResult) => {
+                next: (postRes: Thumbnail) => {
                     $photos.next(postRes);
                     postCtr++;
                     checkComplete();
@@ -187,7 +199,7 @@ export const postPhotos = async (photos: File[]): Promise<ApiResponse<PostPhotos
     }
 };
 
-export const _postPhoto = async (file: File): Promise<{ photoId: string; postPhoto: Promise<PostPhotoResult> }> => {
+export const _postPhoto = async (file: File): Promise<{ photoId: string; postPhoto: Promise<Thumbnail> }> => {
     /** Store all metadata in the database and store b64 in gaia */
     const photoId: string = uuid();
     const gaiaPath = `${BASE_PATH}/${photoId}`;
@@ -204,17 +216,17 @@ export const _postPhoto = async (file: File): Promise<{ photoId: string; postPho
         /** Upload original photo */
         const photo = new PhotoModel({
             _id: photoId,
-            ...metaData.base,
+            ...metaData,
             chunked: b64Chunks.length > 1,
         });
-        const saveRes = await photo.save();
+        const saveRes: any = await photo.save();
 
         /** @return a promise that awaits all posts (radiks, gaia), and resolves with photoId and thumnail if successful */
-        const handlePosts = posts => {
-            return new Promise<{ photoId: string; thumbnail: string }>(async (resolve, reject) => {
+        const handlePhotoPost = posts => {
+            return new Promise<Thumbnail>(async (resolve, reject) => {
                 try {
                     await posts;
-                    resolve({ photoId, thumbnail });
+                    resolve({ photoId, b64: thumbnail, metaData: saveRes.attrs });
                 } catch (error) {
                     reject({ photoId, error });
                 }
@@ -234,10 +246,10 @@ export const _postPhoto = async (file: File): Promise<{ photoId: string; postPho
             const gaiaPosts = b64Chunks.map((chunk, i) =>
                 putFile(`${gaiaPath}/${i}`, JSON.stringify({ photoId, chunkNumber: i, b64: chunk }))
             );
-            const postPhoto = handlePosts(Promise.all([...radiksPosts, ...gaiaPosts]));
+            const postPhoto = handlePhotoPost(Promise.all([...radiksPosts, ...gaiaPosts]));
             return { photoId, postPhoto };
         } else {
-            const postPhoto = handlePosts(putFile(gaiaPath, JSON.stringify({ photoId, b64: b64Chunks[0] })));
+            const postPhoto = handlePhotoPost(putFile(gaiaPath, JSON.stringify({ photoId, b64: b64Chunks[0] })));
             return { photoId, postPhoto };
         }
     } catch (err) {
@@ -248,11 +260,11 @@ export const _postPhoto = async (file: File): Promise<{ photoId: string; postPho
     }
 };
 
-export const deletePhotos = async (ids: string[]): Promise<ApiResponse<DeletePhotosResult>> => {
+export const deletePhotos = async (photoIds: string[]): Promise<ApiResponse<DeletePhotosResult>> => {
     try {
-        const deletes = ids.map(id => _deletePhoto(id));
+        const deletes = photoIds.map(id => _deletePhoto(id));
         const $deletes = of.apply(this, deletes).pipe(mergeAll());
-        return success({ $deletes });
+        return success({ photoIds, $deletes });
     } catch (err) {
         return error(err);
     }
@@ -260,7 +272,7 @@ export const deletePhotos = async (ids: string[]): Promise<ApiResponse<DeletePho
 
 export const _deletePhoto = async (id: string): Promise<string> => {
     try {
-        const photo = await PhotoModel.findById(id);
+        const photo: any = await PhotoModel.findById(id);
         const deletes = { photo: null, chunks: null };
         if (photo) {
             const deleteInRadik = await photo.destroy();
@@ -282,7 +294,7 @@ export const _deletePhoto = async (id: string): Promise<string> => {
                     deletes.photo = deleteInRadik;
                 }
             }
-            return id;
+            return photo.attrs;
         }
         throw new Error(`Photo with id: ${id} not found.`);
     } catch (err) {
