@@ -1,8 +1,66 @@
-import { postPhotos, deletePhotos, getThumbnails } from '../services/photo.service';
+import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
 import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
+import uuid from 'uuid/v4';
 
-export const handleDownloadPhotos = async photos => {};
+type Photo = {
+    src: string;
+    title: string;
+};
+
+export const handleDownloadPhotos = async (ids: string[]) => {
+    if (ids !== undefined && ids.length <= 0) return;
+    try {
+        const photoResponse = await Promise.all(ids.map(id => getPhotoById(id)));
+        const files = photoResponse
+            .map(res => {
+                if (res.status === 'success') {
+                    return { src: `${res.data.b64}`, title: res.data.metaData.title };
+                }
+                return null;
+            })
+            .filter(src => src !== null);
+        triggerDownload(files);
+    } catch (e) {
+        console.error('Error downloading photos', e);
+    }
+};
+
+async function triggerDownload(photos: Photo[]) {
+    if (photos === undefined) return;
+    // If it's a single photo, trigger download without zipping file
+    if (photos.length === 1 && photos[0].src !== '') {
+        const photo = photos[0];
+        const title = removeFileExtension(photo.title);
+        generateDownloadable(`data:image/png;base64,${photo.src}`, `${title}.png`);
+    } else {
+        // Create a zip file and download it
+        const [jszip, filesaver] = await Promise.all([import('jszip'), import('file-saver')]);
+        const zip = new jszip.default();
+        const saveAs = filesaver.saveAs;
+        photos.forEach(photo => {
+            const title = removeFileExtension(photo.title);
+            zip.file(`${title}.png`, photo.src, { base64: true });
+        });
+        const zipFileName = `boto-${uuid().slice(0, 6)}.zip`;
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, zipFileName);
+    }
+}
+
+function removeFileExtension(title) {
+    const splitTitle = title.split('.');
+    return splitTitle.slice(0, splitTitle.length - 1).join('');
+}
+
+function generateDownloadable(source, name) {
+    const downloadableContent = document.createElement('a');
+    downloadableContent.download = name;
+    downloadableContent.href = source;
+    document.body.appendChild(downloadableContent);
+    downloadableContent.click();
+    document.body.removeChild(downloadableContent);
+}
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: Thumbnail) => {},

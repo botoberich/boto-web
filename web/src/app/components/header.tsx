@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
@@ -14,7 +14,6 @@ import styles from './header.module.css';
 const { Header } = Layout;
 
 function PageHeader() {
-    const [checking, setChecking] = React.useState(true);
     const [signedIn, setSignedIn] = React.useState(false);
     const userData = getUser();
     const userName = userData.username !== undefined && userData.username.split('.')[0];
@@ -24,7 +23,6 @@ function PageHeader() {
         async function signin() {
             try {
                 checkIsSignedIn().then(signedIn => {
-                    setChecking(false);
                     setSignedIn(signedIn);
                 });
             } catch (e) {
@@ -41,14 +39,14 @@ function PageHeader() {
     return (
         <Header className={styles.header}>
             <span className={styles.headerTitle}>Photos</span>
-            {checking && (
-                <div className={styles.indicator}>
-                    <Icon type="loading" />
-                </div>
-            )}
             <nav className={styles.nav}>
                 <div className={styles.navItem}>
-                    <Badge count={selectedThumbnails.length}></Badge>
+                    {selectedThumbnails.length > 0 && (
+                        <Tag className={styles.tag} color="#f50">
+                            {selectedThumbnails.length}
+                            <span className={styles.hideMobile}>&nbsp;selected</span>
+                        </Tag>
+                    )}
                 </div>
                 <div className={styles.navItem}>
                     <label className={styles.uploadFileLabel}>
@@ -123,7 +121,7 @@ function PageHeader() {
                         <span className={styles.hideMobile}>Download</span>
                     </Button>
                 </div>
-                <div className={styles.navItem}>
+                <div className={styles.navItem} style={{ marginLeft: '25px' }}>
                     <Dropdown
                         overlay={
                             <Menu>
