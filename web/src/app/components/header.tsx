@@ -22,7 +22,7 @@ function PageHeader() {
     const notificationConfig = (msg: string): ArgsProps => ({
         placement: 'bottomRight',
         bottom: 50,
-        duration: 2,
+        duration: 3,
         message: (
             <div>
                 <Paragraph>{msg}</Paragraph>
@@ -89,36 +89,40 @@ function PageHeader() {
                 <div className={styles.navItem}>
                     <Button
                         onClick={() => {
-                            handleDeletePhotos([...selectedThumbnails], {
-                                onStart: payload => {
-                                    setloadingThumbnails(selectedThumbnails);
-                                    progressDispatch({ type: 'START', payload });
-                                },
-                                onNext: metaData => {
-                                    setThumbnails(thumbnails => {
-                                        let dateString = new Date(metaData.createdAt).toDateString();
-                                        let newThumbnailsList = thumbnails[dateString].filter(
-                                            t => t.photoId !== metaData._id
-                                        );
-                                        let copy = { ...thumbnails };
-                                        copy[dateString] = newThumbnailsList;
-                                        if (newThumbnailsList.length === 0) {
-                                            delete copy[dateString];
-                                        }
-                                        return copy;
-                                    });
-                                    progressDispatch({ type: 'NEXT' });
-                                },
-                                onComplete: () => {
-                                    progressDispatch({ type: 'END' });
-                                    setloadingThumbnails([]);
-                                    setSelectedThumbnails([]);
-                                },
-                                onError: () => {
-                                    setloadingThumbnails([]);
-                                    setSelectedThumbnails([]);
-                                },
-                            });
+                            if (selectedThumbnails.length === 0) {
+                                notification.warn(notificationConfig(`You must select at least 1 photo to delete.`));
+                            } else {
+                                handleDeletePhotos([...selectedThumbnails], {
+                                    onStart: payload => {
+                                        setloadingThumbnails(selectedThumbnails);
+                                        progressDispatch({ type: 'START', payload });
+                                    },
+                                    onNext: metaData => {
+                                        setThumbnails(thumbnails => {
+                                            let dateString = new Date(metaData.createdAt).toDateString();
+                                            let newThumbnailsList = thumbnails[dateString].filter(
+                                                t => t.photoId !== metaData._id
+                                            );
+                                            let copy = { ...thumbnails };
+                                            copy[dateString] = newThumbnailsList;
+                                            if (newThumbnailsList.length === 0) {
+                                                delete copy[dateString];
+                                            }
+                                            return copy;
+                                        });
+                                        progressDispatch({ type: 'NEXT' });
+                                    },
+                                    onComplete: () => {
+                                        progressDispatch({ type: 'END' });
+                                        setloadingThumbnails([]);
+                                        setSelectedThumbnails([]);
+                                    },
+                                    onError: () => {
+                                        setloadingThumbnails([]);
+                                        setSelectedThumbnails([]);
+                                    },
+                                });
+                            }
                         }}>
                         <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
                         <span className={styles.hideMobile}>Delete</span>
@@ -127,17 +131,24 @@ function PageHeader() {
                 <div className={styles.navItem}>
                     <Button
                         onClick={e => {
-                            try {
-                                handleDownloadPhotos(selectedThumbnails);
-                                notification.success(
-                                    notificationConfig(`Successfully downloaded ${selectedThumbnails.length} files.`)
-                                );
-                            } catch (err) {
-                                notification.error(
-                                    notificationConfig(`Error downloading files. Please contact support.`)
-                                );
+                            if (selectedThumbnails.length === 0) {
+                                notification.warn(notificationConfig(`You must select at least 1 photo to download.`));
+                            } else {
+                                try {
+                                    handleDownloadPhotos(selectedThumbnails);
+                                    notification.success(
+                                        notificationConfig(
+                                            `Successfully downloaded ${
+                                                selectedThumbnails.length > 1 ? 'files' : 'file'
+                                            }.`
+                                        )
+                                    );
+                                } catch (err) {
+                                    notification.error(
+                                        notificationConfig(`Error downloading files. Please contact support.`)
+                                    );
+                                }
                             }
-
                             setSelectedThumbnails([]);
                         }}>
                         <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
