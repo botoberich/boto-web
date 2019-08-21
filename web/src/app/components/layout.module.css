@@ -1,16 +1,11 @@
 .content {
-    height: 100vh;
+    height: 85vh;
 }
 
 .children {
     background: #fff;
     margin-top: 32px;
     padding: 16px 32px;
-}
-
-.footer {
-    background: #fff;
-    text-align: center;
 }
 
 .layout {

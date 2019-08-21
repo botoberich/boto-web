@@ -12,7 +12,7 @@ import SideNav from './sideNav';
 import Header from './header.tsx';
 import styles from './layout.module.css';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 const PageLayout = ({ children }) => {
     // const { toggleTheme, theme } = useTheme();
@@ -38,7 +38,6 @@ const PageLayout = ({ children }) => {
                         <Content className={styles.content}>
                             <div className={styles.children}>{children}</div>
                         </Content>
-                        <Footer className={styles.footer}>© {new Date().getFullYear()}, Built for you</Footer>
                     </Layout>
                 </Layout>
             )}

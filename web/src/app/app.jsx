@@ -4,11 +4,11 @@ import loadable from '@loadable/component';
 import styles from './app.module.css';
 
 // UI
-import Layout from './components/layout';
+import AppLayout from './components/layout';
 import PrivateRoute from './components/privateRoute.tsx';
 import { useOverlay } from './contexts/OverlayContext';
 import { usePhotoContext } from './contexts/PhotoContext';
-import { Icon } from 'antd';
+import { Icon, Layout } from 'antd';
 
 // Screens
 const Photo = loadable(() => import('./screens/Photo'));
@@ -19,6 +19,7 @@ export const APP_ROOT = 'APP_ROOT';
 export const OVERLAY_ROOT = 'OVERLAY_ROOT';
 
 function App() {
+    const { Footer } = Layout;
     const { setOverlayVisible } = useOverlay();
     const { loadingLightBox } = usePhotoContext();
 
@@ -41,7 +42,7 @@ function App() {
                         setOverlayVisible(false);
                     }
                 }}>
-                <Layout>
+                <AppLayout>
                     <Router>
                         <PublicRoute path="/app">
                             <PrivateRoute path="/" component={Photo} />
@@ -49,8 +50,9 @@ function App() {
                             {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                         </PublicRoute>
                     </Router>
-                </Layout>
+                </AppLayout>
             </div>
+            <Footer className={styles.footer}>© {new Date().getFullYear()}, Built for you</Footer>
             <div id={OVERLAY_ROOT}></div>
         </div>
     );

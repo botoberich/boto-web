@@ -102,6 +102,9 @@ function PageHeader() {
                                         );
                                         let copy = { ...thumbnails };
                                         copy[dateString] = newThumbnailsList;
+                                        if (newThumbnailsList.length === 0) {
+                                            delete copy[dateString];
+                                        }
                                         return copy;
                                     });
                                     progressDispatch({ type: 'NEXT' });
