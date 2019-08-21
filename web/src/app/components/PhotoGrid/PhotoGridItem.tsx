@@ -13,7 +13,6 @@ const TIME_TO_DOWNLOAD = 1000;
 
 function PhotoGridItem({ id, src }) {
     const [open, setOpen] = React.useState(false);
-    const [selected, setSelected] = React.useState(false);
     const [photoDownloading, setPhotoDownloading] = React.useState(false);
     const editButton = React.useRef(null);
     const originalSrc = React.useRef('');
@@ -54,18 +53,17 @@ function PhotoGridItem({ id, src }) {
     return (
         <div
             className={`${styles.editableContainer} 
-                ${selected ? styles.editing : ''}`}
+                ${selectedThumbnails.indexOf(id) !== -1 ? styles.editing : ''}`}
             key={id}
             onClick={handlePhotoDownload}
             onMouseLeave={() => clearTimeout(timeoutId.current)}
             onTouchCancel={() => clearTimeout(timeoutId.current)}
             onTouchStart={handleInitiateDownload}>
             <Button
-                aria-checked={selected}
+                aria-checked={selectedThumbnails.indexOf(id) !== -1}
                 className={styles.triggerBox}
                 icon="check-circle"
                 onClick={() => {
-                    setSelected(!selected);
                     let selectIndex = selectedThumbnails.indexOf(id);
                     if (selectIndex === -1) {
                         setSelectedThumbnails([...selectedThumbnails, id]);
@@ -81,7 +79,7 @@ function PhotoGridItem({ id, src }) {
                 type="link"></Button>
             <div
                 onClick={() => setOpen(true)}
-                className={`${selected ? styles.scaleDown : ''} ${styles.imageContainer}`}>
+                className={`${selectedThumbnails.indexOf(id) !== -1 ? styles.scaleDown : ''} ${styles.imageContainer}`}>
                 <div
                     aria-label={`PhotoId: ${id}`}
                     className={styles.img}

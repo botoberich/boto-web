@@ -18,6 +18,7 @@ function PhotoGrid() {
     const { thumbnails, setThumbnails, loadingLightBox } = usePhotoContext();
     const { Paragraph } = Typography;
     const notificationConfig = (msg: string): ArgsProps => ({
+        /** @todo we need to find a better way to display notifications globally through out the app */
         placement: 'bottomRight',
         bottom: 50,
         duration: 2,
@@ -29,7 +30,6 @@ function PhotoGrid() {
     });
 
     React.useEffect(() => {
-        let allThumbnails: Thumbnail[] = [];
         handleFetchThumbnails({
             onNext: res => {
                 if (res === null || res === undefined) {

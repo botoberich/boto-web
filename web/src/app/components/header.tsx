@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
@@ -18,7 +18,17 @@ function PageHeader() {
     const userData = getUser();
     const userName = userData.username !== undefined && userData.username.split('.')[0];
     const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails } = usePhotoContext();
-
+    const { Paragraph } = Typography;
+    const notificationConfig = (msg: string): ArgsProps => ({
+        placement: 'bottomRight',
+        bottom: 50,
+        duration: 2,
+        message: (
+            <div>
+                <Paragraph>{msg}</Paragraph>
+            </div>
+        ),
+    });
     React.useEffect(() => {
         async function signin() {
             try {
@@ -114,8 +124,18 @@ function PageHeader() {
                 <div className={styles.navItem}>
                     <Button
                         onClick={e => {
-                            console.log('Downloading:', selectedThumbnails);
-                            handleDownloadPhotos(selectedThumbnails);
+                            try {
+                                handleDownloadPhotos(selectedThumbnails);
+                                notification.success(
+                                    notificationConfig(`Successfully downloaded ${selectedThumbnails.length} files.`)
+                                );
+                            } catch (err) {
+                                notification.error(
+                                    notificationConfig(`Error downloading files. Please contact support.`)
+                                );
+                            }
+
+                            setSelectedThumbnails([]);
                         }}>
                         <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                         <span className={styles.hideMobile}>Download</span>

@@ -22,7 +22,7 @@ export const handleDownloadPhotos = async (ids: string[]) => {
             .filter(src => src !== null);
         triggerDownload(files);
     } catch (e) {
-        console.error('Error downloading photos', e);
+        throw new Error('Error downloading photos', e);
     }
 };
 
