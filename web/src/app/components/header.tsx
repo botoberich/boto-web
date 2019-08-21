@@ -63,6 +63,7 @@ function PageHeader() {
                         <input
                             className={styles.uploadFile}
                             multiple
+                            accept="image/*"
                             onChange={e => {
                                 handleFileUpload(e, {
                                     onStart: payload => progressDispatch({ type: 'START', payload }),
