@@ -64,7 +64,7 @@
     border-color: #d9d9d9;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
     cursor: pointer;
-    padding: 6px 15px;
+    padding: 6.5px 15px;
     font-size: 14px;
     border-radius: 4px;
     transition: 0.5s;
@@ -73,6 +73,13 @@
 .uploadFileLabel:hover {
     color: #40a9ff;
     border-color: #40a9ff;
+}
+
+.tag {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    margin: 0;
 }
 
 @media (max-width: 625px) {

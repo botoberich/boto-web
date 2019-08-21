@@ -32,7 +32,6 @@ function PhotoGrid() {
         let allThumbnails: Thumbnail[] = [];
         handleFetchThumbnails({
             onNext: res => {
-                console.log(res);
                 if (res === null || res === undefined) {
                     return;
                 }
