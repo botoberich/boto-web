@@ -29,23 +29,24 @@ export const handleDownloadPhotos = async (ids: string[]) => {
 async function triggerDownload(photos: Photo[]) {
     if (photos === undefined) return;
     // If it's a single photo, trigger download without zipping file
-    if (photos.length === 1 && photos[0].src !== '') {
-        const photo = photos[0];
+    /** @todo Single download fails when the file size is big - for now just put it in a zip */
+    // if (photos.length === 1 && photos[0].src !== '') {
+    //     const photo = photos[0];
+    //     const title = removeFileExtension(photo.title);
+    //     generateDownloadable(`data:image/png;base64,${photo.src}`, `${title}.png`);
+    // } else {
+    // Create a zip file and download it
+    const [jszip, filesaver] = await Promise.all([import('jszip'), import('file-saver')]);
+    const zip = new jszip.default();
+    const saveAs = filesaver.saveAs;
+    photos.forEach(photo => {
         const title = removeFileExtension(photo.title);
-        generateDownloadable(`data:image/png;base64,${photo.src}`, `${title}.png`);
-    } else {
-        // Create a zip file and download it
-        const [jszip, filesaver] = await Promise.all([import('jszip'), import('file-saver')]);
-        const zip = new jszip.default();
-        const saveAs = filesaver.saveAs;
-        photos.forEach(photo => {
-            const title = removeFileExtension(photo.title);
-            zip.file(`${title}.png`, photo.src, { base64: true });
-        });
-        const zipFileName = `boto-${uuid().slice(0, 6)}.zip`;
-        const content = await zip.generateAsync({ type: 'blob' });
-        saveAs(content, zipFileName);
-    }
+        zip.file(`${title}.png`, photo.src, { base64: true });
+    });
+    const zipFileName = `boto-${uuid().slice(0, 6)}.zip`;
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, zipFileName);
+    // }
 }
 
 function removeFileExtension(title) {
