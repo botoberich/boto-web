@@ -1,5 +1,5 @@
 import { UserSession, AppConfig } from 'blockstack';
-import { configure, User } from 'radiks/src';
+import { configure, User, GroupMembership } from 'radiks/src';
 
 // helpful for debugging
 const logAuth = process.env.NODE_ENV === 'development' && true; // set to true to turn on logging
@@ -49,6 +49,8 @@ export const checkIsSignedIn = async () => {
 
         if (!userFromRadiks) {
             await User.createWithCurrentUser();
+        } else {
+            GroupMembership.cacheKeys();
         }
         return true;
     } else if (userSession.isUserSignedIn()) {
