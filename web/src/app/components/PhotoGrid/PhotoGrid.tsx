@@ -10,7 +10,7 @@ import styles from './PhotoGrid.module.css';
 // Types
 import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
-import { Thumbnail } from '../../interfaces/photos.interface';
+import { IThumbnail, IPhotoMetaData } from '../../interfaces/photos.interface';
 
 const { Title } = Typography;
 
@@ -33,15 +33,32 @@ function PhotoGrid() {
     React.useEffect(() => {
         let thumbnailCtr = 0;
         handleFetchThumbnails({
+            onStart: (allMetaData: IPhotoMetaData[]) => {
+                let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
+                allMetaData.forEach(meta => {
+                    let photoId = meta._id;
+                    let dateString = new Date(meta.createdAt).toDateString();
+                    let thumbnail: IThumbnail = { b64: '', metaData: meta };
+                    skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
+                        ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
+                        : { [photoId]: thumbnail };
+                });
+
+                console.log({ skeletonThumbnails });
+
+                setThumbnails(skeletonThumbnails);
+            },
             onNext: res => {
                 if (res === null || res === undefined) {
                     return;
                 }
                 thumbnailCtr++;
+
+                /** hydrate the skeletons with b64 each emission */
                 setThumbnails(thumbnails => {
                     let dateString = new Date(res.metaData.createdAt).toDateString();
                     let copy = { ...thumbnails };
-                    copy[dateString] = copy[dateString] ? [...copy[dateString], res] : [res];
+                    copy[dateString][res.metaData._id].b64 = res.b64;
                     return copy;
                 });
             },
@@ -70,7 +87,8 @@ function PhotoGrid() {
                             <div key={date}>
                                 <Title level={3}>{isToday(date) ? 'Today' : format(date, 'D MMM YYYY')}</Title>
                                 <div className={styles.grid}>
-                                    {thumbnails[date].map(({ b64, photoId }) => {
+                                    {Object.keys(thumbnails[date]).map(photoId => {
+                                        let b64 = thumbnails[date][photoId].b64;
                                         if (!b64) {
                                             return <Skeleton key={photoId} active />;
                                         }

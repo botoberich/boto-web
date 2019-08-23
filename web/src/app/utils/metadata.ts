@@ -1,6 +1,6 @@
 import EXIF from 'exif-js';
 import { getBase64 } from './encoding';
-import { PhotoMetaData } from '../interfaces/photos.interface';
+import { IPhotoMetaData } from '../interfaces/photos.interface';
 
 export const getExif = b64 => {
     return new Promise((resolve, reject) => {

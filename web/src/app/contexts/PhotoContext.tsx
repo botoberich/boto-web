@@ -1,20 +1,10 @@
 import React from 'react';
-
-interface PhotoContext {
-    selectedThumbnails: any[];
-    setSelectedThumbnails: React.Dispatch<React.SetStateAction<any[]>>;
-    thumbnails: any[];
-    setThumbnails: React.Dispatch<React.SetStateAction<any[]>>;
-    loadingThumbnails: any[];
-    setloadingThumbnails: React.Dispatch<React.SetStateAction<any[]>>;
-    loadingLightBox: boolean;
-    setLoadingLightBox: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { IThumbnail, IPhotoContext } from '../interfaces/photos.interface';
 
 const PhotoContext = React.createContext(null);
 
-function usePhotoContext(): PhotoContext {
-    const context: PhotoContext = React.useContext(PhotoContext);
+function usePhotoContext(): IPhotoContext {
+    const context: IPhotoContext = React.useContext(PhotoContext);
     if (!context) {
         throw new Error(`usePhoto must be used within a PhotoProvider`);
     }
@@ -26,8 +16,6 @@ function PhotoProvider(props) {
     const [thumbnails, setThumbnails] = React.useState({});
     const [loadingThumbnails, setloadingThumbnails] = React.useState([]);
     const [loadingLightBox, setLoadingLightBox] = React.useState(false);
-
-    console.log({ selectedThumbnails, thumbnails });
 
     const value = {
         selectedThumbnails,

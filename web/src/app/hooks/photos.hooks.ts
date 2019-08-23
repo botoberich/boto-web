@@ -1,6 +1,6 @@
 import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
 import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { Thumbnail, PhotoMetaData } from '../interfaces/photos.interface';
+import { IThumbnail, IPhotoMetaData } from '../interfaces/photos.interface';
 import uuid from 'uuid/v4';
 
 type Photo = {
@@ -22,7 +22,7 @@ export const handleDownloadPhotos = async (ids: string[]) => {
             .filter(src => src !== null);
         triggerDownload(files);
     } catch (e) {
-        throw new Error('Error downloading photos', e);
+        throw new Error(`Error downloading photos: ${e}`);
     }
 };
 
@@ -64,12 +64,14 @@ function generateDownloadable(source, name) {
 }
 
 export const handleFetchThumbnails = async ({
-    onNext = (thumbnail: Thumbnail) => {},
+    onNext = (thumbnail: IThumbnail) => {},
     onComplete = () => {},
     onError = err => {},
     onEnd = () => {},
+    onStart = (allMetaData: IPhotoMetaData[]) => {},
 } = {}) => {
     const thumbnailsRes = await getThumbnails();
+    onStart(thumbnailsRes.data.allMetaData);
     if (thumbnailsRes.status === 'success') {
         thumbnailsRes.data.$thumbnails.subscribe({
             next: res => {
@@ -94,7 +96,7 @@ export const handleFetchThumbnails = async ({
 export const handleDeletePhotos = async (
     ids: string[],
     {
-        onNext = (id: PhotoMetaData) => {},
+        onNext = (id: IPhotoMetaData) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},
@@ -134,7 +136,7 @@ export const handleDeletePhotos = async (
 export const handleFileUpload = async (
     e,
     {
-        onNext = (res: Thumbnail) => {},
+        onNext = (res: IThumbnail) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},
@@ -151,7 +153,7 @@ export const handleFileUpload = async (
         const $postPhotos = postRes.data.$photos;
         $postPhotos.subscribe({
             next: res => {
-                console.log('Uploaded photo id: ', res.photoId);
+                console.log('Uploaded photo id: ', res.metaData._id);
                 onNext(res);
             },
             error: err => {

@@ -10,6 +10,7 @@ import { usePhotoContext } from '../contexts/PhotoContext';
 
 // UI
 import styles from './header.module.css';
+import { ArgsProps } from 'antd/lib/notification';
 
 const { Header } = Layout;
 
@@ -69,9 +70,12 @@ function PageHeader() {
                                     onStart: payload => progressDispatch({ type: 'START', payload }),
                                     onNext: res => {
                                         setThumbnails(thumbnails => {
+                                            let photoId = res.metaData._id;
                                             let dateString = new Date(res.metaData.createdAt).toDateString();
                                             let copy = { ...thumbnails };
-                                            copy[dateString] = copy[dateString] ? [...copy[dateString], res] : [res];
+                                            copy[dateString] = copy[dateString]
+                                                ? { ...copy[dateString], ...{ [photoId]: res } }
+                                                : { [photoId]: res };
                                             return copy;
                                         });
                                         progressDispatch({ type: 'NEXT' });
@@ -101,12 +105,9 @@ function PageHeader() {
                                     onNext: metaData => {
                                         setThumbnails(thumbnails => {
                                             let dateString = new Date(metaData.createdAt).toDateString();
-                                            let newThumbnailsList = thumbnails[dateString].filter(
-                                                t => t.photoId !== metaData._id
-                                            );
                                             let copy = { ...thumbnails };
-                                            copy[dateString] = newThumbnailsList;
-                                            if (newThumbnailsList.length === 0) {
+                                            delete copy[dateString][metaData._id];
+                                            if (Object.keys(copy[dateString]).length === 0) {
                                                 delete copy[dateString];
                                             }
                                             return copy;
