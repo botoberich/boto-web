@@ -50,7 +50,7 @@ export const checkIsSignedIn = async () => {
         if (!userFromRadiks) {
             await User.createWithCurrentUser();
         } else {
-            GroupMembership.cacheKeys();
+            await GroupMembership.cacheKeys();
         }
         return true;
     } else if (userSession.isUserSignedIn()) {
