@@ -9,12 +9,18 @@
 
 .editableContainer:hover .triggerBox {
     opacity: 1;
-    filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.2));
+}
+
+.editableContainer:hover .hoverOverlay {
+    opacity: 1;
+    transition: ease-in 0.3s;
 }
 
 .editableContainer.editing .triggerBox {
     display: block;
     opacity: 1;
+    filter: none;
 }
 
 .editableContainer img {
@@ -33,8 +39,14 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
+.editableContainer.editing .hoverOverlay {
+    opacity: 0;
+}
+
 /* Lightly opaque overlay to make the edit button more visible */
 .hoverOverlay {
+    top: 0;
+    border-radius: 8px;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.26), transparent 56px, transparent);
     height: 100%;
     opacity: 0;
@@ -63,8 +75,12 @@
     height: 220px;
 }
 
+.lightBox {
+    z-index: 2;
+}
+
 .scaleDown {
-    transform: translateZ(0px) scale3d(0.76, 0.82, 1);
+    transform: translateZ(0px) scale3d(0.82, 0.82, 1);
 }
 
 .triggerBox,
@@ -82,12 +98,13 @@
     position: absolute;
     text-align: left;
     width: 100px;
-    z-index: 1;
+    z-index: 2;
 }
 
 .triggerBox:hover {
     background: none;
     border: none;
+    color: #40a9ff;
 }
 
 .triggerBox[aria-checked='true'] {

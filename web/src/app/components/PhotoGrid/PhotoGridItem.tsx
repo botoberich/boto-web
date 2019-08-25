@@ -64,7 +64,6 @@ function PhotoGridItem({ id, src }) {
             <Button
                 aria-checked={selectedThumbnails.indexOf(id) !== -1}
                 className={styles.triggerBox}
-                icon="check-circle"
                 onClick={() => {
                     let selectIndex = selectedThumbnails.indexOf(id);
                     if (selectIndex === -1) {
@@ -77,8 +76,10 @@ function PhotoGridItem({ id, src }) {
                 }}
                 ref={editButton}
                 role="checkbox"
-                shape="circle"
-                type="link"></Button>
+                type="link">
+                <Icon type="check-circle" theme={selectedThumbnails.indexOf(id) !== -1 ? 'twoTone' : 'filled'}></Icon>
+            </Button>
+            <div className={styles.topOverlay}></div>
             <div
                 onClick={() => setOpen(true)}
                 className={`${selectedThumbnails.indexOf(id) !== -1 ? styles.scaleDown : ''} ${styles.imageContainer}`}>
