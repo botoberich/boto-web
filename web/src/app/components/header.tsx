@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 
 // State
-import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography, Tooltip } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from '../hooks/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
@@ -92,11 +92,12 @@ function PageHeader() {
                     </label>
                 </div>
                 <div className={styles.navItem}>
-                    <Button
-                        onClick={() => {
-                            if (selectedThumbnails.length === 0) {
-                                notification.warn(notificationConfig(`You must select at least 1 photo to delete.`));
-                            } else {
+                    <Tooltip
+                        placement="bottom"
+                        title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
+                        <Button
+                            disabled={selectedThumbnails.length === 0}
+                            onClick={() => {
                                 handleDeletePhotos([...selectedThumbnails], {
                                     onStart: payload => {
                                         setloadingThumbnails(selectedThumbnails);
@@ -124,18 +125,19 @@ function PageHeader() {
                                         setSelectedThumbnails([]);
                                     },
                                 });
-                            }
-                        }}>
-                        <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
-                        <span className={styles.hideMobile}>Delete</span>
-                    </Button>
+                            }}>
+                            <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
+                            <span className={styles.hideMobile}>Delete</span>
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className={styles.navItem}>
-                    <Button
-                        onClick={e => {
-                            if (selectedThumbnails.length === 0) {
-                                notification.warn(notificationConfig(`You must select at least 1 photo to download.`));
-                            } else {
+                    <Tooltip
+                        placement="bottom"
+                        title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
+                        <Button
+                            disabled={selectedThumbnails.length === 0}
+                            onClick={e => {
                                 try {
                                     handleDownloadPhotos(selectedThumbnails);
                                     notification.success(
@@ -150,12 +152,13 @@ function PageHeader() {
                                         notificationConfig(`Error downloading files. Please contact support.`)
                                     );
                                 }
-                            }
-                            setSelectedThumbnails([]);
-                        }}>
-                        <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
-                        <span className={styles.hideMobile}>Download</span>
-                    </Button>
+
+                                setSelectedThumbnails([]);
+                            }}>
+                            <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
+                            <span className={styles.hideMobile}>Download</span>
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className={styles.navItem} style={{ marginLeft: '25px' }}>
                     <Dropdown
