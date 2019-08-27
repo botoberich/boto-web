@@ -1,7 +1,7 @@
 import { PhotoModel, ChunkModel } from '../models';
 import { putFile, getFile, deleteFile } from 'blockstack';
 import { chunkB64, getBase64 } from '../utils/encoding';
-import { getPhotoMetaData } from '../utils/metadata';
+import { getPhotoMetadata } from '../utils/metadata';
 import { success, error } from '../utils/apiResponse';
 import { of, Subject } from 'rxjs';
 import { mergeAll, map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import uuid from 'uuid/v4';
 import {
     Photo,
     IPostPhotosResult,
+    IPhotoMetadata,
     IGetThumbnailsResult,
     IDeletePhotosResult,
     IThumbnail,
@@ -54,7 +55,7 @@ export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>
     try {
         const photos = await PhotoModel.fetchOwnList();
         const photoIds = photos.map(photo => photo._id);
-        const allMetaData = photos.map(photo => photo.attrs);
+        const allMetadata = photos.map(photo => photo.attrs);
         const fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
         const $thumbnails = of
             .apply(this, fetchThumbnails)
@@ -64,11 +65,11 @@ export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>
                     let { photoId, b64 } = JSON.parse(json);
                     return {
                         b64,
-                        metaData: allMetaData.filter(o => o._id === photoId)[0],
+                        metaData: allMetadata.filter(o => o._id === photoId)[0],
                     };
                 })
             );
-        return success({ allMetaData, $thumbnails });
+        return success({ allMetadata, $thumbnails });
     } catch (err) {
         return error(err);
     }
@@ -106,7 +107,7 @@ export const getPhotos = async () => {
     try {
         const photos = await PhotoModel.fetchOwnList();
         let fetchedCtr = 0;
-        const metaData = photos.map(photo => photo.attrs);
+        const allMetadata = photos.map(photo => photo.attrs);
         const chunkedPhotos: any[] = await Promise.all(
             photos
                 .filter(photo => photo.attrs.chunked)
@@ -156,7 +157,7 @@ export const getPhotos = async () => {
                     checkComplete();
                 }
             });
-        return success({ metaData, $photos });
+        return success({ allMetadata, $photos });
     } catch (err) {
         return error(err);
     }
@@ -169,7 +170,7 @@ export const postPhotos = async (photos: File[]): Promise<ApiResponse<IPostPhoto
         const postResponses = await Promise.all(photos.map(file => _postPhoto(file)));
 
         const postPhotos = postResponses.map(res => res.postPhoto);
-        const photoIds = postResponses.map(res => res.photoId);
+        const allMetadata = postResponses.map(res => res.metaData);
         const checkComplete = () => {
             if (photos.length === postCtr) $photos.complete();
         };
@@ -188,17 +189,17 @@ export const postPhotos = async (photos: File[]): Promise<ApiResponse<IPostPhoto
                     $photos.error(err.error);
                 },
             });
-        return success({ photoIds, $photos });
+        return success({ allMetadata, $photos });
     } catch (err) {
         return error(err);
     }
 };
 
-export const _postPhoto = async (file: File): Promise<{ photoId: string; postPhoto: Promise<IThumbnail> }> => {
+export const _postPhoto = async (file: File): Promise<{ metaData: IPhotoMetadata; postPhoto: Promise<IThumbnail> }> => {
     /** Store all metadata in the database and store b64 in gaia */
     const photoId: string = uuid();
     const gaiaPath = `${BASE_PATH}/${photoId}`;
-    let metaData = await getPhotoMetaData(file); /** if you want data from exif, use metaData.exif */
+    let metaData = await getPhotoMetadata(file); /** if you want data from exif, use metaData.exif */
     let thumbnailUploaded = false;
     try {
         const [thumbnail, original]: [string, string] = await Promise.all([_generateThumbnail(file), getBase64(file)]);
@@ -242,10 +243,10 @@ export const _postPhoto = async (file: File): Promise<{ photoId: string; postPho
                 putFile(`${gaiaPath}/${i}`, JSON.stringify({ photoId, chunkNumber: i, b64: chunk }))
             );
             const postPhoto = handlePhotoPost(Promise.all([...radiksPosts, ...gaiaPosts]));
-            return { photoId, postPhoto };
+            return { metaData: saveRes.attrs, postPhoto };
         } else {
             const postPhoto = handlePhotoPost(putFile(gaiaPath, JSON.stringify({ photoId, b64: b64Chunks[0] })));
-            return { photoId, postPhoto };
+            return { metaData: saveRes.attrs, postPhoto };
         }
     } catch (err) {
         if (thumbnailUploaded) {

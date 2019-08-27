@@ -12,7 +12,7 @@ import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 
 // Types
-import { IThumbnail, IPhotoMetaData } from '../../interfaces/photos.interface';
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
 const { Title } = Typography;
 const { Paragraph } = Typography;
@@ -39,9 +39,9 @@ function PhotoGrid() {
 
         let thumbnailCtr = 0;
         handleFetchThumbnails({
-            onStart: (allMetaData: IPhotoMetaData[]) => {
+            onStart: (allMetadata: IPhotoMetadata[]) => {
                 let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-                allMetaData.forEach(meta => {
+                allMetadata.forEach(meta => {
                     let photoId = meta._id;
                     let dateString = new Date(meta.createdAt).toDateString();
                     let thumbnail: IThumbnail = { b64: '', metaData: meta };
@@ -60,7 +60,7 @@ function PhotoGrid() {
                 }
                 thumbnailCtr++;
 
-                /** hydrate the skeletons with b64 each emission */
+                /** hydrate the skeletons with b64 on each emission */
                 setThumbnails(thumbnails => {
                     let dateString = new Date(res.metaData.createdAt).toDateString();
                     let copy = { ...thumbnails };
@@ -78,7 +78,7 @@ function PhotoGrid() {
                 }
             },
         });
-    }, []);
+    }, [setThumbnails, thumbnails]);
 
     return (
         <div className={styles.gridContainer}>

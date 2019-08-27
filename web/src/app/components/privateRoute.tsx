@@ -31,7 +31,7 @@ function PrivateRoute(props: Props) {
             setSignedIn(signedIn);
             setChecking(false);
         });
-    }, []);
+    }, [location.pathname, location.search]);
 
     if (checking) {
         return <>...</>;
