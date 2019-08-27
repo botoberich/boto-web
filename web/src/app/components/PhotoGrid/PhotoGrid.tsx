@@ -7,17 +7,20 @@ import { ArgsProps } from 'antd/lib/notification';
 import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
-// Types
+// State
 import { handleFetchThumbnails } from '../../hooks/photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
+
+// Types
 import { IThumbnail, IPhotoMetaData } from '../../interfaces/photos.interface';
 
 const { Title } = Typography;
+const { Paragraph } = Typography;
 
 function PhotoGrid() {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
-    const { Paragraph } = Typography;
+
     const notificationConfig = (msg: string): ArgsProps => ({
         /** @todo we need to find a better way to display notifications globally through out the app */
         placement: 'bottomRight',
@@ -31,6 +34,9 @@ function PhotoGrid() {
     });
 
     React.useEffect(() => {
+        // TODO: Need a more robust condition to refetch photos
+        if (Object.entries(thumbnails).length > 0) return;
+
         let thumbnailCtr = 0;
         handleFetchThumbnails({
             onStart: (allMetaData: IPhotoMetaData[]) => {

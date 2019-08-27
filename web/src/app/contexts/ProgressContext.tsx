@@ -2,55 +2,42 @@ import React from 'react';
 
 // UI
 import { notification, Progress, Typography } from 'antd';
-import { ConfigProps } from 'antd/lib/notification';
 
 const { Paragraph } = Typography;
 
 // types
-type ProgressState = {
-    complete: boolean;
-    current: number;
-    loading: boolean;
-    total: number;
-    cmd: 'Upload' | 'Delete' | 'Download' | 'Update' | 'None';
+type IProgressState = {
+    complete?: boolean;
+    current?: number;
+    loading?: boolean;
+    total?: number;
+    cmd?: 'Upload' | 'Delete' | 'Download' | 'Update' | 'None';
 };
 
-type ProgressAction = {
+type IProgressAction = {
     payload?: any;
     type: 'START' | 'END' | 'NEXT' | 'TOTAL';
 };
 
-type ProgressValue = {
-    inProgress: boolean;
-    progressDispatch: React.Dispatch<ProgressAction>;
+type IProgressValue = {
+    progressState: IProgressState;
+    progressDispatch: React.Dispatch<IProgressAction>;
 };
 
-type ProgressContextValue = ProgressState & ProgressValue;
-
-// Sets global config for all notifications
-const notificationProgressConfig: ConfigProps = {
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: null,
-};
-
-const notificationCompleteConfig: ConfigProps = {
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: 2,
-};
+type IProgressContextValue = IProgressState & IProgressValue;
 
 // Progress State
 const ProgressContext = React.createContext(null);
-const initialProgress: ProgressState = {
+
+const initialProgress: IProgressState = {
     complete: false,
     current: 0,
     loading: false,
     total: 1,
     cmd: 'None',
 };
-function progressReducer(state: ProgressState, action: ProgressAction) {
-    console.log('action', action);
+
+function progressReducer(state: IProgressState, action: IProgressAction) {
     switch (action.type) {
         case 'START': {
             return {
@@ -97,7 +84,9 @@ function ProgressProvider(props) {
             const total = progressState.total;
             const percentage = Math.floor(((current + 1) / total) * 100);
             notification.open({
-                ...notificationProgressConfig,
+                placement: 'bottomRight',
+                bottom: 50,
+                duration: null,
                 key: 'ProgressNotificationKey',
                 message: (
                     <div>
@@ -125,7 +114,9 @@ function ProgressProvider(props) {
         if (progressState.complete) {
             notification.destroy();
             notification.success({
-                ...notificationCompleteConfig,
+                placement: 'bottomRight',
+                bottom: 50,
+                duration: 2,
                 message: (
                     <div>
                         <Paragraph>
@@ -146,8 +137,8 @@ function ProgressProvider(props) {
         };
     }, [progressState.loading]);
 
-    const value: ProgressValue = {
-        inProgress: progressState.loading,
+    const value: IProgressContextValue = {
+        progressState,
         progressDispatch,
     };
 
@@ -155,7 +146,7 @@ function ProgressProvider(props) {
 }
 
 function useProgressContext() {
-    const context: ProgressContextValue = React.useContext(ProgressContext);
+    const context: IProgressContextValue = React.useContext(ProgressContext);
     if (!context) {
         throw new Error(`useProgressContext must be used within an ProgressProvider`);
     }

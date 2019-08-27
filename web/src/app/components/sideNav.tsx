@@ -1,10 +1,6 @@
 import React from 'react';
 import { Link } from 'gatsby';
 
-// State
-// import { useTheme } from '../../contexts/ThemeContext';
-import { checkIsSignedIn } from '../services/auth.service';
-
 // UI
 import { Icon, Layout, Menu, Button } from 'antd';
 import Logo from './logo';
@@ -13,24 +9,6 @@ import styles from './sideNav.module.css';
 const { Sider } = Layout;
 
 const Sidebar = () => {
-    // const { toggleTheme, theme } = useTheme();
-    const [signedIn, setSignedIn] = React.useState(false);
-
-    React.useEffect(() => {
-        async function signin() {
-            try {
-                checkIsSignedIn().then(signedIn => {
-                    setSignedIn(signedIn);
-                });
-            } catch (e) {
-                console.log('error signing in');
-                console.error(e);
-            }
-        }
-
-        signin();
-    });
-
     return (
         <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0" width={140} theme="light">
             <div className="logo" />
@@ -42,7 +20,7 @@ const Sidebar = () => {
                         <span className="nav-text">Photos</span>
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="2" className={styles.menuItem} disabled>
+                <Menu.Item key="2" className={styles.menuItem}>
                     <Link to="/app/albums">
                         <Icon type="book" />
                         <span className="nav-text">Albums</span>

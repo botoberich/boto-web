@@ -2,17 +2,20 @@ import React from 'react';
 import { checkIsSignedIn } from '../services/auth.service';
 import { navigate } from 'gatsby';
 
-type RouteProps = {
+type Props = {
     component: any;
     location?: any;
     path: string;
 };
 
-class PrivateRoute extends React.Component<RouteProps> {
-    state = { checking: false, signedIn: false };
+function PrivateRoute(props: Props) {
+    const [checking, setChecking] = React.useState(false);
+    const [signedIn, setSignedIn] = React.useState(false);
 
-    componentDidMount = () => {
-        const { location } = this.props;
+    const { location } = props;
+    const Component = props.component;
+
+    React.useEffect(() => {
         checkIsSignedIn().then(signedIn => {
             if (location.pathname !== `/`) {
                 if (!signedIn) {
@@ -25,19 +28,15 @@ class PrivateRoute extends React.Component<RouteProps> {
                     }
                 }
             }
-            this.setState({ checking: false, signedIn });
+            setSignedIn(signedIn);
+            setChecking(false);
         });
-    };
+    }, []);
 
-    render() {
-        const { location, ...rest } = this.props;
-        const { checking, signedIn } = this.state;
-        const Component = this.props.component;
-        if (checking) {
-            return <>...</>;
-        } else {
-            return signedIn ? <Component {...rest} /> : null;
-        }
+    if (checking) {
+        return <>...</>;
+    } else {
+        return signedIn ? <Component {...props} /> : null;
     }
 }
 
