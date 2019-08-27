@@ -56,11 +56,20 @@
     z-index: -999;
 }
 
-.inProgress {
-    font-size: 40px;
-    left: 38%;
+.spinner {
+    left: 50%;
     position: absolute;
-    top: 36%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.thumbnailLoading {
+    opacity: 0.2;
+    transition: ease-in 0.2s;
+}
+.thumbnailLoading .checkbox {
+    display: none;
 }
 
 .imageContainer {

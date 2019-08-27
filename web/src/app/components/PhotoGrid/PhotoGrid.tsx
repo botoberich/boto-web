@@ -91,7 +91,7 @@ function PhotoGrid() {
                     .map(date => {
                         return (
                             <div key={date}>
-                                <Title level={3}>{isToday(date) ? 'Today' : format(date, 'D MMM YYYY')}</Title>
+                                <Title level={3}>{isToday(date) ? 'Today' : format(date, 'ddd, D MMM YYYY')}</Title>
                                 <div className={styles.grid}>
                                     {Object.keys(thumbnails[date]).map(photoId => {
                                         let b64 = thumbnails[date][photoId].b64;

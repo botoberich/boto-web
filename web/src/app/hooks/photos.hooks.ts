@@ -144,6 +144,7 @@ export const handleFileUpload = async (
     } = {}
 ) => {
     const files: File[] = [...e.target.files];
+    e.target.value = '';
     onStart({
         length: files.length,
         cmd: 'Upload',
