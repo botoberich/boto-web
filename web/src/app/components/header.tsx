@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, navigate } from 'gatsby';
+import { Location } from '@reach/router';
 
 // State
 import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography, Tooltip } from 'antd';
@@ -30,36 +31,47 @@ function PageHeader() {
     const { progressDispatch } = useProgressContext();
 
     return (
-        <Header className={styles.header}>
-            <span className={styles.headerTitle}>Photos</span>
-            <nav className={styles.nav}>
-                <div className={styles.navItem}>
-                    {selectedThumbnails.length > 0 && (
-                        <Tag className={styles.tag} color="#f50">
-                            {selectedThumbnails.length}
-                            <span className={styles.hideMobile}>&nbsp;selected</span>
-                        </Tag>
-                    )}
-                </div>
-                <div className={styles.navItem}>
-                    <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch}></Upload>
-                </div>
-                <div className={styles.navItem}>
-                    <Delete
-                        progressDispatch={progressDispatch}
-                        selectedThumbnails={selectedThumbnails}
-                        setSelectedThumbnails={setSelectedThumbnails}
-                        setloadingThumbnails={setloadingThumbnails}
-                        setThumbnails={setThumbnails}></Delete>
-                </div>
-                <div className={styles.navItem}>
-                    <Download selectedThumbnails={selectedThumbnails} setSelectedThumbnails={setSelectedThumbnails} />
-                </div>
-                <div className={styles.navItem} style={{ marginLeft: '25px' }}>
-                    <UserAvatar></UserAvatar>
-                </div>
-            </nav>
-        </Header>
+        <Location>
+            {({ location }) => {
+                const pathParts = location.pathname.split('/').filter(str => str !== '');
+                const headerTitle = pathParts.length > 1 ? pathParts[1] : "photos";
+                return (
+                    <Header className={styles.header}>
+                        <span className={styles.headerTitle}>{headerTitle}</span>
+                        <nav className={styles.nav}>
+                            <div className={styles.navItem}>
+                                {selectedThumbnails.length > 0 && (
+                                    <Tag className={styles.tag} color="#f50">
+                                        {selectedThumbnails.length}
+                                        <span className={styles.hideMobile}>&nbsp;selected</span>
+                                    </Tag>
+                                )}
+                            </div>
+                            <div className={styles.navItem}>
+                                <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch}></Upload>
+                            </div>
+                            <div className={styles.navItem}>
+                                <Delete
+                                    progressDispatch={progressDispatch}
+                                    selectedThumbnails={selectedThumbnails}
+                                    setSelectedThumbnails={setSelectedThumbnails}
+                                    setloadingThumbnails={setloadingThumbnails}
+                                    setThumbnails={setThumbnails}></Delete>
+                            </div>
+                            <div className={styles.navItem}>
+                                <Download
+                                    selectedThumbnails={selectedThumbnails}
+                                    setSelectedThumbnails={setSelectedThumbnails}
+                                />
+                            </div>
+                            <div className={styles.navItem} style={{ marginLeft: '25px' }}>
+                                <UserAvatar></UserAvatar>
+                            </div>
+                        </nav>
+                    </Header>
+                );
+            }}
+        </Location>
     );
 }
 
