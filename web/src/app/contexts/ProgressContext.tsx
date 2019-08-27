@@ -100,6 +100,7 @@ function ProgressProvider(props) {
                         <Progress
                             status={progressState.loading ? 'active' : 'normal'}
                             percent={percentage}
+                            showInfo={false}
                             strokeColor={{
                                 '0%': '#108ee9',
                                 '100%': '#87d068',
