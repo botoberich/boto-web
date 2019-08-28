@@ -82,7 +82,8 @@ function PhotoGrid() {
                 }
             },
         });
-    }, [setThumbnails, thumbnails]);
+    // eslint-disable-next-line
+    }, []);
 
     return (
         <div className={styles.gridContainer}>
