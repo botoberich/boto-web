@@ -124,7 +124,7 @@ function AlbumMenu({ album }) {
     const handleDeleteAlbum = React.useCallback(id => {
         confirm({
             title: 'Do you want to delete this album?',
-            content: 'Your existing photos will not deleted.',
+            content: 'Your existing photos will not be deleted.',
             onOk() {
                 deleteAlbum(album._id, false);
             },
