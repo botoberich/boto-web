@@ -51,6 +51,15 @@ const _generateThumbnail = async (file: File): Promise<string> => {
     });
 };
 
+export const getThumbnail = async (id): Promise<ApiResponse<IThumbnail>> => {
+    try {
+        const thumbnail = await getFile(`${BASE_PATH}/${id}/thumbnail`);
+        console.log(thumbnail);
+    } catch (e) {
+        console.error(e);
+    }
+};
+
 export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>> => {
     try {
         const photos = await PhotoModel.fetchOwnList();

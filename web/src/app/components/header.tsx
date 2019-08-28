@@ -5,7 +5,7 @@ import { Location } from '@reach/router';
 // State
 import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography, Tooltip } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
-import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from '../hooks/photos.hooks';
+import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from './PhotoGrid/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
 import { usePhotoContext } from '../contexts/PhotoContext';
 

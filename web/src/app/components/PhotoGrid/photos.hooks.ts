@@ -1,6 +1,6 @@
-import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
-import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { IThumbnail, IPhotoMetadata } from '../interfaces/photos.interface';
+import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../../services/photo.service';
+import { ProgressStartingPayload } from '../../interfaces/ui.interface';
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import uuid from 'uuid/v4';
 
 type Photo = {

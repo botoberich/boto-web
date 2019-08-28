@@ -68,7 +68,7 @@ function ApiTestScreen() {
             </Button>
 
             <Input onChange={e => setAlbumId(e.target.value)}></Input>
-            <PhotoGrid />
+            {/* <PhotoGrid /> */}
         </>
     );
 }
