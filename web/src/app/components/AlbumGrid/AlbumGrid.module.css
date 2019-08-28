@@ -31,6 +31,10 @@
     font-size: 18px;
 }
 
+.createInput {
+    margin-top: 8px;
+}
+
 .grid {
     align-items: center;
     display: grid;

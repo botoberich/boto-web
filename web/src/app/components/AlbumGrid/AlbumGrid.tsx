@@ -24,8 +24,6 @@ function useFetchAlbums() {
         try {
             const fetchAlbums = async () => {
                 let albums = await getAlbums();
-                let albumById = await getAlbumById(Object.keys(albums.data)[4]);
-                console.log({ albums, albumById });
                 setAlbums(albums);
             };
             fetchAlbums();
@@ -45,7 +43,6 @@ function useFetchAlbumCover(id) {
         try {
             async function fetchAlbumCover(id) {
                 let resp = await getThumbnail(id);
-                console.log({ resp });
                 setResponse(resp);
             }
             fetchAlbumCover(id);
@@ -143,7 +140,7 @@ function AlbumMenu({ album }) {
                     </Menu>
                 }
                 trigger={['click']}>
-                <div className={styles.moreButton} onClick={() => console.log('heyo')} role="button">
+                <div className={styles.moreButton} role="button">
                     <Icon type="more" />
                 </div>
             </Dropdown>
