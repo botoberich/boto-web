@@ -5,7 +5,7 @@ import { Icon, Typography, Modal, Tooltip, Input } from 'antd';
 import styles from './AlbumGrid.module.css';
 
 // State
-import { createAlbum, removeFromAlbum, getAlbums, getAlbumById, deleteAlbum } from '../../services/album.service';
+import { createAlbum } from '../../services/album.service';
 
 const { Paragraph } = Typography;
 
@@ -13,16 +13,37 @@ function AlbumAdd() {
     const [visible, setVisible] = React.useState(false);
     const [title, setTitle] = React.useState('');
     const [desc, setDesc] = React.useState('');
-    const handleCreateAlbum = React.useCallback(() => {
+    const [validInput, setValidInput] = React.useState(true);
+    const [confirmLoading, setConfirmLoading] = React.useState(false);
+
+    const handleModalOpen = React.useCallback(() => {
         setVisible(true);
     }, []);
+
+    const handleCreateAlbum = React.useCallback(async () => {
+        if (title.length === 0) {
+            setValidInput(false);
+            return;
+        }
+
+        setConfirmLoading(true);
+
+        let resp = await createAlbum([], {
+            title: title,
+            description: desc,
+            coverId: '',
+        });
+
+        setConfirmLoading(false);
+        setVisible(false);
+    }, [title, desc, validInput]);
 
     return (
         <>
             <div
                 aria-label="Create album"
                 className={`${styles.albumCover} ${styles.albumAdd}`}
-                onClick={() => handleCreateAlbum()}
+                onClick={() => handleModalOpen()}
                 role="button">
                 <Icon type="plus" />
             </div>
@@ -33,22 +54,29 @@ function AlbumAdd() {
             <Modal
                 title="Create a new album"
                 visible={visible}
-                onOk={() => setVisible(false)}
-                onCancel={() => setVisible(false)}>
-                <div className={styles.createInput}>
-                    <Input
-                        onChange={e => setTitle(e.target.value)}
-                        placeholder="Enter your album title"
-                        prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        suffix={
-                            <Tooltip title="This will be editable soon.">
-                                <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                            </Tooltip>
-                        }
-                        value={title}
-                    />
+                onOk={handleCreateAlbum}
+                onCancel={() => setVisible(false)}
+                confirmLoading={confirmLoading}>
+                <div className={styles.inputRow}>
+                    <Tooltip placement="topLeft" title="Please enter a title" visible={!validInput}>
+                        <Input
+                            onChange={e => {
+                                setValidInput(true);
+                                setTitle(e.target.value);
+                            }}
+                            placeholder="Enter your album title"
+                            prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            required
+                            suffix={
+                                <Tooltip title="This will be editable soon.">
+                                    <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                                </Tooltip>
+                            }
+                            value={title}
+                        />
+                    </Tooltip>
                 </div>
-                <div className={styles.createInput}>
+                <div className={styles.inputRow}>
                     <Input
                         onChange={e => setDesc(e.target.value)}
                         placeholder="Enter your album description"

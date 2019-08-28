@@ -31,10 +31,6 @@
     font-size: 18px;
 }
 
-.createInput {
-    margin-top: 8px;
-}
-
 .grid {
     align-items: center;
     display: grid;
@@ -52,6 +48,10 @@
     height: 240px;
     position: relative;
     margin-top: 24px;
+}
+
+.inputRow {
+    margin-top: 8px;
 }
 
 .moreButton {

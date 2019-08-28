@@ -24,6 +24,7 @@ function useFetchAlbums() {
         try {
             const fetchAlbums = async () => {
                 let albums = await getAlbums();
+                console.log({ albums });
                 setAlbums(albums);
             };
             fetchAlbums();
@@ -59,7 +60,7 @@ function AlbumGrid() {
     const { response, error } = useFetchAlbums();
 
     if (!response) {
-        return <div>Loading...</div>;
+        return null;
     }
 
     if (response.status === 'success') {
