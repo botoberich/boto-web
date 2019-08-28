@@ -10,6 +10,7 @@ import { getThumbnail } from '../../services/photo.service';
 
 // Types
 import { IGetAlbumsResult, IAlbumMetadata } from '../../interfaces/albums.interface';
+import { IThumbnail } from '../../interfaces/photos.interface';
 import { ApiResponse } from '../../interfaces/response.interface';
 
 const { Title, Paragraph } = Typography;
@@ -41,25 +42,23 @@ function useFetchAlbums() {
 }
 
 function useFetchAlbumCover(id) {
-    // const [response, setAlbums] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
-    // const [error, setError] = React.useState(null);
+    const [response, setResponse] = React.useState<ApiResponse<IThumbnail>>(null);
+    const [error, setError] = React.useState(null);
     React.useEffect(() => {
-        getThumbnail(id);
-        // try {
-        //     async function fetchAlbumCover(id) {
-        //         let albums = await getAlbums();
-        //         let albumById = await getAlbumById(Object.keys(albums.data)[4]);
-        //         console.log({ albums: albums.data.albums, albumById });
-        //         setAlbums(albums);
-        //     };
-        //     fetchAlbumCover(id);
-        // } catch (e) {
-        //     console.error(e);
-        //     setError(e);
-        // }
+        try {
+            async function fetchAlbumCover(id) {
+                let resp = await getThumbnail(id);
+                console.log({ resp });
+                setResponse(resp);
+            }
+            fetchAlbumCover(id);
+        } catch (e) {
+            console.error(e);
+            setError(e);
+        }
     }, []);
 
-    // return { response, error };
+    return { response, error };
 }
 
 function AlbumGrid() {
@@ -71,6 +70,14 @@ function AlbumGrid() {
     if (response.status === 'success') {
         return (
             <div className={styles.grid}>
+                <div className={styles.gridItem}>
+                    <div role="button" aria-label="Create album" className={`${styles.albumCover} ${styles.albumAdd}`}>
+                        <Icon type="plus" />
+                    </div>
+                    <div className={styles.albumHeader}>
+                        <Paragraph className={styles.description}>Create an album</Paragraph>
+                    </div>
+                </div>
                 {Object.values(response.data).map((album: IAlbumMetadata, i) => {
                     return (
                         <div className={styles.gridItem} key={album._id}>
@@ -88,17 +95,29 @@ function AlbumGrid() {
             </div>
         );
     }
+
+    return null;
 }
 
 function AlbumCover({ coverId }) {
-    useFetchAlbumCover(coverId);
-    return (
-        <div
-            className={styles.albumCover}
-            style={{
-                backgroundImage: `url("https://via.placeholder.com/235")`,
-            }}></div>
-    );
+    const { response, error } = useFetchAlbumCover(coverId);
+
+    if (!response) {
+        return <div className={styles.albumCover}></div>;
+    }
+
+    if (response.status === 'success') {
+        return (
+            <div
+                className={styles.albumCover}
+                style={{
+                    background:
+                        response.data.b64 !== undefined ? `url("data:image/png;base64,${response.data.b64}")` : '',
+                }}></div>
+        );
+    }
+
+    return null;
 }
 
 function AlbumHeader({ title, description }) {
