@@ -1,6 +1,5 @@
 import { Subject } from 'rxjs';
 import React from 'react';
-import { ResponseStatus } from './response.interface';
 
 export interface IPhotoContext {
     selectedThumbnails: string[];

@@ -82,7 +82,7 @@ function PhotoGridItem({ id, src }) {
                 type="link">
                 <Icon type="check-circle" theme={selectedThumbnails.indexOf(id) !== -1 ? 'twoTone' : 'filled'}></Icon>
             </Button>
-            <div className={styles.topOverlay}></div>
+            <div className={styles.topOverlay} aria-hidden="true"></div>
             <div
                 onClick={() => {
                     loadingThumbnails.indexOf(id) === -1 && setOpen(true);

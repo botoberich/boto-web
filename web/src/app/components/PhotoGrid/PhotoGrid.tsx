@@ -8,7 +8,7 @@ import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
 // State
-import { handleFetchThumbnails } from '../../hooks/photos.hooks';
+import { handleFetchThumbnails } from './photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
 
 // Types
@@ -40,6 +40,10 @@ function PhotoGrid() {
         let thumbnailCtr = 0;
         handleFetchThumbnails({
             onStart: (allMetadata: IPhotoMetadata[]) => {
+                if (allMetadata === undefined) {
+                    return;
+                }
+                
                 let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
                 allMetadata.forEach(meta => {
                     let photoId = meta._id;
