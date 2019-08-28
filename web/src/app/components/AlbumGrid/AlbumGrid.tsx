@@ -128,7 +128,7 @@ function AlbumMenu({ album }) {
             },
             onCancel() {},
         });
-    }, []);
+    }, [album._id]);
 
     return (
         <>

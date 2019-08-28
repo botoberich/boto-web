@@ -43,7 +43,7 @@ function PhotoGridItem({ id, src }) {
                 setLoadingLightBox(false);
             }
         },
-        [id, photoDownloading, setLoadingLightBox]
+        [id, photoDownloading, setLoadingLightBox, loadingThumbnails]
     );
 
     const handleInitiateDownload = React.useCallback(

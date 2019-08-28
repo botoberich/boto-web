@@ -36,7 +36,7 @@ function AlbumAdd() {
 
         setConfirmLoading(false);
         setVisible(false);
-    }, [title, desc, validInput]);
+    }, [title, desc]);
 
     return (
         <>
