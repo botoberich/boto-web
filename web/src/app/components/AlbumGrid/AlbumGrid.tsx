@@ -1,11 +1,12 @@
 import React from 'react';
 
 // UI
-import { Icon, Menu, Dropdown, Typography } from 'antd';
+import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
+import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
 // State
-import { createAlbum, removeFromAlbum, getAlbums, getAlbumById } from '../../services/album.service';
+import { createAlbum, removeFromAlbum, getAlbums, getAlbumById, deleteAlbum } from '../../services/album.service';
 import { getThumbnail } from '../../services/photo.service';
 
 // Types
@@ -14,11 +15,7 @@ import { IThumbnail } from '../../interfaces/photos.interface';
 import { ApiResponse } from '../../interfaces/response.interface';
 
 const { Title, Paragraph } = Typography;
-const menu = (
-    <Menu>
-        <Menu.Item key="0">Delete</Menu.Item>
-    </Menu>
-);
+const { confirm } = Modal;
 
 function useFetchAlbums() {
     const [response, setAlbums] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
@@ -63,6 +60,7 @@ function useFetchAlbumCover(id) {
 
 function AlbumGrid() {
     const { response, error } = useFetchAlbums();
+
     if (!response) {
         return <div>Loading...</div>;
     }
@@ -71,22 +69,13 @@ function AlbumGrid() {
         return (
             <div className={styles.grid}>
                 <div className={styles.gridItem}>
-                    <div role="button" aria-label="Create album" className={`${styles.albumCover} ${styles.albumAdd}`}>
-                        <Icon type="plus" />
-                    </div>
-                    <div className={styles.albumHeader}>
-                        <Paragraph className={styles.description}>Create an album</Paragraph>
-                    </div>
+                    <AlbumAdd></AlbumAdd>
                 </div>
                 {Object.values(response.data).map((album: IAlbumMetadata, i) => {
                     return (
                         <div className={styles.gridItem} key={album._id}>
                             <div className={styles.topOverlay}></div>
-                            <Dropdown overlay={menu} trigger={['click']}>
-                                <div className={styles.moreButton} onClick={() => console.log('heyo')} role="button">
-                                    <Icon type="more" />
-                                </div>
-                            </Dropdown>
+                            <AlbumMenu album={album}></AlbumMenu>
                             <AlbumCover coverId={album.coverId}></AlbumCover>
                             <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
                         </div>
@@ -128,6 +117,37 @@ function AlbumHeader({ title, description }) {
             </Title>
             <Paragraph className={styles.description}>{description}</Paragraph>
         </div>
+    );
+}
+
+function AlbumMenu({ album }) {
+    const handleDeleteAlbum = React.useCallback(id => {
+        confirm({
+            title: 'Do you want to delete this album?',
+            content: 'Your existing photos will not deleted.',
+            onOk() {
+                deleteAlbum(album._id, false);
+            },
+            onCancel() {},
+        });
+    }, []);
+
+    return (
+        <>
+            <Dropdown
+                overlay={
+                    <Menu>
+                        <Menu.Item key="0" onClick={() => handleDeleteAlbum(album._id)}>
+                            Delete
+                        </Menu.Item>
+                    </Menu>
+                }
+                trigger={['click']}>
+                <div className={styles.moreButton} onClick={() => console.log('heyo')} role="button">
+                    <Icon type="more" />
+                </div>
+            </Dropdown>
+        </>
     );
 }
 
