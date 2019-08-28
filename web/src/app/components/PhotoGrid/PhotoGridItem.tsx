@@ -2,7 +2,7 @@ import React from 'react';
 
 // UI
 import Lightbox from 'react-image-lightbox';
-import { Icon, Button } from 'antd';
+import { Icon, Button, Spin } from 'antd';
 import styles from './PhotoGridItem.module.css';
 
 // State
@@ -24,7 +24,10 @@ function PhotoGridItem({ id, src }) {
         async e => {
             e.persist();
             // We don't want to download the photo if the user is only selecting the photo
-            if (editButton.current !== null && editButton.current.buttonNode === e.target) {
+            if (
+                (editButton.current !== null && editButton.current.buttonNode === e.target) ||
+                loadingThumbnails.indexOf(id) === -1
+            ) {
                 return;
             }
             // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
@@ -40,7 +43,7 @@ function PhotoGridItem({ id, src }) {
                 setLoadingLightBox(false);
             }
         },
-        [id, photoDownloading]
+        [id, photoDownloading, setLoadingLightBox]
     );
 
     const handleInitiateDownload = React.useCallback(
@@ -63,7 +66,7 @@ function PhotoGridItem({ id, src }) {
             onTouchStart={handleInitiateDownload}>
             <Button
                 aria-checked={selectedThumbnails.indexOf(id) !== -1}
-                className={styles.triggerBox}
+                className={`${styles.triggerBox} checkbox`}
                 onClick={() => {
                     let selectIndex = selectedThumbnails.indexOf(id);
                     if (selectIndex === -1) {
@@ -79,13 +82,15 @@ function PhotoGridItem({ id, src }) {
                 type="link">
                 <Icon type="check-circle" theme={selectedThumbnails.indexOf(id) !== -1 ? 'twoTone' : 'filled'}></Icon>
             </Button>
-            <div className={styles.topOverlay}></div>
+            <div className={styles.topOverlay} aria-hidden="true"></div>
             <div
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                    loadingThumbnails.indexOf(id) === -1 && setOpen(true);
+                }}
                 className={`${selectedThumbnails.indexOf(id) !== -1 ? styles.scaleDown : ''} ${styles.imageContainer}`}>
                 <div
                     aria-label={`PhotoId: ${id}`}
-                    className={styles.img}
+                    className={`${styles.img} ${loadingThumbnails.indexOf(id) !== -1 ? styles.thumbnailLoading : ''}`}
                     style={{
                         backgroundImage: `url("${src}")`,
                     }}
@@ -93,8 +98,8 @@ function PhotoGridItem({ id, src }) {
                 {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
             </div>
             {loadingThumbnails.indexOf(id) !== -1 && (
-                <div className={styles.inProgress}>
-                    <Icon type="loading" spin />
+                <div className={styles.spinner}>
+                    <Icon type="loading" style={{ fontSize: 35 }} spin />
                 </div>
             )}
             <div className={styles.hoverOverlay} />

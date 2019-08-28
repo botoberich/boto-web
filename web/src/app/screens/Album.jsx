@@ -1,7 +1,13 @@
 import React from 'react';
+import { AlbumProvider } from '../contexts/AlbumContext';
+import AlbumGrid from '../components/AlbumGrid';
 
-function Album() {
-    return <h1>Album page</h1>;
+function AlbumScreen() {
+    return (
+        <AlbumProvider>
+            <AlbumGrid></AlbumGrid>
+        </AlbumProvider>
+    );
 }
 
-export default Album;
+export default AlbumScreen;

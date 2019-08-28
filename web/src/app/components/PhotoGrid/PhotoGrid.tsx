@@ -7,17 +7,20 @@ import { ArgsProps } from 'antd/lib/notification';
 import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
-// Types
-import { handleFetchThumbnails } from '../../hooks/photos.hooks';
+// State
+import { handleFetchThumbnails } from './photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
-import { IThumbnail, IPhotoMetaData } from '../../interfaces/photos.interface';
+
+// Types
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
 const { Title } = Typography;
+const { Paragraph } = Typography;
 
 function PhotoGrid() {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
-    const { Paragraph } = Typography;
+
     const notificationConfig = (msg: string): ArgsProps => ({
         /** @todo we need to find a better way to display notifications globally through out the app */
         placement: 'bottomRight',
@@ -31,11 +34,18 @@ function PhotoGrid() {
     });
 
     React.useEffect(() => {
+        // TODO: Need a more robust condition to refetch photos
+        if (Object.entries(thumbnails).length > 0) return;
+
         let thumbnailCtr = 0;
         handleFetchThumbnails({
-            onStart: (allMetaData: IPhotoMetaData[]) => {
+            onStart: (allMetadata: IPhotoMetadata[]) => {
+                if (allMetadata === undefined) {
+                    return;
+                }
+                
                 let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-                allMetaData.forEach(meta => {
+                allMetadata.forEach(meta => {
                     let photoId = meta._id;
                     let dateString = new Date(meta.createdAt).toDateString();
                     let thumbnail: IThumbnail = { b64: '', metaData: meta };
@@ -54,7 +64,7 @@ function PhotoGrid() {
                 }
                 thumbnailCtr++;
 
-                /** hydrate the skeletons with b64 each emission */
+                /** hydrate the skeletons with b64 on each emission */
                 setThumbnails(thumbnails => {
                     let dateString = new Date(res.metaData.createdAt).toDateString();
                     let copy = { ...thumbnails };
@@ -72,7 +82,7 @@ function PhotoGrid() {
                 }
             },
         });
-    }, []);
+    }, [setThumbnails, thumbnails]);
 
     return (
         <div className={styles.gridContainer}>
@@ -85,7 +95,7 @@ function PhotoGrid() {
                     .map(date => {
                         return (
                             <div key={date}>
-                                <Title level={3}>{isToday(date) ? 'Today' : format(date, 'D MMM YYYY')}</Title>
+                                <Title level={3}>{isToday(date) ? 'Today' : format(date, 'ddd, D MMM YYYY')}</Title>
                                 <div className={styles.grid}>
                                     {Object.keys(thumbnails[date]).map(photoId => {
                                         let b64 = thumbnails[date][photoId].b64;

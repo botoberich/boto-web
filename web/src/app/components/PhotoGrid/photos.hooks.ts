@@ -1,6 +1,6 @@
-import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../services/photo.service';
-import { ProgressStartingPayload } from '../interfaces/ui.interface';
-import { IThumbnail, IPhotoMetaData } from '../interfaces/photos.interface';
+import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../../services/photo.service';
+import { ProgressStartingPayload } from '../../interfaces/ui.interface';
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import uuid from 'uuid/v4';
 
 type Photo = {
@@ -68,10 +68,10 @@ export const handleFetchThumbnails = async ({
     onComplete = () => {},
     onError = err => {},
     onEnd = () => {},
-    onStart = (allMetaData: IPhotoMetaData[]) => {},
+    onStart = (allMetadata: IPhotoMetadata[]) => {},
 } = {}) => {
     const thumbnailsRes = await getThumbnails();
-    onStart(thumbnailsRes.data.allMetaData);
+    onStart(thumbnailsRes.data.allMetadata);
     if (thumbnailsRes.status === 'success') {
         thumbnailsRes.data.$thumbnails.subscribe({
             next: res => {
@@ -96,7 +96,7 @@ export const handleFetchThumbnails = async ({
 export const handleDeletePhotos = async (
     ids: string[],
     {
-        onNext = (id: IPhotoMetaData) => {},
+        onNext = (id: IPhotoMetadata) => {},
         onComplete = () => {},
         onError = err => {},
         onStart = (payload: ProgressStartingPayload) => {},
@@ -144,6 +144,7 @@ export const handleFileUpload = async (
     } = {}
 ) => {
     const files: File[] = [...e.target.files];
+    e.target.value = '';
     onStart({
         length: files.length,
         cmd: 'Upload',

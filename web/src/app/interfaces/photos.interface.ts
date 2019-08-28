@@ -1,6 +1,5 @@
 import { Subject } from 'rxjs';
 import React from 'react';
-import { ResponseStatus } from './response.interface';
 
 export interface IPhotoContext {
     selectedThumbnails: string[];
@@ -13,7 +12,7 @@ export interface IPhotoContext {
     setLoadingLightBox: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export interface IPhotoMetaData {
+export interface IPhotoMetadata {
     archived: boolean;
     title: string;
     trashed: boolean;
@@ -25,22 +24,22 @@ export interface IPhotoMetaData {
 
 export interface Photo {
     b64: string;
-    metaData: IPhotoMetaData;
+    metaData: IPhotoMetadata;
 }
 
 export interface IPostPhotosResult {
-    allMetaData: IPhotoMetaData[];
+    allMetadata: IPhotoMetadata[];
     $photos: Subject<IThumbnail>;
 }
 export interface IDeletePhotosResult {
     photoIds: string[];
-    $deletes: Subject<IPhotoMetaData>;
+    $deletes: Subject<IPhotoMetadata>;
 }
 export interface IGetThumbnailsResult {
-    allMetaData: IPhotoMetaData[];
+    allMetadata: IPhotoMetadata[];
     $thumbnails: Subject<IThumbnail>;
 }
 export interface IThumbnail {
     b64: string;
-    metaData: IPhotoMetaData;
+    metaData: IPhotoMetadata;
 }

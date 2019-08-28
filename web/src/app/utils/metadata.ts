@@ -1,6 +1,6 @@
 import EXIF from 'exif-js';
 import { getBase64 } from './encoding';
-import { IPhotoMetaData } from '../interfaces/photos.interface';
+import { IPhotoMetadata } from '../interfaces/photos.interface';
 
 export const getExif = b64 => {
     return new Promise((resolve, reject) => {
@@ -14,7 +14,7 @@ export const getExif = b64 => {
     });
 };
 
-export const getPhotoMetaData = async (file): Promise<any> => {
+export const getPhotoMetadata = async (file): Promise<any> => {
     let b64 = await getBase64(file);
     let exif: any = await getExif(b64);
     delete exif.thumbnail;

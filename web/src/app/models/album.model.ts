@@ -7,6 +7,10 @@ class Album extends Model {
     static schema = {
         description: String,
         title: String,
+        coverId: {
+            type: String,
+            decrypted: true,
+        },
     };
 }
 

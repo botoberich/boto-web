@@ -110,8 +110,9 @@ class IndexPage extends React.Component {
                                                         }}
                                                         style={{
                                                             alignItems: 'center',
-                                                            height: '60px',
                                                             borderRadius: '8px',
+                                                            height: '60px',
+                                                            margin: '0 auto',
                                                         }}>
                                                         Get Early Access
                                                     </Button>
