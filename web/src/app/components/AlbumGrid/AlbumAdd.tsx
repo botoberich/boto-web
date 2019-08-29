@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigate } from 'gatsby';
 
 // UI
 import { Icon, Typography, Modal, Tooltip, Input } from 'antd';
@@ -14,7 +15,7 @@ function AlbumAdd() {
             <div
                 aria-labelledby="create-album"
                 className={`${styles.albumCover} ${styles.albumAdd}`}
-                onClick={() => console.log('Route to new album page')}
+                onClick={() => navigate("/app/albums/new")}
                 role="button">
                 <Icon type="plus" />
             </div>

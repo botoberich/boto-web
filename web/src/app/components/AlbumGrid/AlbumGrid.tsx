@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigate, Link } from 'gatsby';
 
 // UI
 import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
@@ -62,15 +63,14 @@ function useFetchAlbumCover(id) {
 }
 
 function AlbumGrid() {
-    const [albums, setAlbums] = React.useState([]);
-    const { response, error, refetchAlbums } = useFetchAlbums();
+    // TODO: Figure out how to append a new album without refetching a whole list of albums again
+    // But for now, refetch is fine
+
+    const { response, refetchAlbums } = useFetchAlbums();
 
     if (!response) {
         return null;
     }
-
-    // TODO: Figure out how to append a new album without refetching a whole list of albums again
-    // But for now, refetch is fine
 
     if (response.status === 'success') {
         return (
@@ -80,12 +80,18 @@ function AlbumGrid() {
                 </div>
                 {Object.values(response.data).map((album: IAlbumMetadata, i) => {
                     return (
-                        <div className={styles.gridItem} key={album._id}>
-                            <div className={styles.topOverlay}></div>
-                            <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
-                            <AlbumCover coverId={album.coverId}></AlbumCover>
-                            <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
-                        </div>
+                        <Link to={`/app/albums/${album._id}`}>
+                            <div
+                                className={styles.gridItem}
+                                key={album._id}
+                                // onClick={() => navigate(`/app/albums/${album._id}`)}
+                            >
+                                <div className={styles.topOverlay}></div>
+                                <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
+                                <AlbumCover coverId={album.coverId}></AlbumCover>
+                                <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
+                            </div>
+                        </Link>
                     );
                 })}
             </div>
@@ -151,7 +157,7 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item key="add" onClick={() => console.log('Add photos to album')}>
+                        <Menu.Item key="add" onClick={() => navigate(`/app/albums/${album._id}`)}>
                             Add Photos
                         </Menu.Item>
                         <Menu.Item key="edit" onClick={handleModalOpen}>

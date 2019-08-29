@@ -15,6 +15,8 @@ import styles from './app.module.css';
 // Screens
 const Photo = loadable(() => import('./screens/Photo'));
 const Album = loadable(() => import('./screens/Album'));
+const DetailedAlbum = loadable(() => import('./screens/AlbumDetailed'));
+const NewAlbum = loadable(() => import('./screens/AlbumNew'));
 const ApiTestScreen = loadable(() => import('./screens/api.test'));
 // const Sharing = loadable(() => import('./screens/Sharing'));
 
@@ -32,8 +34,9 @@ function App() {
                         <PublicRoute path="/app">
                             <PrivateRoute path="/" component={Photo} />
                             <PrivateRoute exact path="/albums" component={Album} />
+                            <PrivateRoute exact path="/albums/new" component={NewAlbum} />
+                            <PrivateRoute exact path="/albums/:albumID" component={DetailedAlbum} />
                             <PrivateRoute path="/test" component={ApiTestScreen} />
-                            {/* <PrivateRoute exact path="/albums" component={Album} /> */}
                             {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                         </PublicRoute>
                     </Router>
