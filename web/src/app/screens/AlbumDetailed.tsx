@@ -6,6 +6,7 @@ import { notification, Typography } from 'antd';
 import 'react-image-lightbox/style.css';
 
 // State
+import { getAlbumById } from '../services/album.service';
 import { handleFetchThumbnails } from '../components/PhotoGrid/photos.hooks';
 import { usePhotoContext } from '../contexts/PhotoContext';
 
@@ -18,6 +19,19 @@ const { Paragraph } = Typography;
 function DetailedAlbumScreen({ albumID }) {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        async function fetchThumbnails() {
+            try {
+                const album = await getAlbumById(albumID);
+                console.log({ album });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        fetchThumbnails();
+    }, []);
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
