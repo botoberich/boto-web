@@ -80,12 +80,8 @@ function AlbumGrid() {
                 </div>
                 {Object.values(response.data).map((album: IAlbumMetadata, i) => {
                     return (
-                        <Link to={`/app/albums/${album._id}`}>
-                            <div
-                                className={styles.gridItem}
-                                key={album._id}
-                                // onClick={() => navigate(`/app/albums/${album._id}`)}
-                            >
+                        <Link to={`/app/albums/${album._id}`} key={album._id}>
+                            <div className={styles.gridItem}>
                                 <div className={styles.topOverlay}></div>
                                 <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
                                 <AlbumCover coverId={album.coverId}></AlbumCover>
