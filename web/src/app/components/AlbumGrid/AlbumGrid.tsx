@@ -8,6 +8,7 @@ import styles from './AlbumGrid.module.css';
 // State
 import { createAlbum, removeFromAlbum, getAlbums, getAlbumById, deleteAlbum } from '../../services/album.service';
 import { getThumbnail } from '../../services/photo.service';
+import { useEditAlbumModal } from './albums.hooks';
 
 // Types
 import { IGetAlbumsResult, IAlbumMetadata } from '../../interfaces/albums.interface';
@@ -18,23 +19,27 @@ const { Title, Paragraph } = Typography;
 const { confirm } = Modal;
 
 function useFetchAlbums() {
-    const [response, setAlbums] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
+    const [response, setResponse] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
     const [error, setError] = React.useState(null);
-    React.useEffect(() => {
+
+    async function fetch() {
         try {
             const fetchAlbums = async () => {
                 let albums = await getAlbums();
-                console.log({ albums });
-                setAlbums(albums);
+                setResponse(albums);
             };
             fetchAlbums();
         } catch (e) {
             console.error(e);
             setError(e);
         }
+    }
+
+    React.useEffect(() => {
+        fetch();
     }, []);
 
-    return { response, error };
+    return { response, error, refetchAlbums: fetch };
 }
 
 function useFetchAlbumCover(id) {
@@ -57,11 +62,15 @@ function useFetchAlbumCover(id) {
 }
 
 function AlbumGrid() {
-    const { response, error } = useFetchAlbums();
+    const [albums, setAlbums] = React.useState([]);
+    const { response, error, refetchAlbums } = useFetchAlbums();
 
     if (!response) {
         return null;
     }
+
+    // TODO: Figure out how to append a new album without refetching a whole list of albums again
+    // But for now, refetch is fine
 
     if (response.status === 'success') {
         return (
@@ -73,7 +82,7 @@ function AlbumGrid() {
                     return (
                         <div className={styles.gridItem} key={album._id}>
                             <div className={styles.topOverlay}></div>
-                            <AlbumMenu album={album}></AlbumMenu>
+                            <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
                             <AlbumCover coverId={album.coverId}></AlbumCover>
                             <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
                         </div>
@@ -118,24 +127,37 @@ function AlbumHeader({ title, description }) {
     );
 }
 
-function AlbumMenu({ album }) {
-    const handleDeleteAlbum = React.useCallback(id => {
-        confirm({
-            title: 'Do you want to delete this album?',
-            content: 'Your existing photos will not be deleted.',
-            onOk() {
-                deleteAlbum(album._id, false);
-            },
-            onCancel() {},
-        });
-    }, [album._id]);
+function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
+    const { Modal, setVisible } = useEditAlbumModal(album, { onSuccess: refetchAlbums });
+
+    const handleModalOpen = React.useCallback(() => setVisible(true), []);
+
+    const handleDeleteAlbum = React.useCallback(
+        id => {
+            confirm({
+                title: 'Do you want to delete this album?',
+                content: 'Your existing photos will not be deleted.',
+                onOk() {
+                    deleteAlbum(album._id, false);
+                },
+                onCancel() {},
+            });
+        },
+        [album._id]
+    );
 
     return (
         <>
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item key="0" onClick={() => handleDeleteAlbum(album._id)}>
+                        <Menu.Item key="add" onClick={() => console.log('Add photos to album')}>
+                            Add Photos
+                        </Menu.Item>
+                        <Menu.Item key="edit" onClick={handleModalOpen}>
+                            Edit
+                        </Menu.Item>
+                        <Menu.Item key="delete" onClick={() => handleDeleteAlbum(album._id)}>
                             Delete
                         </Menu.Item>
                     </Menu>
@@ -145,6 +167,8 @@ function AlbumMenu({ album }) {
                     <Icon type="more" />
                 </div>
             </Dropdown>
+
+            {Modal}
         </>
     );
 }

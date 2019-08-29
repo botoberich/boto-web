@@ -29,7 +29,7 @@ type IProgressContextValue = IProgressState & IProgressValue;
 // Progress State
 const ProgressContext = React.createContext(null);
 
-const initialProgress: IProgressState = {
+const initialProgress = {
     complete: false,
     current: 0,
     loading: false,
