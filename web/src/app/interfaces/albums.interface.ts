@@ -30,5 +30,6 @@ export interface IGetAlbumsResult {
     albums: { [albumId: string]: IAlbumMetadata };
 }
 export interface IGetSingleAlbumResult {
-    albumData: { photos: { [photoId: string]: IPhotoMetadata }; albumMetadata: IAlbumMetadata };
+    photos: IPhotoMetadata[];
+    albumMetadata: IAlbumMetadata;
 }

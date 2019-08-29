@@ -6,9 +6,42 @@ import styles from './AlbumGrid.module.css';
 
 // State
 import { updateAlbumMetadata } from '../../services/album.service';
+// import { getThumbnails } from '../../services/photo.service';
 
 // Types
+// import { ProgressStartingPayload } from '../../interfaces/ui.interface';
+// import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
+
+// export const handleFetchThumbnails = async ({
+//     onNext = (thumbnail: IThumbnail) => {},
+//     onComplete = () => {},
+//     onError = err => {},
+//     onEnd = () => {},
+//     onStart = (allMetadata: IPhotoMetadata[]) => {},
+// } = {}) => {
+//     const thumbnailsRes = await getThumbnails();
+//     onStart(thumbnailsRes.data.allMetadata);
+//     if (thumbnailsRes.status === 'success') {
+//         thumbnailsRes.data.$thumbnails.subscribe({
+//             next: res => {
+//                 onNext(res);
+//             },
+//             error: err => {
+//                 onError(err);
+//                 onEnd();
+//             },
+//             complete: () => {
+//                 onComplete();
+//                 onEnd();
+//             },
+//         });
+//     } else {
+//         console.log('Error: ', thumbnailsRes.data);
+//         onError(thumbnailsRes.data);
+//         onEnd();
+//     }
+// };
 
 export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} }) {
     const [visible, setVisible] = React.useState(false);
@@ -37,7 +70,7 @@ export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} 
 
         setConfirmLoading(false);
         setVisible(false);
-    }, [title, desc]);
+    }, [title, desc, onSuccess, album._id]);
 
     return {
         Modal: (
