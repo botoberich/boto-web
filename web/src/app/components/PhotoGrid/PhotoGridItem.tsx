@@ -20,6 +20,12 @@ function PhotoGridItem({ id, src }) {
 
     const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox } = usePhotoContext();
 
+    React.useEffect(() => {
+        return () => {
+            setSelectedThumbnails([]);
+        };
+    }, []);
+
     const handlePhotoDownload = React.useCallback(
         async e => {
             e.stopPropagation();
