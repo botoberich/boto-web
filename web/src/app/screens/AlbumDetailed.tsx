@@ -106,7 +106,14 @@ function DetailedAlbumScreen({ albumID }) {
         fetch();
 
         return () => {
-            subscription.unsubscribe();
+            // State is being cached for some reason after page.
+            // Example: The last fetch call is storing the set of thumbnails,
+            // even page Photo screen and Detailed Album screen
+            // Will refactor state management later, using context or mobx
+            subscription.then(sub => {
+                sub.unsubscribe();
+                setThumbnails({});
+            });
         };
     }, [albumID]);
 
