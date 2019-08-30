@@ -4,6 +4,7 @@ import { navigate } from 'gatsby';
 
 type Props = {
     component: any;
+    exact?: boolean;
     location?: any;
     path: string;
 };

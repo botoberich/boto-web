@@ -108,6 +108,7 @@ export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>
 
 export const getPhotoById = async (id: string): Promise<ApiResponse<Photo>> => {
     try {
+        console.log({ photoId: id });
         const photo = await PhotoModel.findById(id);
         const metaData = photo.attrs;
         if (photo.attrs.chunked) {

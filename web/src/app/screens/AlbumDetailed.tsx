@@ -34,9 +34,6 @@ function DetailedAlbumScreen({ albumID }) {
     });
 
     React.useEffect(() => {
-        // TODO: Need a more robust condition to refetch photos
-        if (Object.entries(thumbnails).length > 0) return;
-
         let subscription;
 
         async function fetch() {
@@ -63,19 +60,17 @@ function DetailedAlbumScreen({ albumID }) {
                         return;
                     }
 
-                    let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
+                    const thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
                     allMetadata.forEach(meta => {
-                        let photoId = meta._id;
-                        let dateString = new Date(meta.createdAt).toDateString();
-                        let thumbnail: IThumbnail = { b64: '', metaData: meta };
-                        skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
-                            ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
+                        const photoId = meta._id;
+                        const dateString = new Date(meta.createdAt).toDateString();
+                        const thumbnail: IThumbnail = { b64: '', metaData: meta };
+                        thumbnailsByDate[dateString] = thumbnailsByDate[dateString]
+                            ? { ...thumbnailsByDate[dateString], ...{ [photoId]: thumbnail } }
                             : { [photoId]: thumbnail };
                     });
 
-                    console.log({ skeletonThumbnails });
-
-                    setThumbnails(skeletonThumbnails);
+                    setThumbnails(thumbnailsByDate);
                 },
                 onNext: res => {
                     if (res === null || res === undefined) {

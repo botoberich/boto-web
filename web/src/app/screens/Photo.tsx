@@ -32,9 +32,6 @@ function PhotoScreen() {
     });
 
     React.useEffect(() => {
-        // TODO: Need a more robust condition to refetch photos
-        if (Object.entries(thumbnails).length > 0) return;
-
         let thumbnailCtr = 0;
         const subscription = handleFetchThumbnails({
             onStart: (allMetadata: IPhotoMetadata[]) => {
