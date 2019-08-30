@@ -7,7 +7,7 @@
     height: 100%;
     background: transparent;
     position: absolute;
-    z-index: 1000000;
+    z-index: 100;
 }
 
 .loadingIcon {

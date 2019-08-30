@@ -24,10 +24,6 @@ function useFetchAlbums() {
     const [error, setError] = React.useState(null);
 
     async function fetch() {
-        if (response !== null) {
-            return;
-        }
-
         const fetchAlbums = async () => {
             let albums = await getAlbums();
             setResponse(albums);
@@ -43,7 +39,7 @@ function useFetchAlbums() {
 
     React.useEffect(() => {
         fetch();
-    }, []);
+    }, [response]);
 
     return { response, error, refetchAlbums: fetch };
 }
@@ -89,14 +85,14 @@ function AlbumGrid() {
                 </div>
                 {Object.values(response.data).map((album: IAlbumMetadata, i) => {
                     return (
-                        <Link to={`/app/albums/${album._id}`} key={album._id}>
-                            <div className={styles.gridItem}>
-                                <div className={styles.topOverlay}></div>
-                                <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
+                        <div className={styles.gridItem} key={album._id}>
+                            <div className={styles.topOverlay}></div>
+                            <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
+                            <Link to={`/app/albums/${album._id}`} key={album._id}>
                                 <AlbumCover coverId={album.coverId}></AlbumCover>
-                                <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
-                            </div>
-                        </Link>
+                            </Link>
+                            <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
+                        </div>
                     );
                 })}
             </div>
@@ -141,7 +137,7 @@ function AlbumHeader({ title, description }) {
 function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
     const { Modal, setVisible } = useEditAlbumModal(album, { onSuccess: refetchAlbums });
 
-    const handleModalOpen = React.useCallback(() => setVisible(true), [setVisible]);
+    const handleModalOpen = React.useCallback(e => setVisible(true), [setVisible]);
 
     const handleDeleteAlbum = React.useCallback(
         id => {
