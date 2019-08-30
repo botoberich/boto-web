@@ -36,7 +36,7 @@ function PhotoScreen() {
         if (Object.entries(thumbnails).length > 0) return;
 
         let thumbnailCtr = 0;
-        handleFetchThumbnails({
+        const subscription = handleFetchThumbnails({
             onStart: (allMetadata: IPhotoMetadata[]) => {
                 if (allMetadata === undefined) {
                     return;
@@ -78,6 +78,9 @@ function PhotoScreen() {
                 }
             },
         });
+        return () => {
+            subscription.then(sub => sub.unsubscribe());
+        };
         // eslint-disable-next-line
     }, []);
 

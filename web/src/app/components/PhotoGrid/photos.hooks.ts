@@ -70,10 +70,11 @@ export const handleFetchThumbnails = async ({
     onEnd = () => {},
     onStart = (allMetadata: IPhotoMetadata[]) => {},
 } = {}) => {
+    let subscription = { unsubscribe: () => {} };
     const thumbnailsRes = await getThumbnails();
     onStart(thumbnailsRes.data.allMetadata);
     if (thumbnailsRes.status === 'success') {
-        thumbnailsRes.data.$thumbnails.subscribe({
+        subscription = thumbnailsRes.data.$thumbnails.subscribe({
             next: res => {
                 onNext(res);
             },
@@ -91,6 +92,8 @@ export const handleFetchThumbnails = async ({
         onError(thumbnailsRes.data);
         onEnd();
     }
+
+    return subscription;
 };
 
 export const handleDeletePhotos = async (

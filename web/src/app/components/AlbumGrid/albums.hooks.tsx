@@ -20,6 +20,8 @@ export const handleFetchAlbumThumbnails = async ({
     onEnd = () => {},
     onStart = (allMetadata: IPhotoMetadata[]) => {},
 } = {}) => {
+    let subscription = { unsubscribe: () => {} };
+
     const thumbnailsRes = await getThumbnailsByIds(thumbnailIDs);
     console.log({ thumbnailsRes });
     if (thumbnailsRes.status !== 'success') {
@@ -28,7 +30,7 @@ export const handleFetchAlbumThumbnails = async ({
 
     onStart(thumbnailsRes.data.allMetadata);
     if (thumbnailsRes.status === 'success') {
-        thumbnailsRes.data.$thumbnails.subscribe({
+        subscription = thumbnailsRes.data.$thumbnails.subscribe({
             next: res => {
                 onNext(res);
             },
@@ -46,6 +48,8 @@ export const handleFetchAlbumThumbnails = async ({
         onError(thumbnailsRes.data);
         onEnd();
     }
+
+    return subscription;
 };
 
 export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} }) {

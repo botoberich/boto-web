@@ -37,6 +37,8 @@ function DetailedAlbumScreen({ albumID }) {
         // TODO: Need a more robust condition to refetch photos
         if (Object.entries(thumbnails).length > 0) return;
 
+        let subscription;
+
         async function fetch() {
             console.log({ albumID });
             if (albumID === null) {
@@ -53,7 +55,8 @@ function DetailedAlbumScreen({ albumID }) {
             const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
 
             let thumbnailCtr = 0;
-            handleFetchAlbumThumbnails({
+
+            subscription = handleFetchAlbumThumbnails({
                 thumbnailIDs,
                 onStart: (allMetadata: IPhotoMetadata[]) => {
                     if (allMetadata === undefined) {
@@ -101,6 +104,10 @@ function DetailedAlbumScreen({ albumID }) {
         }
 
         fetch();
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, [albumID]);
 
     return (

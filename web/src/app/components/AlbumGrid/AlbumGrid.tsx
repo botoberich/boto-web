@@ -67,7 +67,6 @@ function useFetchAlbumCover(id) {
             console.error(e);
             setError(e);
         }
-
     }, [id]);
 
     return { response, error };
