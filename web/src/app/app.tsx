@@ -72,8 +72,6 @@ function AppRoot(props) {
 
 function LightBoxLoader() {
     const { loadingLightBox } = usePhotoContext();
-    console.log({ loadingLightBox });
-
     if (loadingLightBox) {
         return (
             <div className={styles.loadingOverlay}>
