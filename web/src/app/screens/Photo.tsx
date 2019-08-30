@@ -52,8 +52,6 @@ function PhotoScreen() {
                         : { [photoId]: thumbnail };
                 });
 
-                console.log({ skeletonThumbnails });
-
                 setThumbnails(skeletonThumbnails);
             },
             onNext: res => {

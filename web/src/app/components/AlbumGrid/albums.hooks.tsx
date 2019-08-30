@@ -6,42 +6,47 @@ import styles from './AlbumGrid.module.css';
 
 // State
 import { updateAlbumMetadata } from '../../services/album.service';
-// import { getOwnThumbnails } from '../../services/photo.service';
+import { getThumbnailsByIds } from '../../services/photo.service';
 
 // Types
-// import { ProgressStartingPayload } from '../../interfaces/ui.interface';
-// import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
 
-// export const handleFetchThumbnails = async ({
-//     onNext = (thumbnail: IThumbnail) => {},
-//     onComplete = () => {},
-//     onError = err => {},
-//     onEnd = () => {},
-//     onStart = (allMetadata: IPhotoMetadata[]) => {},
-// } = {}) => {
-//     const thumbnailsRes = await getOwnThumbnails();
-//     onStart(thumbnailsRes.data.allMetadata);
-//     if (thumbnailsRes.status === 'success') {
-//         thumbnailsRes.data.$thumbnails.subscribe({
-//             next: res => {
-//                 onNext(res);
-//             },
-//             error: err => {
-//                 onError(err);
-//                 onEnd();
-//             },
-//             complete: () => {
-//                 onComplete();
-//                 onEnd();
-//             },
-//         });
-//     } else {
-//         console.log('Error: ', thumbnailsRes.data);
-//         onError(thumbnailsRes.data);
-//         onEnd();
-//     }
-// };
+export const handleFetchAlbumThumbnails = async ({
+    thumbnailIDs = [],
+    onNext = (thumbnail: IThumbnail) => {},
+    onComplete = () => {},
+    onError = err => {},
+    onEnd = () => {},
+    onStart = (allMetadata: IPhotoMetadata[]) => {},
+} = {}) => {
+    const thumbnailsRes = await getThumbnailsByIds(thumbnailIDs);
+    console.log({ thumbnailsRes });
+    if (thumbnailsRes.status !== 'success') {
+        return;
+    }
+
+    onStart(thumbnailsRes.data.allMetadata);
+    if (thumbnailsRes.status === 'success') {
+        thumbnailsRes.data.$thumbnails.subscribe({
+            next: res => {
+                onNext(res);
+            },
+            error: err => {
+                onError(err);
+                onEnd();
+            },
+            complete: () => {
+                onComplete();
+                onEnd();
+            },
+        });
+    } else {
+        console.log('Error: ', thumbnailsRes.data);
+        onError(thumbnailsRes.data);
+        onEnd();
+    }
+};
 
 export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} }) {
     const [visible, setVisible] = React.useState(false);

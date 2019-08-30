@@ -6,43 +6,107 @@ import { notification, Typography } from 'antd';
 import 'react-image-lightbox/style.css';
 
 // State
+import { handleFetchAlbumThumbnails } from '../components/AlbumGrid/albums.hooks';
 import { getAlbumById } from '../services/album.service';
-import { getThumbnail } from '../services/photo.service';
-// import { handleFetchThumbnails } from '../components/PhotoGrid/photos.hooks';
 import { usePhotoContext } from '../contexts/PhotoContext';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
-import { IThumbnail } from '../interfaces/photos.interface';
+import { IThumbnail, IPhotoMetadata } from '../interfaces/photos.interface';
 
-const { Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 function DetailedAlbumScreen({ albumID }) {
+    const [title, setTitle] = React.useState('');
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
 
+    const notificationConfig = (msg: string): ArgsProps => ({
+        // TODO: Refactor to use a global navigation singleton
+        placement: 'bottomRight',
+        bottom: 50,
+        duration: 3,
+        message: (
+            <div>
+                <Paragraph>{msg}</Paragraph>
+            </div>
+        ),
+    });
+
     React.useEffect(() => {
-        // async function fetchThumbnails() {
-        //     try {
-        //         const res = await getAlbumById(albumID);
-        //         console.log({ res });
-        //         let thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-        //         const photos = res.data.photos;
-        //         console.log('photosp', photos);
-        //         const thumbnailIDs = photos.map(photo => photo._id);
-        //         const thu
-        //         console.log('thumbnailIDs', thumbnailIDs);
-        //     } catch (e) {
-        //         console.error(e);
-        //     }
-        // }
-        // fetchThumbnails();
+        // TODO: Need a more robust condition to refetch photos
+        if (Object.entries(thumbnails).length > 0) return;
+
+        async function fetch() {
+            console.log({ albumID });
+            if (albumID === null) {
+                return;
+            }
+
+            const albumRes = await getAlbumById(albumID);
+            console.log({ albumRes });
+            if (albumRes.status !== 'success') {
+                return;
+            }
+
+            setTitle(albumRes.data.albumMetadata.title);
+            const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
+
+            let thumbnailCtr = 0;
+            handleFetchAlbumThumbnails({
+                thumbnailIDs,
+                onStart: (allMetadata: IPhotoMetadata[]) => {
+                    if (allMetadata === undefined) {
+                        return;
+                    }
+
+                    let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
+                    allMetadata.forEach(meta => {
+                        let photoId = meta._id;
+                        let dateString = new Date(meta.createdAt).toDateString();
+                        let thumbnail: IThumbnail = { b64: '', metaData: meta };
+                        skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
+                            ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
+                            : { [photoId]: thumbnail };
+                    });
+
+                    console.log({ skeletonThumbnails });
+
+                    setThumbnails(skeletonThumbnails);
+                },
+                onNext: res => {
+                    if (res === null || res === undefined) {
+                        return;
+                    }
+                    thumbnailCtr++;
+
+                    /** hydrate the skeletons with b64 on each emission */
+                    setThumbnails(thumbnails => {
+                        let dateString = new Date(res.metaData.createdAt).toDateString();
+                        let copy = { ...thumbnails };
+                        copy[dateString][res.metaData._id].b64 = res.b64;
+                        return copy;
+                    });
+                },
+                onError: err => {
+                    notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
+                },
+                onComplete: () => {
+                    setLoading(false);
+                    if (thumbnailCtr !== 0) {
+                        notification.success(notificationConfig(`Successfully loaded all photos.`));
+                    }
+                },
+            });
+        }
+
+        fetch();
     }, [albumID]);
 
     return (
         <>
-            <h1>Detailed album screen: {albumID}</h1>
-            <p>Here is where you view all the current photos in an album</p>
+            <Title>{title}</Title>
+            <PhotoGrid thumbnails={thumbnails} loading={loading}></PhotoGrid>
         </>
     );
 }

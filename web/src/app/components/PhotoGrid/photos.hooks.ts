@@ -1,4 +1,4 @@
-import { postPhotos, deletePhotos, getOwnThumbnails, getPhotoById } from '../../services/photo.service';
+import { postPhotos, deletePhotos, getThumbnails, getPhotoById } from '../../services/photo.service';
 import { ProgressStartingPayload } from '../../interfaces/ui.interface';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import uuid from 'uuid/v4';
@@ -70,7 +70,7 @@ export const handleFetchThumbnails = async ({
     onEnd = () => {},
     onStart = (allMetadata: IPhotoMetadata[]) => {},
 } = {}) => {
-    const thumbnailsRes = await getOwnThumbnails();
+    const thumbnailsRes = await getThumbnails();
     onStart(thumbnailsRes.data.allMetadata);
     if (thumbnailsRes.status === 'success') {
         thumbnailsRes.data.$thumbnails.subscribe({
