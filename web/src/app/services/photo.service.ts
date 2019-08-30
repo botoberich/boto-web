@@ -59,6 +59,29 @@ export const getThumbnail = async (id): Promise<ApiResponse<IThumbnail>> => {
     }
 };
 
+export const getThumbnailsByIds = async (photoIds): Promise<ApiResponse<IGetThumbnailsResult>> => {
+    try {
+        const photos = await Promise.all(photoIds.map(id => PhotoModel.findById(id)));
+        const allMetadata = photos.map(photo => photo.attrs);
+        const fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
+        const $thumbnails = of
+            .apply(this, fetchThumbnails)
+            .pipe(mergeAll())
+            .pipe(
+                map((json: string) => {
+                    let { photoId, b64 } = JSON.parse(json);
+                    return {
+                        b64,
+                        metaData: allMetadata.filter(o => o._id === photoId)[0],
+                    };
+                })
+            );
+        return success({ allMetadata, $thumbnails });
+    } catch (err) {
+        return error(err);
+    }
+};
+
 export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>> => {
     try {
         const photos = await PhotoModel.fetchOwnList();

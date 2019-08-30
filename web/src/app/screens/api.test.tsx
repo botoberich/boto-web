@@ -7,6 +7,7 @@ import 'react-image-lightbox/style.css';
 import { usePhotoContext } from '../contexts/PhotoContext';
 import { Button, Input } from 'antd';
 import { createAlbum, removeFromAlbum, getAlbums, getAlbumById } from '../services/album.service';
+import { getThumbnailsByIds } from '../services/photo.service';
 
 function ApiTestScreen() {
     let { selectedThumbnails } = usePhotoContext();
