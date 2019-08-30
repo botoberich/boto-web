@@ -35,7 +35,7 @@ export interface IDeletePhotosResult {
     photoIds: string[];
     $deletes: Subject<IPhotoMetadata>;
 }
-export interface IGetThumbnailsResult {
+export interface IGetOwnThumbnailsResult {
     allMetadata: IPhotoMetadata[];
     $thumbnails: Subject<IThumbnail>;
 }

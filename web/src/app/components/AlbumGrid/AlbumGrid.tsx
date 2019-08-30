@@ -24,11 +24,16 @@ function useFetchAlbums() {
     const [error, setError] = React.useState(null);
 
     async function fetch() {
+        if (response !== null) {
+            return;
+        }
+
+        const fetchAlbums = async () => {
+            let albums = await getAlbums();
+            setResponse(albums);
+        };
+
         try {
-            const fetchAlbums = async () => {
-                let albums = await getAlbums();
-                setResponse(albums);
-            };
             fetchAlbums();
         } catch (e) {
             console.error(e);
@@ -47,16 +52,22 @@ function useFetchAlbumCover(id) {
     const [response, setResponse] = React.useState<ApiResponse<IThumbnail>>(null);
     const [error, setError] = React.useState(null);
     React.useEffect(() => {
+        if (response !== null) {
+            return;
+        }
+
+        async function fetchAlbumCover(id) {
+            let resp = await getThumbnail(id);
+            setResponse(resp);
+        }
+
         try {
-            async function fetchAlbumCover(id) {
-                let resp = await getThumbnail(id);
-                setResponse(resp);
-            }
             fetchAlbumCover(id);
         } catch (e) {
             console.error(e);
             setError(e);
         }
+
     }, [id]);
 
     return { response, error };
@@ -65,7 +76,6 @@ function useFetchAlbumCover(id) {
 function AlbumGrid() {
     // TODO: Figure out how to append a new album without refetching a whole list of albums again
     // But for now, refetch is fine
-
     const { response, refetchAlbums } = useFetchAlbums();
 
     if (!response) {
@@ -98,7 +108,7 @@ function AlbumGrid() {
 }
 
 function AlbumCover({ coverId }) {
-    const { response, error } = useFetchAlbumCover(coverId);
+    const { response } = useFetchAlbumCover(coverId);
 
     if (!response) {
         return <div className={styles.albumCover}></div>;

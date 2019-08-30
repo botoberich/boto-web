@@ -22,7 +22,6 @@ function DetailedAlbumScreen({ albumID }) {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
-        // addToAlbum(['0f71540d-c51f-4630-8f15-275feeb1f3e2', '3e8a0fa0-1ba3-413a-8a48-8de32b841d48'], albumID);
         async function fetchThumbnails() {
             try {
                 const res = await getAlbumById(albumID);
@@ -33,14 +32,15 @@ function DetailedAlbumScreen({ albumID }) {
                 const photos = res.data.photos;
                 console.log('photosp', photos);
                 const thumbnails = await Promise.all(
-                    photos.map(({ _id }) => {
-                        return getThumbnail(_id);
+                    photos.map(async ({ _id }) => {
+                        const thumbnail = await getThumbnail(_id).then(res => res);
+                        console.log('thumbnail', thumbnail);
                     })
                 );
 
                 console.log('thumbnails', thumbnails);
-                const allMetadata = thumbnails.map(thumbnail => thumbnail.attr);
-                console.log('allMetadata', allMetadata);
+                // const allMetadata = thumbnails.map(thumbnail => thumbnail.attr);
+                // console.log('allMetadata', allMetadata);
 
                 // allMetadata.forEach(meta => {
                 //     let photoId = meta._id;

@@ -12,7 +12,7 @@ import {
     Photo,
     IPostPhotosResult,
     IPhotoMetadata,
-    IGetThumbnailsResult,
+    IGetOwnThumbnailsResult,
     IDeletePhotosResult,
     IThumbnail,
 } from '../interfaces/photos.interface';
@@ -59,7 +59,7 @@ export const getThumbnail = async (id): Promise<ApiResponse<IThumbnail>> => {
     }
 };
 
-export const getThumbnails = async (): Promise<ApiResponse<IGetThumbnailsResult>> => {
+export const getOwnThumbnails = async (): Promise<ApiResponse<IGetOwnThumbnailsResult>> => {
     try {
         const photos = await PhotoModel.fetchOwnList();
         const photoIds = photos.map(photo => photo._id);

@@ -138,3 +138,5 @@ export const deleteAlbum = async (albumId: string, keepPhotos: boolean): Promise
         return error(err);
     }
 };
+
+export const getAlbumThumbnails = photoIds => {};

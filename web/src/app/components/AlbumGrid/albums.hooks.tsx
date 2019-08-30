@@ -6,7 +6,7 @@ import styles from './AlbumGrid.module.css';
 
 // State
 import { updateAlbumMetadata } from '../../services/album.service';
-// import { getThumbnails } from '../../services/photo.service';
+// import { getOwnThumbnails } from '../../services/photo.service';
 
 // Types
 // import { ProgressStartingPayload } from '../../interfaces/ui.interface';
@@ -20,7 +20,7 @@ import { IAlbumMetadata } from '../../interfaces/albums.interface';
 //     onEnd = () => {},
 //     onStart = (allMetadata: IPhotoMetadata[]) => {},
 // } = {}) => {
-//     const thumbnailsRes = await getThumbnails();
+//     const thumbnailsRes = await getOwnThumbnails();
 //     onStart(thumbnailsRes.data.allMetadata);
 //     if (thumbnailsRes.status === 'success') {
 //         thumbnailsRes.data.$thumbnails.subscribe({
