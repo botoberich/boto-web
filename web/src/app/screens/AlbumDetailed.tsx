@@ -22,114 +22,27 @@ function DetailedAlbumScreen({ albumID }) {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
-        async function fetchThumbnails() {
-            try {
-                const res = await getAlbumById(albumID);
-                console.log({ res });
-
-                let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-
-                const photos = res.data.photos;
-                console.log('photosp', photos);
-                const thumbnails = await Promise.all(
-                    photos.map(async ({ _id }) => {
-                        const thumbnail = await getThumbnail(_id).then(res => res);
-                        console.log('thumbnail', thumbnail);
-                    })
-                );
-
-                console.log('thumbnails', thumbnails);
-                // const allMetadata = thumbnails.map(thumbnail => thumbnail.attr);
-                // console.log('allMetadata', allMetadata);
-
-                // allMetadata.forEach(meta => {
-                //     let photoId = meta._id;
-                //     let dateString = new Date(meta.createdAt).toDateString();
-                //     let thumbnail: IThumbnail = { b64: '', metaData: meta };
-                //     skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
-                //         ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
-                //         : { [photoId]: thumbnail };
-                // });
-
-                console.log('thumbanils', thumbnails);
-                // setThumbnails(thumbnails);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        fetchThumbnails();
+        // async function fetchThumbnails() {
+        //     try {
+        //         const res = await getAlbumById(albumID);
+        //         console.log({ res });
+        //         let thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
+        //         const photos = res.data.photos;
+        //         console.log('photosp', photos);
+        //         const thumbnailIDs = photos.map(photo => photo._id);
+        //         const thu
+        //         console.log('thumbnailIDs', thumbnailIDs);
+        //     } catch (e) {
+        //         console.error(e);
+        //     }
+        // }
+        // fetchThumbnails();
     }, [albumID]);
-
-    const notificationConfig = (msg: string): ArgsProps => ({
-        // TODO: Refactor to use a global navigation singleton
-        placement: 'bottomRight',
-        bottom: 50,
-        duration: 3,
-        message: (
-            <div>
-                <Paragraph>{msg}</Paragraph>
-            </div>
-        ),
-    });
-
-    // React.useEffect(() => {
-    //     // TODO: Need a more robust condition to refetch photos
-    //     if (Object.entries(thumbnails).length > 0) return;
-
-    //     let thumbnailCtr = 0;
-    //     handleFetchThumbnails({
-    //         onStart: (allMetadata: IPhotoMetadata[]) => {
-    //             if (allMetadata === undefined) {
-    //                 return;
-    //             }
-
-    //             let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-    //             allMetadata.forEach(meta => {
-    //                 let photoId = meta._id;
-    //                 let dateString = new Date(meta.createdAt).toDateString();
-    //                 let thumbnail: IThumbnail = { b64: '', metaData: meta };
-    //                 skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
-    //                     ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
-    //                     : { [photoId]: thumbnail };
-    //             });
-
-    //             console.log({ skeletonThumbnails });
-
-    //             setThumbnails(skeletonThumbnails);
-    //         },
-    //         onNext: res => {
-    //             if (res === null || res === undefined) {
-    //                 return;
-    //             }
-    //             thumbnailCtr++;
-
-    //             /** hydrate the skeletons with b64 on each emission */
-    //             setThumbnails(thumbnails => {
-    //                 let dateString = new Date(res.metaData.createdAt).toDateString();
-    //                 let copy = { ...thumbnails };
-    //                 copy[dateString][res.metaData._id].b64 = res.b64;
-    //                 return copy;
-    //             });
-    //         },
-    //         onError: err => {
-    //             notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
-    //         },
-    //         onComplete: () => {
-    //             setLoading(false);
-    //             if (thumbnailCtr !== 0) {
-    //                 notification.success(notificationConfig(`Successfully loaded all photos.`));
-    //             }
-    //         },
-    //     });
-    //     // eslint-disable-next-line
-    // }, []);
 
     return (
         <>
             <h1>Detailed album screen: {albumID}</h1>
             <p>Here is where you view all the current photos in an album</p>
-            {/* <PhotoGrid loading={loading} thumbnails={thumbnails} />; */}
         </>
     );
 }

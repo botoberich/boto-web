@@ -14,7 +14,7 @@ import { mergeAll } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import { ApiResponse } from '../interfaces/response.interface';
 import { Model } from 'radiks/src';
-import { deletePhotos } from './photo.service';
+import { deletePhotos, getThumbnail } from './photo.service';
 
 export const createAlbum = async (
     photoIds: string[],
@@ -138,5 +138,3 @@ export const deleteAlbum = async (albumId: string, keepPhotos: boolean): Promise
         return error(err);
     }
 };
-
-export const getAlbumThumbnails = photoIds => {};
