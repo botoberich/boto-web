@@ -18,6 +18,10 @@ configure({
     userSession,
 });
 
+if (typeof window !== 'undefined') {
+    window.localStorage.setItem('radiks-server-url', process.env.GATSBY_RADIKS_SERVER_URL);
+}
+
 export const isBrowser = () => typeof window !== 'undefined';
 
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});

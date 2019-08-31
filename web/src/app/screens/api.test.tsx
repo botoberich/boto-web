@@ -8,6 +8,7 @@ import { usePhotoContext } from '../contexts/PhotoContext';
 import { Button, Input } from 'antd';
 import { createAlbum, removeFromAlbum, getAlbums, getAlbumById } from '../services/album.service';
 import { getThumbnailsByIds } from '../services/photo.service';
+import { gaiaGet } from '../services/http.service';
 
 function ApiTestScreen() {
     let { selectedThumbnails } = usePhotoContext();
@@ -19,7 +20,13 @@ function ApiTestScreen() {
             let albumById = await getAlbumById(Object.keys(albums.data)[4]);
             console.log({ albums, albumById });
         };
-        fetchAlbums();
+
+        const getThumbnail = async () => {
+            let tn = await gaiaGet({ path: `user/photos/d6f060b1-a050-481a-8807-d3de0157dc25/thumbnail` });
+            console.log({ tn });
+        };
+        // fetchAlbums();
+        getThumbnail();
     }, []);
 
     const handleCreateAlbum = useCallback(async () => {
