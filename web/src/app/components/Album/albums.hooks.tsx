@@ -51,7 +51,7 @@ export const handleFetchAlbumThumbnails = async ({
     return subscription;
 };
 
-export function useEditAlbumModal(album: IAlbumMetadata) {
+export function useEditAlbumModal(album: IAlbumMetadata, { refetchAlbums = () => {} }) {
     const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
         initialTitle: album.title,
         initialDesc: album.description,
@@ -72,6 +72,7 @@ export function useEditAlbumModal(album: IAlbumMetadata) {
             description: desc,
         });
 
+        refetchAlbums()
         setConfirmLoading(false);
         setVisible(false);
     }, [title, desc, album._id]);

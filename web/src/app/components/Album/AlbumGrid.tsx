@@ -133,7 +133,7 @@ function AlbumHeader({ title, description }) {
 }
 
 function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
-    const { Modal, setVisible } = useEditAlbumModal(album);
+    const { Modal, setVisible } = useEditAlbumModal(album, { refetchAlbums });
 
     const handleModalOpen = React.useCallback(e => setVisible(true), [setVisible]);
 
