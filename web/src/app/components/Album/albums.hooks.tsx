@@ -51,7 +51,7 @@ export const handleFetchAlbumThumbnails = async ({
     return subscription;
 };
 
-export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} }) {
+export function useEditAlbumModal(album: IAlbumMetadata) {
     const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
         initialTitle: album.title,
         initialDesc: album.description,
@@ -67,18 +67,14 @@ export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} 
 
         setConfirmLoading(true);
 
-        let resp = await updateAlbumMetadata(album._id, {
+        await updateAlbumMetadata(album._id, {
             title: title,
             description: desc,
         });
-        
-        if (resp !== undefined && resp.status === 'success') {
-            onSuccess();
-        }
 
         setConfirmLoading(false);
         setVisible(false);
-    }, [title, desc, onSuccess, album._id]);
+    }, [title, desc, album._id]);
 
     return {
         Modal: (

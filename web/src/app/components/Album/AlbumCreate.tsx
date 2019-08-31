@@ -1,9 +1,10 @@
 import React from 'react';
+import { navigate } from 'gatsby';
 
 // UI
 import AlbumForm, { useAlbumForm } from './AlbumForm';
 import PhotoGrid, { usePhotoGrid } from '../Photo/PhotoGrid';
-import { Typography, Button } from 'antd';
+import { Typography, Button, notification } from 'antd';
 import styles from './AlbumCreate.module.css';
 
 // State
@@ -11,20 +12,27 @@ import { usePhotoContext } from '../../contexts/PhotoContext';
 import { createAlbum } from '../../services/album.service';
 
 // Types
+import { ArgsProps } from 'antd/lib/notification'
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
 
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 
 function AlbumCreate() {
-    // 1. Handle inputs for new album
-    // 2. Allow selection of photos to add to album
-    // 3. Navigate user to new album on success
-    // 4. If canceled, navigate back to many-album view
-    // 5. Show a cancel and save button
-
     const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
         initialDesc: '',
         initialTitle: '',
+    });
+
+    const notificationConfig = (msg: string): ArgsProps => ({
+        // TODO: Refactor to use a global navigation singleton
+        placement: 'bottomRight',
+        bottom: 50,
+        duration: 3,
+        message: (
+            <div>
+                <Paragraph>{msg}</Paragraph>
+            </div>
+        ),
     });
 
     const { thumbnails, loading } = usePhotoGrid();
@@ -45,11 +53,15 @@ function AlbumCreate() {
             coverId: selectedThumbnails[0],
         };
 
-        console.log({ albumMetaData });
 
-        console.log('Creating new album');
+        notification.success(notificationConfig("Creating your album"))
+
         const resp = await createAlbum(selectedThumbnails, albumMetaData);
-        console.log({ resp });
+
+        if (resp.status === 'success') {
+            const albumId = resp.data.albumMetadata._id;
+            navigate(`/app/albums/${albumId}`);
+        }
     }, [selectedThumbnails, title, desc]);
 
     return (

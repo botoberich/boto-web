@@ -133,7 +133,7 @@ function AlbumHeader({ title, description }) {
 }
 
 function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
-    const { Modal, setVisible } = useEditAlbumModal(album, { onSuccess: refetchAlbums });
+    const { Modal, setVisible } = useEditAlbumModal(album);
 
     const handleModalOpen = React.useCallback(e => setVisible(true), [setVisible]);
 
@@ -142,8 +142,11 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
             confirm({
                 title: 'Do you want to delete this album?',
                 content: 'Your existing photos will not be deleted.',
-                onOk() {
-                    deleteAlbum(album._id, false);
+                async onOk() {
+                    const resp = await deleteAlbum(album._id, false);
+                    if (resp.status === 'success') {
+                        refetchAlbums();
+                    }
                 },
                 onCancel() {},
             });

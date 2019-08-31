@@ -54,14 +54,15 @@ function removeFileExtension(title) {
     return splitTitle.slice(0, splitTitle.length - 1).join('');
 }
 
-function generateDownloadable(source, name) {
-    const downloadableContent = document.createElement('a');
-    downloadableContent.download = name;
-    downloadableContent.href = source;
-    document.body.appendChild(downloadableContent);
-    downloadableContent.click();
-    document.body.removeChild(downloadableContent);
-}
+// TODO: Fix single photo downloads
+// function generateDownloadable(source, name) {
+//     const downloadableContent = document.createElement('a');
+//     downloadableContent.download = name;
+//     downloadableContent.href = source;
+//     document.body.appendChild(downloadableContent);
+//     downloadableContent.click();
+//     document.body.removeChild(downloadableContent);
+// }
 
 export const handleFetchThumbnails = async ({
     onNext = (thumbnail: IThumbnail) => {},
@@ -88,7 +89,7 @@ export const handleFetchThumbnails = async ({
             },
         });
     } else {
-        console.log('Error: ', thumbnailsRes.data);
+        console.error('Error: ', thumbnailsRes.data);
         onError(thumbnailsRes.data);
         onEnd();
     }
@@ -115,22 +116,20 @@ export const handleDeletePhotos = async (
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
             next: metaData => {
-                console.log('Deleted photo id: ', metaData._id);
                 onNext(metaData);
             },
             error: err => {
-                console.log('Delete photo err: ', err);
+                console.error('Delete photo err: ', err);
                 onError(err);
                 onEnd();
             },
             complete: () => {
-                console.log('Deletes Completed.');
                 onComplete();
                 onEnd();
             },
         });
     } else {
-        console.log('Error: ', deleteRes.data);
+        console.error('Error: ', deleteRes.data);
         onError(deleteRes.data);
         onEnd();
     }
@@ -157,22 +156,20 @@ export const handleFileUpload = async (
         const $postPhotos = postRes.data.$photos;
         $postPhotos.subscribe({
             next: res => {
-                console.log('Uploaded photo id: ', res.metaData._id);
                 onNext(res);
             },
             error: err => {
-                console.log('Upload error: ', err);
+                console.error('Upload error: ', err);
                 onError(err);
                 onEnd();
             },
             complete: () => {
-                console.log('Uploads completed.');
                 onComplete();
                 onEnd();
             },
         });
     } else {
-        console.log('Error: ', postRes.data);
+        console.error('Error: ', postRes.data);
         onError(postRes.data);
         onEnd();
     }
