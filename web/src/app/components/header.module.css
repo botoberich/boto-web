@@ -16,6 +16,7 @@
     color: #5f6368;
     font-size: 20px;
     text-rendering: optimizeLegibility;
+    text-transform: capitalize;
     margin-right: 16px;
 }
 
