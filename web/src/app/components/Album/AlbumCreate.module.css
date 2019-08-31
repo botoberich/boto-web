@@ -1,4 +1,9 @@
-.formContainer {
+.btnRow {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.inputContainer {
     max-width: 480px;
 }
 

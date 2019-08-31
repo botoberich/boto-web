@@ -45,16 +45,18 @@ function useFetchAlbums() {
 }
 
 function useFetchAlbumCover(id) {
-    const [response, setResponse] = React.useState<ApiResponse<IThumbnail>>(null);
+    if (!id) {
+        return {};
+    }
+
+    const [cover, setCover] = React.useState<IThumbnail>(null);
     const [error, setError] = React.useState(null);
     React.useEffect(() => {
-        if (response !== null) {
-            return;
-        }
-
         async function fetchAlbumCover(id) {
-            let resp = await getThumbnail(id);
-            setResponse(resp);
+            const resp = await getThumbnail(id);
+            if (resp && resp.status === 'success') {
+                setCover(resp.data);
+            }
         }
 
         try {
@@ -65,7 +67,7 @@ function useFetchAlbumCover(id) {
         }
     }, [id]);
 
-    return { response, error };
+    return { cover, error };
 }
 
 function AlbumGrid() {
@@ -101,25 +103,20 @@ function AlbumGrid() {
 }
 
 function AlbumCover({ coverId }) {
-    let resp;
-    if (coverId) {
-        const { response } = useFetchAlbumCover(coverId);
-        resp = response;
-    }
+    const { cover } = useFetchAlbumCover(coverId);
 
-    if (!resp || !coverId) {
+    if (!cover) {
         return <div className={styles.albumCover}></div>;
     }
 
-    if (resp.status === 'success') {
-        return (
-            <div
-                className={styles.albumCover}
-                style={{
-                    background: resp.data.b64 !== undefined ? `url("data:image/png;base64,${resp.data.b64}")` : '',
-                }}></div>
-        );
-    }
+    return (
+        <div
+            aria-label="Album Cover"
+            className={styles.albumCover}
+            style={{
+                backgroundImage: `url("data:image/png;base64,${cover.b64}"`,
+            }}></div>
+    );
 
     return null;
 }

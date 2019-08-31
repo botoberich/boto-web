@@ -23,7 +23,6 @@ export const handleFetchAlbumThumbnails = async ({
     let subscription = { unsubscribe: () => {} };
 
     const thumbnailsRes = await getThumbnailsByIds(thumbnailIDs);
-    console.log({ thumbnailsRes });
     if (thumbnailsRes.status !== 'success') {
         return;
     }
@@ -72,8 +71,7 @@ export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} 
             title: title,
             description: desc,
         });
-
-        console.log('edit album response:', resp);
+        
         if (resp !== undefined && resp.status === 'success') {
             onSuccess();
         }

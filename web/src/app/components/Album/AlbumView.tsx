@@ -48,13 +48,11 @@ export function useAlbumView({ albumID }) {
         let subscription;
 
         async function fetch() {
-            console.log({ albumID });
             if (albumID === null) {
                 return;
             }
 
             const albumRes = await getAlbumById(albumID);
-            console.log({ albumRes });
             if (albumRes.status !== 'success') {
                 return;
             }

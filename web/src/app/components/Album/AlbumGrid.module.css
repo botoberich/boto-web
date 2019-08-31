@@ -10,6 +10,8 @@
 
 .albumCover {
     background-color: #e8eaed;
+    background-position: center;
+    background-size: cover;
     border-radius: 8px;
     height: 180px;
 }
