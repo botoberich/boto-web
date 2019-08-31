@@ -29,12 +29,14 @@ const notificationConfig = (msg: string): ArgsProps => ({
 function PageHeader() {
     const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails } = usePhotoContext();
     const { progressDispatch } = useProgressContext();
-
+    const upperFirstLetter = str => {
+        return str.charAt(0).toUpperCase() + str.substr(1, str.length);
+    };
     return (
         <Location>
             {({ location }) => {
                 const pathParts = location.pathname.split('/').filter(str => str !== '');
-                const headerTitle = pathParts.length > 1 ? pathParts[1] : 'photos';
+                const headerTitle = pathParts.length > 1 ? upperFirstLetter(pathParts[1]) : upperFirstLetter('photos');
                 // Quick fix to hide upload and delete buttons on non-Photo screen
                 const isPhotoScreen = location.pathname === '/app/';
                 return (
