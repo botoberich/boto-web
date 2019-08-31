@@ -17,7 +17,6 @@ const Photo = loadable(() => import('./screens/Photo'));
 const Album = loadable(() => import('./screens/Album'));
 const DetailedAlbum = loadable(() => import('./screens/AlbumDetailed'));
 const NewAlbum = loadable(() => import('./screens/AlbumNew'));
-const ApiTestScreen = loadable(() => import('./screens/api.test'));
 // const Sharing = loadable(() => import('./screens/Sharing'));
 
 export const APP_ROOT = 'APP_ROOT';
@@ -36,7 +35,6 @@ function App() {
                             <PrivateRoute exact path="/albums" component={Album} />
                             <PrivateRoute exact path="/albums/new" component={NewAlbum} />
                             <PrivateRoute exact path="/albums/:albumID" component={DetailedAlbum} />
-                            <PrivateRoute path="/test" component={ApiTestScreen} />
                             {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                         </PublicRoute>
                     </Router>

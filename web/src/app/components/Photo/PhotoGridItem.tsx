@@ -2,6 +2,7 @@ import React from 'react';
 
 // UI
 import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 import { Icon, Button, Spin } from 'antd';
 import styles from './PhotoGridItem.module.css';
 

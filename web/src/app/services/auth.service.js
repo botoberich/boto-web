@@ -1,10 +1,6 @@
 import { UserSession, AppConfig } from 'blockstack';
 import { configure, User, GroupMembership } from 'radiks/src';
 
-// helpful for debugging
-const logAuth = process.env.NODE_ENV === 'development' && true; // set to true to turn on logging
-const clog = (...args) => logAuth && console.log(...args);
-// helpful for debugging
 const appConfig = new AppConfig(
     ['store_write', 'publish_data'],
     typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000',
@@ -23,10 +19,7 @@ export const isBrowser = () => typeof window !== 'undefined';
 export const getUser = () => (isBrowser() && userSession.isUserSignedIn() ? userSession.loadUserData() : {});
 
 export const handleLogin = async callback => {
-    clog('isLoggedIn check', userSession.isUserSignedIn());
-
     if (userSession.isUserSignedIn()) {
-        clog('logged in');
         callback(getUser());
     } else if (userSession.isSignInPending()) {
         let userData = await userSession.handlePendingSignIn();
@@ -38,7 +31,6 @@ export const handleLogin = async callback => {
 
 export const checkIsSignedIn = async () => {
     if (!isBrowser()) {
-        // clog('Not a browser');
         return Promise.resolve(false);
     }
     if (userSession.isSignInPending()) {
@@ -55,10 +47,8 @@ export const checkIsSignedIn = async () => {
         return true;
     } else if (userSession.isUserSignedIn()) {
         const user = userSession.loadUserData();
-        // clog('isLoggedIn check', { user });
         return Promise.resolve(!!user);
     } else {
-        // clog('isLoggedIn check - nothing');
         return Promise.resolve(false);
     }
 };
