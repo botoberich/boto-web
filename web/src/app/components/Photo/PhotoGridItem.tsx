@@ -29,8 +29,8 @@ function PhotoGridItem({ id, src }) {
 
     const handlePhotoDownload = React.useCallback(
         async e => {
-            e.stopPropagation();
             e.persist();
+            e.stopPropagation();
 
             // Download the photo if the user is only selecting the photo
             if (editButton.current !== null && editButton.current.buttonNode === e.target) {

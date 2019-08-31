@@ -17,7 +17,6 @@
     font-size: 20px;
     text-rendering: optimizeLegibility;
     text-transform: capitalize;
-    margin-right: 16px;
 }
 
 @media (min-width: 576px) {
@@ -77,10 +76,12 @@
 }
 
 .tag {
-    height: 30px;
-    display: flex;
     align-items: center;
+    display: flex;
+    height: 30px;
+    justify-content: center;
     margin: 0;
+    min-width: 32px;
 }
 
 @media (max-width: 800px) {

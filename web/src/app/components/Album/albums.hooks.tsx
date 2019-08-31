@@ -1,22 +1,38 @@
 import React from 'react';
 
 // UI
-import { Modal, Typography } from 'antd';
+import { Modal } from 'antd';
 
 // State
-import { updateAlbumMetadata, removeFromAlbum } from '../../services/album.service';
+import { updateAlbumMetadata, removeFromAlbum, addToAlbum, getAlbums } from '../../services/album.service';
 import { getThumbnailsByIds } from '../../services/photo.service';
 import AlbumForm, { useAlbumForm } from './AlbumForm';
 
 // Types
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
-import { ArgsProps } from 'antd/lib/notification';
 
-const { Paragraph } = Typography;
-
-export const handleRemoveFromAlbum = ({ photoIds, albumId }) => {
+export const handleRemoveFromAlbum = ({ albumId, photoIds }) => {
     return removeFromAlbum(photoIds, albumId);
+};
+
+export const handleAddToAlbum = async ({ photoIds }) => {
+    console.log('Adding photos to album');
+
+    // 1. Fetch all albums
+    const resp = await getAlbums();
+    console.log({ resp });
+    let albums;
+    if (resp.status === 'success') {
+        albums = Object.values(resp.data);
+    }
+    console.log({ albums });
+
+    // 2. Render names onto a list in a modal
+
+    // 3. Add photos to selected album
+
+    // return addToAlbum(photoIds, selectedAlbumId);
 };
 
 export const handleFetchAlbumThumbnails = async ({

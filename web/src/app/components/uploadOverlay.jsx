@@ -89,6 +89,7 @@ function UploadOverlay({ setOverlayVisible }) {
                         aria-label="Close overlay"
                         type="close-circle"
                         onClick={e => {
+                            e.persist();
                             e.stopPropagation();
                             setOverlayVisible(false);
                         }}
