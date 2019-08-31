@@ -63,6 +63,7 @@ export const addToAlbum = async (photoIds, albumId): Promise<ApiResponse<IAddToA
     }
 };
 
+// TODO: Remove the coverId if the album is empty
 export const removeFromAlbum = async (photoIds, albumId): Promise<ApiResponse<IRemoveFromAlbumResult>> => {
     try {
         let album = await Album.findById(albumId);

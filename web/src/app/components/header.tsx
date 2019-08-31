@@ -3,7 +3,7 @@ import { Link, navigate } from 'gatsby';
 import { Location, Match } from '@reach/router';
 
 // State
-import { Button, Layout, Icon, Avatar, Menu, Dropdown, Badge, Tag, notification, Typography, Tooltip } from 'antd';
+import { Button, Layout, Icon, Avatar, Menu, Dropdown, Tag, notification, Typography, Tooltip } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../services/auth.service';
 import { handleFileUpload, handleDeletePhotos, handleDownloadPhotos } from './Photo/photos.hooks';
 import { useProgressContext } from '../contexts/ProgressContext';
@@ -15,10 +15,13 @@ import { ArgsProps } from 'antd/lib/notification';
 
 // Types
 import { IMatchProps } from '../interfaces/ui.interface';
+import { handleRemoveFromAlbum } from './Album/albums.hooks';
 
 const { Header } = Layout;
 const { Paragraph } = Typography;
-const notificationCoinfig = (msg: string): ArgsProps => ({
+
+// TODO: Again, refactor this to use a single notification config later
+const notificationConfig = (msg: string): ArgsProps => ({
     placement: 'bottomRight',
     bottom: 50,
     duration: 3,
@@ -30,25 +33,24 @@ const notificationCoinfig = (msg: string): ArgsProps => ({
 });
 
 function PageHeader() {
-    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails } = usePhotoContext();
+    const {
+        selectedThumbnails,
+        setSelectedThumbnails,
+        setThumbnails,
+        setloadingThumbnails,
+        thumbnails,
+    } = usePhotoContext();
     const { progressDispatch } = useProgressContext();
-    const upperFirstLetter = str => {
-        return str.charAt(0).toUpperCase() + str.substr(1, str.length);
-    };
+
     return (
         <Location>
             {props => {
                 return (
                     <Header className={styles.header}>
                         <Match path="/app/:title/*">
-                            {(props: IMatchProps) => {
-                                console.log({ props });
-                                return (
-                                    <span className={styles.headerTitle}>
-                                        {props.match ? props.match.title : 'photos'}
-                                    </span>
-                                );
-                            }}
+                            {(props: IMatchProps) => (
+                                <span className={styles.headerTitle}>{props.match ? props.match.title : 'photos'}</span>
+                            )}
                         </Match>
                         <nav className={styles.nav}>
                             <div className={styles.navItem}>
@@ -109,8 +111,10 @@ function PageHeader() {
                                     }
                                     return (
                                         <div className={styles.navItem}>
-                                            <Remove
+                                            <RemoveFromAlbum
                                                 albumId={props.match.id}
+                                                thumbnails={thumbnails}
+                                                setThumbnails={setThumbnails}
                                                 selectedThumbnails={selectedThumbnails}
                                                 setSelectedThumbnails={setSelectedThumbnails}
                                             />
@@ -231,26 +235,48 @@ function Download({ selectedThumbnails, setSelectedThumbnails }) {
     );
 }
 
-function Remove({ albumId, selectedThumbnails, setSelectedThumbnails }) {
+function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, setThumbnails, thumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <Button
                 disabled={selectedThumbnails.length === 0}
-                // onClick={e => {
-                //     try {
-                //         handleDownloadPhotos(selectedThumbnails);
-                //         notification.success(
-                //             notificationConfig(
-                //                 `Successfully downloaded ${selectedThumbnails.length > 1 ? 'files' : 'file'}.`
-                //             )
-                //         );
-                //     } catch (err) {
-                //         notification.error(notificationConfig(`Error downloading files. Please contact support.`));
-                //     }
+                onClick={async () => {
+                    try {
+                        notification.success(
+                            notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`)
+                        );
 
-                //     setSelectedThumbnails([]);
-                // }}
-            >
+                        const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
+
+                        if (resp.status === 'success') {
+                            notification.success(
+                                notificationConfig(
+                                    `Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`
+                                )
+                            );
+
+                            let filteredThumbnails = { ...thumbnails };
+                            Object.entries(thumbnails).map(([date]) => {
+                                selectedThumbnails.map(removed => {
+                                    // Remove from DOM the removed photos
+                                    delete filteredThumbnails[date][removed];
+
+                                    // Remove the data as well
+                                    if (Object.values(filteredThumbnails[date]).length === 0) {
+                                        delete filteredThumbnails[date];
+                                    }
+                                });
+                            });
+                            setThumbnails(filteredThumbnails);
+                        } else {
+                            notification.error(notificationConfig(`Trouble removing photos.`));
+                        }
+                    } catch (err) {
+                        notification.error(notificationConfig(`Trouble removing photos.`));
+                    }
+
+                    setSelectedThumbnails([]);
+                }}>
                 <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                 <span className={styles.hideMobile}>Remove From Album</span>
             </Button>

@@ -1,16 +1,23 @@
 import React from 'react';
 
 // UI
-import { Modal } from 'antd';
+import { Modal, Typography } from 'antd';
 
 // State
-import { updateAlbumMetadata } from '../../services/album.service';
+import { updateAlbumMetadata, removeFromAlbum } from '../../services/album.service';
 import { getThumbnailsByIds } from '../../services/photo.service';
 import AlbumForm, { useAlbumForm } from './AlbumForm';
 
 // Types
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
+import { ArgsProps } from 'antd/lib/notification';
+
+const { Paragraph } = Typography;
+
+export const handleRemoveFromAlbum = ({ photoIds, albumId }) => {
+    return removeFromAlbum(photoIds, albumId);
+};
 
 export const handleFetchAlbumThumbnails = async ({
     thumbnailIDs = [],
@@ -72,7 +79,7 @@ export function useEditAlbumModal(album: IAlbumMetadata, { refetchAlbums = () =>
             description: desc,
         });
 
-        refetchAlbums()
+        refetchAlbums();
         setConfirmLoading(false);
         setVisible(false);
     }, [title, desc, album._id]);
