@@ -59,7 +59,6 @@ export function useAlbumView({ albumID }) {
 
             setTitle(albumRes.data.albumMetadata.title);
             const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
-
             let thumbnailCtr = 0;
 
             subscription = handleFetchAlbumThumbnails({

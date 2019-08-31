@@ -12,7 +12,7 @@ import { usePhotoContext } from '../../contexts/PhotoContext';
 import { createAlbum } from '../../services/album.service';
 
 // Types
-import { ArgsProps } from 'antd/lib/notification'
+import { ArgsProps } from 'antd/lib/notification';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
 
 const { Title, Paragraph } = Typography;
@@ -53,14 +53,15 @@ function AlbumCreate() {
             coverId: selectedThumbnails[0],
         };
 
-
-        notification.success(notificationConfig("Creating your album"))
+        notification.success(notificationConfig('Creating your album'));
 
         const resp = await createAlbum(selectedThumbnails, albumMetaData);
 
         if (resp.status === 'success') {
             const albumId = resp.data.albumMetadata._id;
-            navigate(`/app/albums/${albumId}`);
+            setTimeout(() => {
+                navigate(`/app/albums/${albumId}`);
+            }, 1000);
         }
     }, [selectedThumbnails, title, desc]);
 

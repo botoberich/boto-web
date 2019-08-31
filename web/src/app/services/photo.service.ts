@@ -54,7 +54,7 @@ const _generateThumbnail = async (file: File): Promise<string> => {
 export const getThumbnail = async (id): Promise<ApiResponse<IThumbnail>> => {
     try {
         const thumbnail = await getFile(`${BASE_PATH}/${id}/thumbnail`);
-        const { photoId, b64 } = JSON.parse(thumbnail);
+        const { photoId, b64 } = JSON.parse(thumbnail.toString());
         return success({ photoId, b64 });
     } catch (e) {
         return error(e);
@@ -64,7 +64,7 @@ export const getThumbnail = async (id): Promise<ApiResponse<IThumbnail>> => {
 export const getThumbnailsByIds = async (photoIds): Promise<ApiResponse<IGetThumbnailsResult>> => {
     try {
         const photos = await Promise.all(photoIds.map(id => PhotoModel.findById(id)));
-        const allMetadata = photos.map(photo => photo.attrs);
+        const allMetadata = photos.map((photo: any) => photo.attrs);
         const fetchThumbnails = photoIds.map(id => getFile(`${BASE_PATH}/${id}/thumbnail`));
         const $thumbnails = of
             .apply(this, fetchThumbnails)

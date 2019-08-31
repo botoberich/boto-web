@@ -143,7 +143,7 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
                 title: 'Do you want to delete this album?',
                 content: 'Your existing photos will not be deleted.',
                 async onOk() {
-                    const resp = await deleteAlbum(album._id, false);
+                    const resp = await deleteAlbum(album._id, true);
                     if (resp.status === 'success') {
                         refetchAlbums();
                     }
