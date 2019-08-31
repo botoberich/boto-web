@@ -34,7 +34,9 @@ function PageHeader() {
         <Location>
             {({ location }) => {
                 const pathParts = location.pathname.split('/').filter(str => str !== '');
-                const headerTitle = pathParts.length > 1 ? pathParts[1] : "photos";
+                const headerTitle = pathParts.length > 1 ? pathParts[1] : 'photos';
+                // Quick fix to hide upload and delete buttons on non-Photo screen
+                const isPhotoScreen = location.pathname === '/app/';
                 return (
                     <Header className={styles.header}>
                         <span className={styles.headerTitle}>{headerTitle}</span>
@@ -47,17 +49,21 @@ function PageHeader() {
                                     </Tag>
                                 )}
                             </div>
-                            <div className={styles.navItem}>
-                                <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch}></Upload>
-                            </div>
-                            <div className={styles.navItem}>
-                                <Delete
-                                    progressDispatch={progressDispatch}
-                                    selectedThumbnails={selectedThumbnails}
-                                    setSelectedThumbnails={setSelectedThumbnails}
-                                    setloadingThumbnails={setloadingThumbnails}
-                                    setThumbnails={setThumbnails}></Delete>
-                            </div>
+                            {isPhotoScreen && (
+                                <div className={styles.navItem}>
+                                    <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch}></Upload>
+                                </div>
+                            )}
+                            {isPhotoScreen && (
+                                <div className={styles.navItem}>
+                                    <Delete
+                                        progressDispatch={progressDispatch}
+                                        selectedThumbnails={selectedThumbnails}
+                                        setSelectedThumbnails={setSelectedThumbnails}
+                                        setloadingThumbnails={setloadingThumbnails}
+                                        setThumbnails={setThumbnails}></Delete>
+                                </div>
+                            )}
                             <div className={styles.navItem}>
                                 <Download
                                     selectedThumbnails={selectedThumbnails}
