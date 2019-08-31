@@ -6,7 +6,7 @@ import { notification, Typography } from 'antd';
 import 'react-image-lightbox/style.css';
 
 // State
-import { handleFetchAlbumThumbnails } from '../components/AlbumGrid/albums.hooks';
+import { handleFetchAlbumThumbnails } from '../components/Album/albums.hooks';
 import { getAlbumById } from '../services/album.service';
 import { usePhotoContext } from '../contexts/PhotoContext';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 
 // UI
-import { Icon, Modal, Tooltip, Input } from 'antd';
-import styles from './AlbumGrid.module.css';
+import { Modal } from 'antd';
 
 // State
 import { updateAlbumMetadata } from '../../services/album.service';
 import { getThumbnailsByIds } from '../../services/photo.service';
+import AlbumForm, { useAlbumForm } from './AlbumForm';
 
 // Types
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
@@ -53,10 +53,11 @@ export const handleFetchAlbumThumbnails = async ({
 };
 
 export function useEditAlbumModal(album: IAlbumMetadata, { onSuccess = () => {} }) {
+    const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
+        initialTitle: album.title,
+        initialDesc: album.description,
+    });
     const [visible, setVisible] = React.useState(false);
-    const [title, setTitle] = React.useState(album.title);
-    const [desc, setDesc] = React.useState(album.description);
-    const [validInput, setValidInput] = React.useState(true);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
 
     const handleEditAlbum = React.useCallback(async () => {
@@ -129,38 +130,13 @@ function EditModal({
             onOk={handleEditAlbum}
             onCancel={() => setVisible(false)}
             confirmLoading={confirmLoading}>
-            <div className={styles.inputRow}>
-                <Tooltip placement="topLeft" title="Please enter a title" visible={!validInput}>
-                    <Input
-                        onChange={e => {
-                            setValidInput(true);
-                            setTitle(e.target.value);
-                        }}
-                        placeholder="Enter your album title"
-                        prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        required
-                        suffix={
-                            <Tooltip title="This will be editable soon.">
-                                <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                            </Tooltip>
-                        }
-                        value={title}
-                    />
-                </Tooltip>
-            </div>
-            <div className={styles.inputRow}>
-                <Input
-                    onChange={e => setDesc(e.target.value)}
-                    placeholder="Enter your album description"
-                    prefix={<Icon type="tags" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    suffix={
-                        <Tooltip title="This will be editable soon.">
-                            <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                        </Tooltip>
-                    }
-                    value={desc}
-                />
-            </div>
+            <AlbumForm
+                setTitle={setTitle}
+                title={title}
+                setDesc={setDesc}
+                desc={desc}
+                setValidInput={setValidInput}
+                validInput={validInput}></AlbumForm>
         </Modal>
     );
 }

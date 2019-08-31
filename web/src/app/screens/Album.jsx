@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlbumProvider } from '../contexts/AlbumContext';
-import AlbumGrid from '../components/AlbumGrid';
+import AlbumGrid from '../components/Album/AlbumGrid';
 
 function AlbumScreen() {
     return (
