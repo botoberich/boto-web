@@ -39,7 +39,7 @@ function useFetchAlbums() {
 
     React.useEffect(() => {
         fetch();
-    }, [response]);
+    }, []);
 
     return { response, error, refetchAlbums: fetch };
 }
@@ -69,8 +69,6 @@ function useFetchAlbumCover(id) {
 }
 
 function AlbumGrid() {
-    // TODO: Figure out how to append a new album without refetching a whole list of albums again
-    // But for now, refetch is fine
     const { response, refetchAlbums } = useFetchAlbums();
 
     if (!response) {
@@ -103,19 +101,22 @@ function AlbumGrid() {
 }
 
 function AlbumCover({ coverId }) {
-    const { response } = useFetchAlbumCover(coverId);
+    let resp;
+    if (coverId) {
+        const { response } = useFetchAlbumCover(coverId);
+        resp = response;
+    }
 
-    if (!response) {
+    if (!resp || !coverId) {
         return <div className={styles.albumCover}></div>;
     }
 
-    if (response.status === 'success') {
+    if (resp.status === 'success') {
         return (
             <div
                 className={styles.albumCover}
                 style={{
-                    background:
-                        response.data.b64 !== undefined ? `url("data:image/png;base64,${response.data.b64}")` : '',
+                    background: resp.data.b64 !== undefined ? `url("data:image/png;base64,${resp.data.b64}")` : '',
                 }}></div>
         );
     }
