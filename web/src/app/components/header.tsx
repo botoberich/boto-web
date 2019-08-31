@@ -66,12 +66,14 @@ function PageHeader() {
                                         setThumbnails={setThumbnails}></Delete>
                                 </div>
                             )}
-                            <div className={styles.navItem}>
-                                <Download
-                                    selectedThumbnails={selectedThumbnails}
-                                    setSelectedThumbnails={setSelectedThumbnails}
-                                />
-                            </div>
+                            {isPhotoScreen && (
+                                <div className={styles.navItem}>
+                                    <Download
+                                        selectedThumbnails={selectedThumbnails}
+                                        setSelectedThumbnails={setSelectedThumbnails}
+                                    />
+                                </div>
+                            )}
                             <div className={styles.navItem} style={{ marginLeft: '25px' }}>
                                 <UserAvatar></UserAvatar>
                             </div>
