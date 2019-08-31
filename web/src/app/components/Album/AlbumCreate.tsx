@@ -4,6 +4,10 @@ import React from 'react';
 import AlbumForm, { useAlbumForm } from './AlbumForm';
 import PhotoGrid, { usePhotoGrid } from '../Photo/PhotoGrid';
 import { Typography } from 'antd';
+import styles from './AlbumCreate.module.css';
+
+// State
+import { usePhotoContext } from '../../contexts/PhotoContext';
 
 const { Title } = Typography;
 
@@ -20,17 +24,27 @@ function AlbumCreate() {
 
     const { thumbnails, loading } = usePhotoGrid();
 
+    const { selectedThumbnails } = usePhotoContext();
+
+    console.log({ selectedThumbnails });
+
     return (
         <>
             <Title level={1}>Create a new album</Title>
-            <AlbumForm
-                setTitle={setTitle}
-                title={title}
-                setDesc={setDesc}
-                desc={desc}
-                setValidInput={setValidInput}
-                validInput={validInput}></AlbumForm>
-            <PhotoGrid thumbnails={thumbnails} loading={loading}></PhotoGrid>
+            <div className={styles.row}>
+                <div className={styles.formContainer}>
+                    <AlbumForm
+                        setTitle={setTitle}
+                        title={title}
+                        setDesc={setDesc}
+                        desc={desc}
+                        setValidInput={setValidInput}
+                        validInput={validInput}></AlbumForm>
+                </div>
+            </div>
+            <div className={styles.row}>
+                <PhotoGrid thumbnails={thumbnails} loading={loading}></PhotoGrid>
+            </div>
         </>
     );
 }

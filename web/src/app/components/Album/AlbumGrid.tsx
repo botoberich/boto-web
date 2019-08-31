@@ -7,7 +7,7 @@ import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
 // State
-import { createAlbum, removeFromAlbum, getAlbums, getAlbumById, deleteAlbum } from '../../services/album.service';
+import { getAlbums, deleteAlbum } from '../../services/album.service';
 import { getThumbnail } from '../../services/photo.service';
 import { useEditAlbumModal } from './albums.hooks';
 

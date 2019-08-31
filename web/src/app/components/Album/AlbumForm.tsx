@@ -29,7 +29,7 @@ function AlbumForm({ setTitle, title, setDesc, desc, validInput, setValidInput }
                             setValidInput(true);
                             setTitle(e.target.value);
                         }}
-                        placeholder="Enter your album title"
+                        placeholder="Title"
                         prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
                         required
                         suffix={
@@ -44,7 +44,7 @@ function AlbumForm({ setTitle, title, setDesc, desc, validInput, setValidInput }
             <div className={styles.inputRow}>
                 <Input
                     onChange={e => setDesc(e.target.value)}
-                    placeholder="Enter your album description"
+                    placeholder="Description"
                     prefix={<Icon type="tags" style={{ color: 'rgba(0,0,0,.25)' }} />}
                     suffix={
                         <Tooltip title="This will be editable soon.">
