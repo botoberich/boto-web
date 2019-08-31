@@ -20,6 +20,10 @@
     width: 100%;
 }
 
+.editableContainer.editing:hover .topOverlay {
+    opacity: 0;
+}
+
 .editableContainer.editing .triggerBox {
     display: block;
     opacity: 1;
