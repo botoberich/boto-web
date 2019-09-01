@@ -9,7 +9,7 @@ import { StaticQuery, graphql } from 'gatsby';
 import './index.css';
 import { Affix, Layout } from 'antd';
 import SideNav from './sideNav';
-import Header from './header.tsx';
+import Header from './Header/Header.tsx';
 import styles from './layout.module.css';
 
 const { Content } = Layout;
