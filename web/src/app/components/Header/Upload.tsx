@@ -5,7 +5,7 @@ import { handleFileUpload } from '../Photo/photos.hooks'
 
 // UI
 import { Icon } from 'antd';
-import styles from './Header.module.css';
+import styles from './Upload.module.css';
 
 function Upload({ setThumbnails, progressDispatch }) {
     return (

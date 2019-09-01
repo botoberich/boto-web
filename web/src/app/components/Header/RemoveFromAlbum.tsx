@@ -5,7 +5,7 @@ import { handleRemoveFromAlbum } from '../Album/albums.hooks';
 
 // UI
 import { Tooltip, Button, Icon, notification, Typography } from 'antd';
-import styles from './Header.module.css';
+import styles from './RemoveFromAlbum.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';

@@ -4,7 +4,7 @@ import { handleDeletePhotos } from '../Photo/photos.hooks'
 
 // UI
 import { Tooltip, Button, Icon } from 'antd';
-import styles from './Header.module.css';
+import styles from './Delete.module.css';
 
 function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, setloadingThumbnails, setThumbnails }) {
     return (
