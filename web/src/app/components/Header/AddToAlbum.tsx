@@ -2,10 +2,11 @@ import React from 'react';
 
 // State
 import { handleAddToAlbum } from '../Album/albums.hooks';
+import { getAlbums } from '../../services/album.service';
 
 // UI
-import { Tooltip, Button, Icon, notification, Typography } from 'antd';
-import styles from './Header.module.css';
+import { Tooltip, Button, Icon, notification, Typography, Modal } from 'antd';
+import styles from './AddToAlbum.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
@@ -24,46 +25,86 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function AddToAlbum({ selectedThumbnails }) {
+function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
+    const [visible, setVisible] = React.useState(false);
+    const [albums, setAlbums] = React.useState([]);
+    const [confirmLoading, setConfirmLoading] = React.useState(false);
+
     return (
-        <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-            <Button
-                disabled={selectedThumbnails.length === 0}
-                onClick={async () => {
-                    try {
-                        notification.success(
-                            notificationConfig(`Adding ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`)
+        <>
+            <Tooltip
+                placement="bottom"
+                title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
+                <Button
+                    disabled={selectedThumbnails.length === 0}
+                    onClick={async () => {
+                        try {
+                            setVisible(true);
+                            const resp = await getAlbums();
+                            if (resp.status === 'success') {
+                                setAlbums(Object.values(resp.data));
+                            }
+                        } catch (err) {
+                            notification.error(notificationConfig(`Trouble adding photos.`));
+                        }
+                    }}>
+                    <Icon type="wallet" theme="twoTone" />
+                    <span className={styles.hideMobile}>Add To Album</span>
+                </Button>
+            </Tooltip>
+
+            <Modal
+                bodyStyle={{ padding: '8px 0 8px 0' }}
+                confirmLoading={confirmLoading}
+                footer={null}
+                onOk={() => setVisible(false)}
+                onCancel={() => setVisible(false)}
+                title="Albums"
+                visible={visible}>
+                <ul className={styles.list}>
+                    {albums.map(album => {
+                        return (
+                            <li
+                                className={styles.listItem}
+                                key={album._id}
+                                onClick={async () => {
+                                    console.log('Saving photos to album ', album._id);
+                                    setConfirmLoading(true);
+                                    try {
+                                        const res = await handleAddToAlbum({
+                                            albumId: album._id,
+                                            photoIds: selectedThumbnails,
+                                        });
+                                        if (res.status === 'success') {
+                                            notification.success(
+                                                notificationConfig(
+                                                    `Successfully added ${
+                                                        selectedThumbnails.length > 1 ? 'photos' : 'photo'
+                                                    } to album.`
+                                                )
+                                            );
+                                        } else {
+                                            notification.error(notificationConfig(`Trouble adding photos.`));
+                                        }
+                                        setConfirmLoading(false);
+                                        setVisible(false);
+                                        setSelectedThumbnails([]);
+                                    } catch (e) {
+                                        notification.error(notificationConfig(`Trouble adding photos.`));
+                                        setConfirmLoading(false);
+                                        setVisible(false);
+                                    }
+                                }}>
+                                <span className={styles.icon}>
+                                    <Icon type="fire" theme="twoTone" />{' '}
+                                </span>
+                                {album.title}
+                            </li>
                         );
-
-                        // TODO: Create a modal of all the available albums
-
-                        const resp = await handleAddToAlbum({ photoIds: selectedThumbnails });
-                        // const resp = await new Promise(resolve => {
-                        //     setTimeout(() => {
-                        //         resolve({ status: 'success', data: {} });
-                        //     }, 2000);
-                        // });
-
-                        console.log({ resp });
-                        // const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
-
-                        // if (resp.status === 'success') {
-                        //     notification.success(
-                        //         notificationConfig(
-                        //             `Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`
-                        //         )
-                        //     );
-                        // } else {
-                        //     notification.error(notificationConfig(`Trouble removing photos.`));
-                        // }
-                    } catch (err) {
-                        notification.error(notificationConfig(`Trouble removing photos.`));
-                    }
-                }}>
-                <Icon type="wallet" theme="twoTone" />
-                <span className={styles.hideMobile}>Add To Album</span>
-            </Button>
-        </Tooltip>
+                    })}
+                </ul>
+            </Modal>
+        </>
     );
 }
 

@@ -16,23 +16,8 @@ export const handleRemoveFromAlbum = ({ albumId, photoIds }) => {
     return removeFromAlbum(photoIds, albumId);
 };
 
-export const handleAddToAlbum = async ({ photoIds }) => {
-    console.log('Adding photos to album');
-
-    // 1. Fetch all albums
-    const resp = await getAlbums();
-    console.log({ resp });
-    let albums;
-    if (resp.status === 'success') {
-        albums = Object.values(resp.data);
-    }
-    console.log({ albums });
-
-    // 2. Render names onto a list in a modal
-
-    // 3. Add photos to selected album
-
-    // return addToAlbum(photoIds, selectedAlbumId);
+export const handleAddToAlbum = async ({ albumId, photoIds }) => {
+    return addToAlbum(photoIds, albumId);
 };
 
 export const handleFetchAlbumThumbnails = async ({

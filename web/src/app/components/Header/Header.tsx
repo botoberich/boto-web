@@ -74,7 +74,9 @@ function PageHeader() {
                     {props =>
                         props.match && (
                             <div className={styles.navItem}>
-                                <AddToAlbum selectedThumbnails={selectedThumbnails}></AddToAlbum>
+                                <AddToAlbum
+                                    selectedThumbnails={selectedThumbnails}
+                                    setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
                             </div>
                         )
                     }
