@@ -159,9 +159,6 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item key="add" onClick={() => navigate(`/app/albums/${album._id}`)}>
-                            Add Photos
-                        </Menu.Item>
                         <Menu.Item key="edit" onClick={handleModalOpen}>
                             Edit
                         </Menu.Item>
