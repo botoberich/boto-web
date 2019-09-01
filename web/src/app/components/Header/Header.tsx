@@ -14,7 +14,7 @@ import Delete from './Delete';
 import Download from './Download';
 import RemoveFromAlbum from './RemoveFromAlbum';
 import AddToAlbum from './AddToAlbum';
-import styles from './header.module.css';
+import styles from './Header.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
