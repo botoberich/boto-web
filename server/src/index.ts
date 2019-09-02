@@ -1,9 +1,12 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const { setup } = require('radiks-server');
+import express, { Response, Router } from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { setup } from 'radiks-server';
+import { authenticate } from './middlewares/auth';
+import { IResponse } from './interfaces/http.interface';
 
 const app = express();
+const router = Router();
 const PORT = process.env.PORT || (process.env.DEBUG ? 4001 : 3000);
 
 app.use(
@@ -13,24 +16,17 @@ app.use(
     })
 );
 
-app.use((req, res, next) => {
-    console.log('VERIFY TOKEN MIDDLEWARE');
-    console.log(req.headers);
-    next();
-});
-
-app.get('/', (req, res) => {
-    res.status(200).json({ ['March to Web3']: 'Alive' });
-});
-
+app.use(authenticate);
 app.get('/healthcheck', (req, res) => {
     res.status(200).json({ status: 'Healthy' });
 });
 
+router.use('/gaia', require('./routes/gaia'));
+app.use(router);
 app.listen(PORT, async () => {
     console.log(`Successfully started '${process.env.APP_ENV}' server on port ${PORT}!`);
 
-    let RadiksController = await setup({
+    const RadiksController = await setup({
         mongoDBUrl: process.env.MONGODB_URL,
     });
 
