@@ -66,24 +66,31 @@ const getUserData = async (authResponseToken, transitKey) => {
 export const authenticate = async (req, res: IResponse, next) => {
     const authResponseToken = req.headers['x-auth-response'];
     const transitKey = req.headers['x-auth-transit-key'];
-    const userDataRes = await getUserData(authResponseToken, transitKey);
-    if (userDataRes.status === 'success') {
-        const appConfig = new AppConfig(
-            ['store_write', 'publish_data'],
-            process.env.APP_ENV === 'dev' ? 'http://localhost:3000' : `https://${process.env.APP_ENV}-boto-server.herokuapp.com`
-        );
-        const userSession = new UserSession({ appConfig });
-        const userData = userDataRes.data;
-        const sessionData = userSession.store.getSessionData();
-        sessionData.userData = userData;
-        userSession.store.setSessionData(sessionData);
-        res.blockstack = {
-            getFile: (path, options) => getFile(path, options, userSession),
-            putFile: (path, content, options) => putFile(path, content, options, userSession),
-            deleteFile: (path, options) => deleteFile(path, options, userSession),
-        };
+
+    if (!authResponseToken || !transitKey) {
         next();
     } else {
-        res.status(401).json(error(userDataRes.data));
+        const userDataRes = await getUserData(authResponseToken, transitKey);
+        if (userDataRes.status === 'success') {
+            const appConfig = new AppConfig(
+                ['store_write', 'publish_data'],
+                process.env.APP_ENV === 'dev'
+                    ? 'http://localhost:3000'
+                    : `https://${process.env.APP_ENV}-boto-server.herokuapp.com`
+            );
+            const userSession = new UserSession({ appConfig });
+            const userData = userDataRes.data;
+            const sessionData = userSession.store.getSessionData();
+            sessionData.userData = userData;
+            userSession.store.setSessionData(sessionData);
+            res.blockstack = {
+                getFile: (path, options) => getFile(path, options, userSession),
+                putFile: (path, content, options) => putFile(path, content, options, userSession),
+                deleteFile: (path, options) => deleteFile(path, options, userSession),
+            };
+            next();
+        } else {
+            res.status(401).json(error(userDataRes.data));
+        }
     }
 };
