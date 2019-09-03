@@ -3,7 +3,7 @@ import { Link, navigate } from 'gatsby';
 import { Match } from '@reach/router';
 
 // State
-import { Layout, Avatar, Menu, Dropdown, Tag, Typography } from 'antd';
+import { Layout, Avatar, Menu, Dropdown, Tag, Typography, Icon } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { usePhotoContext } from '../../contexts/PhotoContext';
@@ -22,18 +22,6 @@ import { IMatchProps } from '../../interfaces/ui.interface';
 
 const { Header } = Layout;
 const { Paragraph } = Typography;
-
-// TODO: Again, refactor this to use a single notification config later
-const notificationConfig = (msg: string): ArgsProps => ({
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: 3,
-    message: (
-        <div>
-            <Paragraph>{msg}</Paragraph>
-        </div>
-    ),
-});
 
 function PageHeader() {
     const {
@@ -61,76 +49,129 @@ function PageHeader() {
                         </Tag>
                     )}
                 </div>
-                <Match path="/app/">
-                    {props =>
-                        props.match && (
-                            <div className={styles.navItem}>
-                                <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch}></Upload>
-                            </div>
-                        )
-                    }
-                </Match>
-                <Match path="/app">
-                    {props =>
-                        props.match && (
-                            <div className={styles.navItem}>
-                                <AddToAlbum
-                                    selectedThumbnails={selectedThumbnails}
-                                    setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
-                            </div>
-                        )
-                    }
-                </Match>
-                <Match path="/app/">
-                    {props =>
-                        props.match && (
-                            <div className={styles.navItem}>
-                                <Delete
-                                    progressDispatch={progressDispatch}
-                                    selectedThumbnails={selectedThumbnails}
-                                    setSelectedThumbnails={setSelectedThumbnails}
-                                    setloadingThumbnails={setloadingThumbnails}
-                                    setThumbnails={setThumbnails}></Delete>
-                            </div>
-                        )
-                    }
-                </Match>
-                <Match path="/app/">
-                    {props1 => (
-                        <Match path="/app/albums/:id">
-                            {props2 => {
-                                if (props1.match || props2.match) {
-                                    return (
-                                        <div className={styles.navItem}>
-                                            <Download
-                                                selectedThumbnails={selectedThumbnails}
-                                                setSelectedThumbnails={setSelectedThumbnails}
-                                            />
-                                        </div>
-                                    );
-                                }
-                            }}
-                        </Match>
-                    )}
-                </Match>
-                <Match path="/app/albums/:id">
-                    {(props: IMatchProps) => {
-                        if (!props.match) {
-                            return null;
-                        }
-                        return (
-                            <div className={styles.navItem}>
-                                <RemoveFromAlbum
-                                    albumId={props.match.id}
-                                    thumbnails={thumbnails}
-                                    setThumbnails={setThumbnails}
-                                    selectedThumbnails={selectedThumbnails}
-                                    setSelectedThumbnails={setSelectedThumbnails}
-                                />
-                            </div>
-                        );
-                    }}
-                </Match>
+
+                {/* Additive Actions */}
+                <div className={styles.navItem}>
+                    <Dropdown
+                        trigger={['click']}
+                        overlayClassName={styles.navDropdown}
+                        overlay={
+                            <Menu>
+                                <Menu.Item>
+                                    <Match path="/app/">
+                                        {props =>
+                                            props.match && (
+                                                <div className={styles.navItem}>
+                                                    <Upload
+                                                        setThumbnails={setThumbnails}
+                                                        progressDispatch={progressDispatch}></Upload>
+                                                </div>
+                                            )
+                                        }
+                                    </Match>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Match path="/app">
+                                        {props =>
+                                            props.match && (
+                                                <div className={styles.navItem}>
+                                                    <AddToAlbum
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
+                                                </div>
+                                            )
+                                        }
+                                    </Match>
+                                </Menu.Item>
+                            </Menu>
+                        }>
+                        <Icon type="plus-circle" theme="twoTone" twoToneColor="#1890ff" style={{ fontSize: '24px' }} />
+                    </Dropdown>
+                </div>
+
+                {/* Deletion/Removal Actions */}
+                <div className={styles.navItem}>
+                    <Dropdown
+                        trigger={['click']}
+                        overlayClassName={styles.navDropdown}
+                        overlay={
+                            <Menu>
+                                <Menu.Item>
+                                    <Match path="/app/">
+                                        {props =>
+                                            props.match && (
+                                                <div className={styles.navItem}>
+                                                    <Delete
+                                                        progressDispatch={progressDispatch}
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}
+                                                        setloadingThumbnails={setloadingThumbnails}
+                                                        setThumbnails={setThumbnails}></Delete>
+                                                </div>
+                                            )
+                                        }
+                                    </Match>
+                                </Menu.Item>
+
+                                <Match path="/app/albums/:id">
+                                    {(props: IMatchProps) => {
+                                        if (!props.match) {
+                                            return null;
+                                        }
+                                        return (
+                                            <Menu.Item>
+                                                <div className={styles.navItem}>
+                                                    <RemoveFromAlbum
+                                                        albumId={props.match.id}
+                                                        thumbnails={thumbnails}
+                                                        setThumbnails={setThumbnails}
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}
+                                                    />
+                                                </div>
+                                            </Menu.Item>
+                                        );
+                                    }}
+                                </Match>
+                            </Menu>
+                        }>
+                        <Icon type="minus-circle" theme="twoTone" twoToneColor="#eb2f96" style={{ fontSize: '24px' }} />
+                    </Dropdown>
+                </div>
+
+                {/* Additional Actions */}
+                <div className={styles.navItem}>
+                    <Dropdown
+                        trigger={['click']}
+                        overlayClassName={styles.navDropdown}
+                        overlay={
+                            <Menu>
+                                <Menu.Item>
+                                    <Match path="/app/">
+                                        {props1 => (
+                                            <Match path="/app/albums/:id">
+                                                {props2 => {
+                                                    if (props1.match || props2.match) {
+                                                        return (
+                                                            <div className={styles.navItem}>
+                                                                <Download
+                                                                    selectedThumbnails={selectedThumbnails}
+                                                                    setSelectedThumbnails={setSelectedThumbnails}
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
+                                                }}
+                                            </Match>
+                                        )}
+                                    </Match>
+                                </Menu.Item>
+                            </Menu>
+                        }>
+                        <Icon type="more" style={{ fontSize: '24px' }} />
+                    </Dropdown>
+                </div>
+
                 <div className={styles.navItem} style={{ marginLeft: '25px' }}>
                     <UserAvatar></UserAvatar>
                 </div>

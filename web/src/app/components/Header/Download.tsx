@@ -27,10 +27,14 @@ const notificationConfig = (msg: string): ArgsProps => ({
 function Download({ selectedThumbnails, setSelectedThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-            <Button
-                disabled={selectedThumbnails.length === 0}
+            <div
+                // disabled={selectedThumbnails.length === 0}
                 onClick={e => {
                     try {
+                        if (selectedThumbnails.length <= 0) {
+                            return;
+                        }
+                        
                         handleDownloadPhotos(selectedThumbnails);
                         notification.success(
                             notificationConfig(
@@ -45,7 +49,7 @@ function Download({ selectedThumbnails, setSelectedThumbnails }) {
                 }}>
                 <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                 <span className={styles.hideMobile}>Download</span>
-            </Button>
+            </div>
         </Tooltip>
     );
 }

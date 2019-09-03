@@ -35,10 +35,14 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
             <Tooltip
                 placement="bottom"
                 title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-                <Button
-                    disabled={selectedThumbnails.length === 0}
+                <div
+                    // disabled={selectedThumbnails.length === 0}
                     onClick={async () => {
                         try {
+                            if (selectedThumbnails.length <= 0) {
+                                return;
+                            }
+                            
                             setVisible(true);
                             const resp = await getAlbums();
                             if (resp.status === 'success') {
@@ -50,7 +54,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                     }}>
                     <Icon type="wallet" theme="twoTone" />
                     <span className={styles.hideMobile}>Add To Album</span>
-                </Button>
+                </div>
             </Tooltip>
 
             <Modal

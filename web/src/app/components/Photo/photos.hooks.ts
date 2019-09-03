@@ -107,6 +107,10 @@ export const handleDeletePhotos = async (
         onEnd = () => {},
     } = {}
 ) => {
+    if (ids.length <= 0) {
+        return;
+    }
+    
     onStart({
         length: ids.length,
         cmd: 'Delete',
