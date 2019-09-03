@@ -9,9 +9,13 @@ import styles from './Delete.module.css';
 function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, setloadingThumbnails, setThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-            <Button
-                disabled={selectedThumbnails.length === 0}
+            <div
+                // disabled={selectedThumbnails.length === 0}
                 onClick={() => {
+                    if (selectedThumbnails.length <= 0) {
+                        return;
+                    }
+                    
                     handleDeletePhotos([...selectedThumbnails], {
                         onStart: payload => {
                             setloadingThumbnails(selectedThumbnails);
@@ -42,7 +46,7 @@ function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, s
                 }}>
                 <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
                 <span className={styles.hideMobile}>Delete</span>
-            </Button>
+            </div>
         </Tooltip>
     );
 }

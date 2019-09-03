@@ -32,8 +32,21 @@
     width: 100%;
 }
 
-.navItem {
+.nav > .navItem {
+    margin-left: 16px;
+}
+
+.navDropdown {
+    min-width: 110px;
+}
+
+.navDropdown i {
+    margin-right: 8px;
     margin-left: 8px;
+}
+
+.navItem {
+    display: flex;
 }
 
 .menu {

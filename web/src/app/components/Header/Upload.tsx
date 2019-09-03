@@ -1,7 +1,7 @@
 import React from 'react';
 
 // State
-import { handleFileUpload } from '../Photo/photos.hooks'
+import { handleFileUpload } from '../Photo/photos.hooks';
 
 // UI
 import { Icon } from 'antd';
@@ -9,7 +9,7 @@ import styles from './Upload.module.css';
 
 function Upload({ setThumbnails, progressDispatch }) {
     return (
-        <label className={styles.uploadFileLabel}>
+        <label>
             <input
                 className={styles.uploadFile}
                 multiple
@@ -37,9 +37,10 @@ function Upload({ setThumbnails, progressDispatch }) {
                 type="file"
             />
             <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
-            <span className={`${styles.ml8} ${styles.hideMobile}`}>Upload</span>
+            <span className={styles.hideMobile}>Upload</span>
         </label>
     );
 }
 
-export default Upload
+export default Upload;
+ 
