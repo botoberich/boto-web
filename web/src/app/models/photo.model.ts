@@ -7,7 +7,7 @@ class Photo extends Model {
     static className = 'Photo';
 
     static schema = {
-        albumId: {
+        albumIds: {
             type: String,
             decrypted: true,
         },

@@ -15,6 +15,17 @@ import { of, Subject } from 'rxjs';
 import { ApiResponse } from '../interfaces/response.interface';
 import { Model } from 'radiks/src';
 import { deletePhotos, getThumbnail } from './photo.service';
+import { PhotoModel } from '../models';
+
+const getPhotosByAlbumId = async (albumId): Promise<PhotoModel[]> => {
+    try {
+        let ownPhotos = await Photo.fetchOwnList();
+        let photos = ownPhotos.filter(photo => JSON.parse(photo.attrs.albumIds).some(id => id === albumId));
+        return photos;
+    } catch (err) {
+        throw new Error(err);
+    }
+};
 
 export const createAlbum = async (
     photoIds: string[],
@@ -48,9 +59,11 @@ export const addToAlbum = async (photoIds, albumId): Promise<ApiResponse<IAddToA
         }
         let photos = await Promise.all(photoIds.map(id => Photo.findById(id)));
         let addPhotos = photos.map((photo: Model) => {
+            let albumIds = JSON.parse(photo.attrs.albumIds || `[]`);
+            let newAlbumIds = new Set([...albumIds, albumId]);
             if (photo) {
                 photo.update({
-                    albumId,
+                    albumIds: JSON.stringify([...newAlbumIds]),
                 });
                 return photo.save();
             }
@@ -70,11 +83,14 @@ export const removeFromAlbum = async (photoIds, albumId): Promise<ApiResponse<IR
         if (!album) {
             throw new Error(`Album ${albumId} doesn't exist.`);
         }
-        let photos = await Promise.all(photoIds.map(id => Photo.findOne({ _id: id, albumId })));
+        let photos = await Promise.all(photoIds.map(id => Photo.findById(id)));
         let removePhotos = photos.map((photo: Model) => {
+            let albumIds = JSON.parse(photo.attrs.albumIds || `[]`);
+            let newAlbumIds = new Set([...albumIds]);
+            newAlbumIds.delete(albumId);
             if (photo) {
                 photo.update({
-                    albumId: null,
+                    albumIds: JSON.stringify([...newAlbumIds]),
                 });
                 return photo.save();
             }
@@ -99,7 +115,7 @@ export const getAlbums = async (): Promise<ApiResponse<IGetAlbumsResult>> => {
 
 export const getAlbumById = async (albumId): Promise<ApiResponse<IGetSingleAlbumResult>> => {
     try {
-        let [album, photos] = await Promise.all([Album.findById(albumId), Photo.fetchList({ albumId })]);
+        let [album, photos] = await Promise.all([Album.findById(albumId), getPhotosByAlbumId(albumId)]);
         let photosMap = {};
         photos.forEach(photo => (photosMap[photo._id] = photo.attrs));
         return success({ photos, albumMetadata: album.attrs });
@@ -130,7 +146,7 @@ export const deleteAlbum = async (albumId: string, keepPhotos: boolean): Promise
         let album = await Album.findById(albumId);
         await album.destroy();
         if (!keepPhotos) {
-            let photos = await Photo.fetchList({ albumId });
+            let photos = await getPhotosByAlbumId(albumId);
             let photoIds = photos.map(photo => photo._id);
             await deletePhotos(photoIds);
         }
