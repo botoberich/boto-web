@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 import { Location } from '@reach/router';
 
 // UI
-import { Icon, Layout, Menu, Button } from 'antd';
+import { Icon, Layout, Menu, Switch } from 'antd';
 import Logo from './logo';
 import styles from './sideNav.module.css';
 
@@ -42,12 +42,21 @@ const Sidebar = () => {
                                     <span className="nav-text">Sharing</span>
                                 </Link>
                             </Menu.Item>
-                            {/* <div className={styles.menuItem}>
-                    <span className={styles.themeToggleText}>
-                        {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
-                    </span>
-                    <Switch onChange={toggleTheme}></Switch>
-                </div> */}
+                            <div className={styles.menuItem}>
+                                <span className={styles.themeToggleText}>Toggle Server Compute</span>
+                                <Switch
+                                    onChange={() => {
+                                        console.log('toggling');
+                                    }}></Switch>
+                            </div>
+                            {/* 
+                            <div className={styles.menuItem}>
+                                <span className={styles.themeToggleText}>
+                                    {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
+                                </span>
+                                <Switch onChange={toggleTheme}></Switch>
+                            </div> 
+                            */}
                         </Menu>
                     </Sider>
                 );
