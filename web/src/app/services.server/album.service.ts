@@ -11,10 +11,10 @@ import uuid from 'uuid/v4';
 import Photo from '../models/photo.model';
 import { success, error } from '../utils/apiResponse';
 import { mergeAll } from 'rxjs/operators';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { ApiResponse } from '../interfaces/response.interface';
 import { Model } from 'radiks/src';
-import { deletePhotos, getThumbnail } from './photo.service';
+import { deletePhotos } from './photo.service';
 
 export const createAlbum = async (
     photoIds: string[],
