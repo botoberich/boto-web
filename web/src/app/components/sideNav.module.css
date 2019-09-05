@@ -10,6 +10,10 @@
     width: 130px !important;
 }
 
+.pl24 {
+    padding-left: 24px;
+}
+
 .sider {
     width: 150px;
     z-index: 900;
@@ -19,10 +23,6 @@
     margin-left: 8px;
     border-right: none;
     height: 100%;
-}
-
-.themeToggleText {
-    margin-right: 16px;
 }
 
 @media (min-width: 568px) {

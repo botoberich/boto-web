@@ -1,28 +1,32 @@
 import React from 'react';
 import { Link } from 'gatsby';
-import { Location } from '@reach/router';
+import { Match } from '@reach/router';
+
+// State
+import { useService } from '../contexts/ServiceContext';
 
 // UI
-import { Icon, Layout, Menu, Switch } from 'antd';
+import { Icon, Layout, Menu, Switch, Modal } from 'antd';
 import Logo from './logo';
 import styles from './sideNav.module.css';
 
+// Types
+import { IMatchProps } from '../interfaces/ui.interface';
+
 const { Sider } = Layout;
+const { confirm } = Modal;
 
 const Sidebar = () => {
-    const [selected, setSelected] = React.useState('photos');
+    const { service, setServer, setClient, isServer } = useService();
+    console.log({ service });
 
     return (
-        <Location>
-            {({ location }) => {
-                const pathParts = location.pathname.split('/').filter(str => str !== '');
-                const headerTitle = pathParts.length > 1 ? pathParts[1] : 'photos';
-                setSelected(headerTitle);
-
+        <Match path="/app/:title/*">
+            {(props: IMatchProps) => {
                 return (
                     <Sider breakpoint="lg" className={styles.sider} collapsedWidth="0" width={140} theme="light">
                         <div className="logo" />
-                        <Menu mode="inline" selectedKeys={[selected]}>
+                        <Menu mode="inline" selectedKeys={props.match ? [props.match.title] : ['photos']}>
                             <Logo />
                             <Menu.Item key="photos" className={styles.menuItem}>
                                 <Link to="/app/">
@@ -43,11 +47,26 @@ const Sidebar = () => {
                                 </Link>
                             </Menu.Item>
                             <div className={styles.menuItem}>
-                                <span className={styles.themeToggleText}>Toggle Server Compute</span>
-                                <Switch
-                                    onChange={() => {
-                                        console.log('toggling');
-                                    }}></Switch>
+                                <div className={styles.pl24}>
+                                    <Switch
+                                        checked={isServer}
+                                        onChange={checked => {
+                                            if (!checked) {
+                                                setClient();
+                                                return;
+                                            }
+
+                                            confirm({
+                                                title: 'Use a server',
+                                                content: serverWarningMessage,
+                                                onOk() {
+                                                    setServer();
+                                                },
+                                            });
+                                        }}
+                                        unCheckedChildren={'Client'}
+                                        checkedChildren={'Server'}></Switch>
+                                </div>
                             </div>
                             {/* 
                             <div className={styles.menuItem}>
@@ -61,8 +80,14 @@ const Sidebar = () => {
                     </Sider>
                 );
             }}
-        </Location>
+        </Match>
     );
 };
 
 export default Sidebar;
+
+const serverWarningMessage = `To maintain your utmost privacy and security as a 
+decentralized app, Boto uses your browser to do all computation, including fragmenting, 
+uploading, and downloading your photos. However, if you are experiencing sluggishness, 
+it may help to temporarily use our server to quicken the process. This means we perform 
+computation on our side, authorized by you.`;

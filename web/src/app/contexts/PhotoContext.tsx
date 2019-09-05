@@ -1,5 +1,5 @@
 import React from 'react';
-import { IThumbnail, IPhotoContext } from '../interfaces/photos.interface';
+import { IPhotoContext } from '../interfaces/photos.interface';
 
 const PhotoContext = React.createContext(null);
 

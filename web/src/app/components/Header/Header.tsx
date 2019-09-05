@@ -17,11 +17,9 @@ import AddToAlbum from './AddToAlbum';
 import styles from './Header.module.css';
 
 // Types
-import { ArgsProps } from 'antd/lib/notification';
 import { IMatchProps } from '../../interfaces/ui.interface';
 
 const { Header } = Layout;
-const { Paragraph } = Typography;
 
 function PageHeader() {
     const {

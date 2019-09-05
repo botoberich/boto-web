@@ -1,10 +1,9 @@
-import {  MatchRenderProps } from '@reach/router';
+import { MatchRenderProps } from '@reach/router';
 
 export interface ProgressStartingPayload {
     length: number;
     cmd: 'Upload' | 'Delete' | 'Download' | 'Update';
 }
-
 
 interface IMatchParams {
     id: string;
