@@ -1,12 +1,12 @@
 import React from 'react';
-import { IPhotoContext } from '../interfaces/photos.interface';
+import { IPhotoContextValue } from '../interfaces/contexts.interface';
 
 const PhotoContext = React.createContext(null);
 
-function usePhotoContext(): IPhotoContext {
-    const context: IPhotoContext = React.useContext(PhotoContext);
+function usePhotoContext(): IPhotoContextValue {
+    const context: IPhotoContextValue = React.useContext(PhotoContext);
     if (!context) {
-        throw new Error(`usePhoto must be used within a PhotoProvider`);
+        throw new Error(`usePhotoContext must be used within a PhotoProvider`);
     }
     return context;
 }

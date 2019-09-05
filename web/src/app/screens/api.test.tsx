@@ -22,11 +22,14 @@ function ApiTestScreen() {
         };
 
         const getThumbnail = async () => {
-            let tn = await gaiaGet({ path: `user/photos/d6f060b1-a050-481a-8807-d3de0157dc25/thumbnail` });
+            let tn = await gaiaGet({
+                body: { path: `user/photos/d6f060b1-a050-481a-8807-d3de0157dc25/thumbnail` },
+                isServer: true,
+            });
             console.log({ tn });
         };
-        // fetchAlbums();
-        getThumbnail();
+        fetchAlbums();
+        // getThumbnail();
     }, []);
 
     const handleCreateAlbum = useCallback(async () => {

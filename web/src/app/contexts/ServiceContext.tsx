@@ -1,22 +1,15 @@
 import React from 'react';
-
-interface ServiceContextValue {
-    service: string;
-    toggleService: () => void;
-    setServer: () => void;
-    setClient: () => void;
-    isServer: boolean;
-}
+import { IServiceContextValue } from '../interfaces/contexts.interface';
 
 const ServiceContext = React.createContext(null);
 
 const CLIENT = 'client';
 const SERVER = 'server';
 
-function useService(): ServiceContextValue {
+function useServiceContext(): IServiceContextValue {
     const context = React.useContext(ServiceContext);
     if (!context) {
-        throw new Error(`useService must be used within a ServiceProvider`);
+        throw new Error(`useServiceContext must be used within a ServiceProvider`);
     }
     return context;
 }
@@ -42,5 +35,5 @@ function ServiceProvider(props) {
     return <ServiceContext.Provider value={value} {...props}></ServiceContext.Provider>;
 }
 
-export { ServiceProvider, useService };
+export { ServiceProvider, useServiceContext };
 export default ServiceContext;

@@ -4,10 +4,10 @@ import { Match } from '@reach/router';
 
 // State
 // import { useService } from '../contexts/ServiceContext';
+import { useServiceContext } from '../contexts/ServiceContext';
 
 // UI
 import { Icon, Layout, Menu, Switch, Modal } from 'antd';
-// import { Switch, Modal } from 'antd';
 import Logo from './logo';
 import styles from './sideNav.module.css';
 
@@ -15,10 +15,10 @@ import styles from './sideNav.module.css';
 import { IMatchProps } from '../interfaces/ui.interface';
 
 const { Sider } = Layout;
-// const { confirm } = Modal;
+const { confirm } = Modal;
 
 const Sidebar = () => {
-    // const { service, setServer, setClient, isServer } = useService();
+    const { service, setServer, setClient, isServer } = useServiceContext();
 
     return (
         <Match path="/app/:title/*">
@@ -46,28 +46,27 @@ const Sidebar = () => {
                                     <span className="nav-text">Sharing</span>
                                 </Link>
                             </Menu.Item>
-                            {/* <div className={styles.menuItem}>
-                                <div className={styles.pl24}>
-                                    <Switch
-                                        checked={isServer}
-                                        onChange={checked => {
-                                            if (!checked) {
-                                                setClient();
-                                                return;
-                                            }
+                            <div className={styles.serviceSelector}>
+                                <Switch
+                                    style={{ width: '100%' }}
+                                    checked={isServer}
+                                    onChange={checked => {
+                                        if (!checked) {
+                                            setClient();
+                                            return;
+                                        }
 
-                                            confirm({
-                                                title: 'Use a server',
-                                                content: serverWarningMessage,
-                                                onOk() {
-                                                    setServer();
-                                                },
-                                            });
-                                        }}
-                                        unCheckedChildren={'Client'}
-                                        checkedChildren={'Server'}></Switch>
-                                </div>
-                            </div> */}
+                                        confirm({
+                                            title: 'Use a server',
+                                            content: serverWarningMessage,
+                                            onOk() {
+                                                setServer();
+                                            },
+                                        });
+                                    }}
+                                    unCheckedChildren={'Client'}
+                                    checkedChildren={'Server'}></Switch>
+                            </div>
                             {/* 
                             <div className={styles.menuItem}>
                                 <span className={styles.themeToggleText}>
@@ -86,8 +85,8 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-// const serverWarningMessage = `To maintain your utmost privacy and security as a
-// decentralized app, Boto uses your browser to do all computation, including fragmenting,
-// uploading, and downloading your photos. However, if you are experiencing sluggishness,
-// it may help to temporarily use our server to quicken the process. This means we perform
-// computation on our side, authorized by you.`;
+const serverWarningMessage = `To maintain your utmost privacy and security as a
+decentralized app, Boto uses your browser to do all computation, including fragmenting,
+uploading, and downloading your photos. However, if you are experiencing sluggishness,
+it may help to temporarily use our server to quicken the process. This means we perform
+computation on our server, authorized by you.`;

@@ -10,8 +10,11 @@
     width: 130px !important;
 }
 
-.pl24 {
-    padding-left: 24px;
+.serviceSelector {
+    display: flex;
+    justify-content: center;
+    width: 130px !important;
+    padding: 20px 16px 0px 16px;
 }
 
 .sider {
