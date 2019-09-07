@@ -24,7 +24,7 @@ function ApiTestScreen() {
         const getThumbnail = async () => {
             let tn = await gaiaGet({
                 body: { path: `user/photos/d6f060b1-a050-481a-8807-d3de0157dc25/thumbnail` },
-                isServer: true,
+                useServer: true,
             });
             console.log({ tn });
         };

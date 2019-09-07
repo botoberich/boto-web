@@ -18,25 +18,20 @@ import styles from './Header.module.css';
 
 // Types
 import { IMatchProps } from '../../interfaces/ui.interface';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Header } = Layout;
 
 function PageHeader() {
-    const {
-        selectedThumbnails,
-        setSelectedThumbnails,
-        setThumbnails,
-        setloadingThumbnails,
-        thumbnails,
-    } = usePhotoContext();
+    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails, thumbnails } = usePhotoContext();
+
+    const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
 
     return (
         <Header className={styles.header}>
             <Match path="/app/:title/*">
-                {(props: IMatchProps) => (
-                    <span className={styles.headerTitle}>{props.match ? props.match.title : 'photos'}</span>
-                )}
+                {(props: IMatchProps) => <span className={styles.headerTitle}>{props.match ? props.match.title : 'photos'}</span>}
             </Match>
             <nav className={styles.nav}>
                 <div className={styles.navItem}>
@@ -62,7 +57,8 @@ function PageHeader() {
                                                 <div className={styles.navItem}>
                                                     <Upload
                                                         setThumbnails={setThumbnails}
-                                                        progressDispatch={progressDispatch}></Upload>
+                                                        progressDispatch={progressDispatch}
+                                                        useServer={useServer}></Upload>
                                                 </div>
                                             )
                                         }
@@ -104,7 +100,8 @@ function PageHeader() {
                                                         selectedThumbnails={selectedThumbnails}
                                                         setSelectedThumbnails={setSelectedThumbnails}
                                                         setloadingThumbnails={setloadingThumbnails}
-                                                        setThumbnails={setThumbnails}></Delete>
+                                                        setThumbnails={setThumbnails}
+                                                        useServer={useServer}></Delete>
                                                 </div>
                                             )
                                         }
@@ -153,6 +150,7 @@ function PageHeader() {
                                                         return (
                                                             <div className={styles.navItem}>
                                                                 <Download
+                                                                    useServer={useServer}
                                                                     selectedThumbnails={selectedThumbnails}
                                                                     setSelectedThumbnails={setSelectedThumbnails}
                                                                 />

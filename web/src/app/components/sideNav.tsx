@@ -18,7 +18,7 @@ const { Sider } = Layout;
 const { confirm } = Modal;
 
 const Sidebar = () => {
-    const { service, setServer, setClient, isServer } = useServiceContext();
+    const { service, setServer, setClient, useServer } = useServiceContext();
 
     return (
         <Match path="/app/:title/*">
@@ -49,7 +49,7 @@ const Sidebar = () => {
                             <div className={styles.serviceSelector}>
                                 <Switch
                                     style={{ width: '100%' }}
-                                    checked={isServer}
+                                    checked={useServer}
                                     onChange={checked => {
                                         if (!checked) {
                                             setClient();

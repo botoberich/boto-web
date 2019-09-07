@@ -20,17 +20,20 @@ export const handleAddToAlbum = async ({ albumId, photoIds }) => {
     return addToAlbum(photoIds, albumId);
 };
 
-export const handleFetchAlbumThumbnails = async ({
-    thumbnailIDs = [],
-    onNext = (thumbnail: IThumbnail) => {},
-    onComplete = () => {},
-    onError = err => {},
-    onEnd = () => {},
-    onStart = (allMetadata: IPhotoMetadata[]) => {},
-} = {}) => {
+export const handleFetchAlbumThumbnails = async (
+    useServer: boolean = false,
+    {
+        thumbnailIDs = [],
+        onNext = (thumbnail: IThumbnail) => {},
+        onComplete = () => {},
+        onError = err => {},
+        onEnd = () => {},
+        onStart = (allMetadata: IPhotoMetadata[]) => {},
+    } = {}
+) => {
     let subscription = { unsubscribe: () => {} };
 
-    const thumbnailsRes = await getThumbnailsByIds(thumbnailIDs);
+    const thumbnailsRes = await getThumbnailsByIds(useServer, thumbnailIDs);
     if (thumbnailsRes.status !== 'success') {
         return;
     }
@@ -113,19 +116,7 @@ export function useEditAlbumModal(album: IAlbumMetadata, { refetchAlbums = () =>
     };
 }
 
-function EditModal({
-    album,
-    handleEditAlbum,
-    visible,
-    setVisible,
-    confirmLoading,
-    validInput,
-    setValidInput,
-    title,
-    setTitle,
-    desc,
-    setDesc,
-}) {
+function EditModal({ album, handleEditAlbum, visible, setVisible, confirmLoading, validInput, setValidInput, title, setTitle, desc, setDesc }) {
     return (
         <Modal
             title={`Editing album ${album.title}`}

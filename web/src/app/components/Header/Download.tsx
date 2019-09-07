@@ -24,7 +24,7 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function Download({ selectedThumbnails, setSelectedThumbnails }) {
+function Download({ useServer, selectedThumbnails, setSelectedThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <div
@@ -34,13 +34,9 @@ function Download({ selectedThumbnails, setSelectedThumbnails }) {
                         if (selectedThumbnails.length <= 0) {
                             return;
                         }
-                        
-                        handleDownloadPhotos(selectedThumbnails);
-                        notification.success(
-                            notificationConfig(
-                                `Successfully downloaded ${selectedThumbnails.length > 1 ? 'files' : 'file'}.`
-                            )
-                        );
+
+                        handleDownloadPhotos(useServer, selectedThumbnails);
+                        notification.success(notificationConfig(`Successfully downloaded ${selectedThumbnails.length > 1 ? 'files' : 'file'}.`));
                     } catch (err) {
                         notification.error(notificationConfig(`Error downloading files. Please contact support.`));
                     }

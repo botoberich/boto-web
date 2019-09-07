@@ -13,6 +13,7 @@ import { usePhotoContext } from '../../contexts/PhotoContext';
 // Types
 import { ArgsProps } from 'antd/lib/notification';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Title, Paragraph } = Typography;
 
@@ -31,6 +32,7 @@ export function useAlbumView({ albumID }) {
     const [title, setTitle] = React.useState('');
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
+    const { useServer } = useServiceContext();
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
@@ -61,7 +63,7 @@ export function useAlbumView({ albumID }) {
             const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
             let thumbnailCtr = 0;
 
-            subscription = handleFetchAlbumThumbnails({
+            subscription = handleFetchAlbumThumbnails(useServer, {
                 thumbnailIDs,
                 onStart: (allMetadata: IPhotoMetadata[]) => {
                     if (allMetadata === undefined) {

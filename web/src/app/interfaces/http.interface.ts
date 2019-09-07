@@ -12,6 +12,6 @@ export interface IRequestBody {
 
 export interface IGaiaRequestOptions {
     body: IRequestBody;
-    isServer: boolean;
+    useServer: boolean;
     options?: any;
 }

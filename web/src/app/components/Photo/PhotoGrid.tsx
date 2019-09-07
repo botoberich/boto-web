@@ -13,12 +13,14 @@ import { usePhotoContext } from '../../contexts/PhotoContext';
 // Types
 import { ArgsProps } from 'antd/lib/notification';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Title, Paragraph } = Typography;
 
 export function usePhotoGrid() {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
+    const { useServer } = useServiceContext();
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
@@ -34,7 +36,7 @@ export function usePhotoGrid() {
 
     React.useEffect(() => {
         let thumbnailCtr = 0;
-        const subscription = handleFetchThumbnails({
+        const subscription = handleFetchThumbnails(useServer, {
             onStart: (allMetadata: IPhotoMetadata[]) => {
                 if (allMetadata === undefined) {
                     return;
@@ -87,7 +89,7 @@ export function usePhotoGrid() {
             });
         };
         // eslint-disable-next-line
-    }, []);
+    }, [useServer]);
 
     return {
         thumbnails,
@@ -98,9 +100,7 @@ export function usePhotoGrid() {
 function PhotoGrid({ thumbnails, loading }) {
     return (
         <div className={styles.gridContainer}>
-            {!loading && Object.keys(thumbnails).length === 0 && (
-                <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>
-            )}
+            {!loading && Object.keys(thumbnails).length === 0 && <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>}
             {Object.keys(thumbnails).length > 0 &&
                 Object.keys(thumbnails)
                     .sort(compareDesc)
@@ -114,13 +114,7 @@ function PhotoGrid({ thumbnails, loading }) {
                                         if (!b64) {
                                             return <Skeleton key={photoId} active />;
                                         }
-                                        return (
-                                            <PhotoGridItem
-                                                id={photoId}
-                                                key={photoId}
-                                                src={`data:image/png;base64,${b64}`}
-                                            />
-                                        );
+                                        return <PhotoGridItem id={photoId} key={photoId} src={`data:image/png;base64,${b64}`} />;
                                     })}
                                 </div>
                             </div>

@@ -16,5 +16,5 @@ export interface IServiceContextValue {
     toggleService: () => void;
     setServer: () => void;
     setClient: () => void;
-    isServer: boolean;
+    useServer: boolean;
 }

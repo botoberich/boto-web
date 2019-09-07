@@ -8,10 +8,10 @@ type Photo = {
     title: string;
 };
 
-export const handleDownloadPhotos = async (ids: string[]) => {
+export const handleDownloadPhotos = async (useServer: boolean = false, ids: string[]) => {
     if (ids !== undefined && ids.length <= 0) return;
     try {
-        const photoResponse = await Promise.all(ids.map(id => getPhotoById(id)));
+        const photoResponse = await Promise.all(ids.map(id => getPhotoById(useServer, id)));
         const files = photoResponse
             .map(res => {
                 if (res.status === 'success') {
@@ -64,15 +64,18 @@ function removeFileExtension(title) {
 //     document.body.removeChild(downloadableContent);
 // }
 
-export const handleFetchThumbnails = async ({
-    onNext = (thumbnail: IThumbnail) => {},
-    onComplete = () => {},
-    onError = err => {},
-    onEnd = () => {},
-    onStart = (allMetadata: IPhotoMetadata[]) => {},
-} = {}) => {
+export const handleFetchThumbnails = async (
+    isServer: boolean = false,
+    {
+        onNext = (thumbnail: IThumbnail) => {},
+        onComplete = () => {},
+        onError = err => {},
+        onEnd = () => {},
+        onStart = (allMetadata: IPhotoMetadata[]) => {},
+    } = {}
+) => {
     let subscription = { unsubscribe: () => {} };
-    const thumbnailsRes = await getThumbnails();
+    const thumbnailsRes = await getThumbnails(isServer);
     onStart(thumbnailsRes.data.allMetadata);
     if (thumbnailsRes.status === 'success') {
         subscription = thumbnailsRes.data.$thumbnails.subscribe({
@@ -98,6 +101,7 @@ export const handleFetchThumbnails = async ({
 };
 
 export const handleDeletePhotos = async (
+    useServer: boolean = false,
     ids: string[],
     {
         onNext = (id: IPhotoMetadata) => {},
@@ -110,13 +114,13 @@ export const handleDeletePhotos = async (
     if (ids.length <= 0) {
         return;
     }
-    
+
     onStart({
         length: ids.length,
         cmd: 'Delete',
     });
 
-    const deleteRes = await deletePhotos(ids);
+    const deleteRes = await deletePhotos(useServer, ids);
     if (deleteRes.status === 'success') {
         deleteRes.data.$deletes.subscribe({
             next: metaData => {
@@ -140,6 +144,7 @@ export const handleDeletePhotos = async (
 };
 
 export const handleFileUpload = async (
+    useServer: boolean = false,
     e,
     {
         onNext = (res: IThumbnail) => {},
@@ -155,7 +160,7 @@ export const handleFileUpload = async (
         length: files.length,
         cmd: 'Upload',
     });
-    const postRes = await postPhotos(files);
+    const postRes = await postPhotos(useServer, files);
     if (postRes.status === 'success') {
         const $postPhotos = postRes.data.$photos;
         $postPhotos.subscribe({

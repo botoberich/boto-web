@@ -28,7 +28,7 @@ function ServiceProvider(props) {
     }, [service]);
 
     const value = React.useMemo(
-        () => ({ service, setServer, setClient, toggleService, isServer: service === SERVER }),
+        () => ({ service, setServer, setClient, toggleService, useServer: service === SERVER }),
         [service]
     );
 

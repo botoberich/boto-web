@@ -15,6 +15,7 @@ import { useEditAlbumModal } from './albums.hooks';
 import { IGetAlbumsResult, IAlbumMetadata } from '../../interfaces/albums.interface';
 import { IThumbnail } from '../../interfaces/photos.interface';
 import { ApiResponse } from '../../interfaces/response.interface';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Title, Paragraph } = Typography;
 const { confirm } = Modal;
@@ -48,12 +49,12 @@ function useFetchAlbumCover(id) {
     if (!id) {
         return {};
     }
-
+    const { useServer } = useServiceContext();
     const [cover, setCover] = React.useState<IThumbnail>(null);
     const [error, setError] = React.useState(null);
     React.useEffect(() => {
         async function fetchAlbumCover(id) {
-            const resp = await getThumbnail(id);
+            const resp = await getThumbnail(useServer, id);
             if (resp && resp.status === 'success') {
                 setCover(resp.data);
             }
@@ -134,6 +135,7 @@ function AlbumHeader({ title, description }) {
 
 function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
     const { Modal, setVisible } = useEditAlbumModal(album, { refetchAlbums });
+    const { useServer } = useServiceContext();
 
     const handleModalOpen = React.useCallback(e => setVisible(true), [setVisible]);
 
@@ -143,7 +145,7 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
                 title: 'Do you want to delete this album?',
                 content: 'Your existing photos will not be deleted.',
                 async onOk() {
-                    const resp = await deleteAlbum(album._id, true);
+                    const resp = await deleteAlbum(useServer, album._id, true);
                     if (resp.status === 'success') {
                         refetchAlbums();
                     }

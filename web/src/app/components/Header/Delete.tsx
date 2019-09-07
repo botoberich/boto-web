@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { handleDeletePhotos } from '../Photo/photos.hooks'
+import { handleDeletePhotos } from '../Photo/photos.hooks';
 
 // UI
 import { Tooltip, Button, Icon } from 'antd';
 import styles from './Delete.module.css';
 
-function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, setloadingThumbnails, setThumbnails }) {
+function Delete({ useServer, selectedThumbnails, setSelectedThumbnails, progressDispatch, setloadingThumbnails, setThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <div
@@ -15,8 +15,8 @@ function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, s
                     if (selectedThumbnails.length <= 0) {
                         return;
                     }
-                    
-                    handleDeletePhotos([...selectedThumbnails], {
+
+                    handleDeletePhotos(useServer, [...selectedThumbnails], {
                         onStart: payload => {
                             setloadingThumbnails(selectedThumbnails);
                             progressDispatch({ type: 'START', payload });

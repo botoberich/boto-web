@@ -10,10 +10,10 @@ const getHeaders = (): IRequestHeaders => {
     return { 'x-auth-response': authResponse, 'x-auth-transit-key': transitKey };
 };
 
-const makeGaiaRequest = async (method: 'get' | 'put' | 'delete', { body, options, isServer }: IGaiaRequestOptions) => {
+const makeGaiaRequest = async (method: 'get' | 'put' | 'delete', { body, options, useServer }: IGaiaRequestOptions) => {
     let headers = getHeaders();
     let result;
-    if (isServer) {
+    if (useServer) {
         let res = await axios.post(`${process.env.GATSBY_RADIKS_SERVER_URL}/gaia/${method}`, body, {
             headers,
         });

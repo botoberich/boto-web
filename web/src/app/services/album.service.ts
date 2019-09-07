@@ -27,10 +27,7 @@ const getPhotosByAlbumId = async (albumId): Promise<PhotoModel[]> => {
     }
 };
 
-export const createAlbum = async (
-    photoIds: string[],
-    albumMetadata: IAlbumMetadata
-): Promise<ApiResponse<ICreateAlbumResult>> => {
+export const createAlbum = async (photoIds: string[], albumMetadata: IAlbumMetadata): Promise<ApiResponse<ICreateAlbumResult>> => {
     try {
         let albumId = uuid();
         let album = new Album({
@@ -124,10 +121,7 @@ export const getAlbumById = async (albumId): Promise<ApiResponse<IGetSingleAlbum
     }
 };
 
-export const updateAlbumMetadata = async (
-    albumId: string,
-    newMetadata: IAlbumMetadata
-): Promise<ApiResponse<IAlbumMetadata>> => {
+export const updateAlbumMetadata = async (albumId: string, newMetadata: IAlbumMetadata): Promise<ApiResponse<IAlbumMetadata>> => {
     try {
         let album = await Album.findById(albumId);
         album.update({
@@ -141,14 +135,14 @@ export const updateAlbumMetadata = async (
     }
 };
 
-export const deleteAlbum = async (albumId: string, keepPhotos: boolean): Promise<ApiResponse<IAlbumMetadata>> => {
+export const deleteAlbum = async (useServer: boolean, albumId: string, keepPhotos: boolean): Promise<ApiResponse<IAlbumMetadata>> => {
     try {
         let album = await Album.findById(albumId);
         await album.destroy();
         if (!keepPhotos) {
             let photos = await getPhotosByAlbumId(albumId);
             let photoIds = photos.map(photo => photo._id);
-            await deletePhotos(photoIds);
+            await deletePhotos(useServer, photoIds);
         }
         return success(album.attrs);
     } catch (err) {
