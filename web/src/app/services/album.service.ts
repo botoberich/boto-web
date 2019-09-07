@@ -20,7 +20,7 @@ import { PhotoModel } from '../models';
 const getPhotosByAlbumId = async (albumId): Promise<PhotoModel[]> => {
     try {
         let ownPhotos = await Photo.fetchOwnList();
-        let photos = ownPhotos.filter(photo => JSON.parse(photo.attrs.albumIds).some(id => id === albumId));
+        let photos = ownPhotos.filter(photo => JSON.parse(photo.attrs.albumIds || '[]').some(id => id === albumId));
         return photos;
     } catch (err) {
         throw new Error(err);
