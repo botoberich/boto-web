@@ -9,6 +9,8 @@ import 'react-image-lightbox/style.css';
 import { handleFetchAlbumThumbnails } from '../Album/albums.hooks';
 import { getAlbumById } from '../../services/album.service';
 import { usePhotoContext } from '../../contexts/PhotoContext';
+import { setAlbumMetaData } from '../../redux/album/album.actions';
+import { useDispatch } from 'react-redux';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
@@ -17,11 +19,11 @@ import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Title, Paragraph } = Typography;
 
-function AlbumView({ title, loading, thumbnails }) {
+function AlbumView({ title, loading, skeleton }) {
     return (
         <>
             <Title>{title}</Title>
-            <PhotoGrid thumbnails={thumbnails} loading={loading}></PhotoGrid>
+            <PhotoGrid skeleton={skeleton} loading={loading}></PhotoGrid>
         </>
     );
 }
@@ -33,6 +35,7 @@ export function useAlbumView({ albumID }) {
     const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
     const { useServer } = useServiceContext();
+    const dispatch = useDispatch();
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
@@ -56,9 +59,17 @@ export function useAlbumView({ albumID }) {
             try {
                 const albumRes = await getAlbumById(albumID);
 
+                if (!albumRes) {
+                    return;
+                }
+                
                 if (albumRes.status !== 'success') {
                     return;
                 }
+
+                console.log({ albumRes });
+
+                dispatch(setAlbumMetaData(albumRes.data.albumMetadata._id, albumRes.data.albumMetadata));
 
                 setTitle(albumRes.data.albumMetadata.title);
                 const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
@@ -70,7 +81,8 @@ export function useAlbumView({ albumID }) {
                         if (allMetadata === undefined) {
                             return;
                         }
-                        console.log({ allMetadata });
+                        console.log({ albumID, allMetadata });
+
                         const thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
                         allMetadata.forEach(meta => {
                             const photoId = meta._id;
@@ -115,14 +127,9 @@ export function useAlbumView({ albumID }) {
         fetch();
 
         return () => {
-            // State is being cached for some reason after page.
-            // Example: The last fetch call is storing the set of thumbnails,
-            // even page Photo screen and Detailed Album screen
-            // Will refactor state management later, using context or mobx
             if (subscription) {
                 subscription.then(sub => {
                     sub.unsubscribe();
-                    setThumbnails({});
                 });
             }
         };

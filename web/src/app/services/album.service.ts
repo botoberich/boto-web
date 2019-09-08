@@ -3,8 +3,8 @@ import {
     ICreateAlbumResult,
     IAddToAlbumResult,
     IRemoveFromAlbumResult,
-    IGetAlbumsResult,
-    IGetSingleAlbumResult,
+    IAlbumsMetadata,
+    IAlbum,
 } from '../interfaces/albums.interface';
 import Album from '../models/album.model';
 import uuid from 'uuid/v4';
@@ -99,7 +99,7 @@ export const removeFromAlbum = async (photoIds, albumId): Promise<ApiResponse<IR
     }
 };
 
-export const getAlbums = async (): Promise<ApiResponse<IGetAlbumsResult>> => {
+export const getAlbums = async (): Promise<ApiResponse<IAlbumsMetadata>> => {
     try {
         let albums = await Album.fetchOwnList();
         let albumsMap = {};
@@ -110,7 +110,7 @@ export const getAlbums = async (): Promise<ApiResponse<IGetAlbumsResult>> => {
     }
 };
 
-export const getAlbumById = async (albumId): Promise<ApiResponse<IGetSingleAlbumResult>> => {
+export const getAlbumById = async (albumId): Promise<ApiResponse<IAlbum>> => {
     try {
         let [album, photos] = await Promise.all([Album.findById(albumId), getPhotosByAlbumId(albumId)]);
         let photosMap = {};

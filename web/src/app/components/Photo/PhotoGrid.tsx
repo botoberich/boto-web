@@ -8,15 +8,13 @@ import styles from './PhotoGrid.module.css';
 
 // State
 import { handleFetchThumbnails } from './photos.hooks';
-import { usePhotoContext } from '../../contexts/PhotoContext';
-import { useDispatch, useSelector } from 'react-redux';
-import { addPhoto, setMetaData } from '../../redux/photo/photo.actions';
+import { useDispatch } from 'react-redux';
+import { nextPhoto, setMetaData } from '../../redux/photo/photo.actions';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
-import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
-import { AppState } from '../../redux/root.reducer';
 
 const { Title, Paragraph } = Typography;
 
@@ -38,30 +36,29 @@ export function usePhotoGrid() {
     });
 
     React.useEffect(() => {
-        let thumbnailCtr = 0;
+        // photoCounter tracks the number of photos fetched. users can successfully fetch 0 photos. 
+        // if so, we don't want to send them a notification
+        let photoCounter = 0;
         const subscription = handleFetchThumbnails(useServer, {
             onStart: (allMetadata: IPhotoMetadata[]) => {
                 if (allMetadata === undefined) {
                     return;
                 }
-
                 dispatch(setMetaData(allMetadata));
             },
             onNext: res => {
                 if (res === null || res === undefined) {
                     return;
                 }
-
-                thumbnailCtr++;
-
-                dispatch(addPhoto(res));
+                photoCounter++;
+                dispatch(nextPhoto(res));
             },
             onError: err => {
                 notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
             },
             onComplete: () => {
                 setLoading(false);
-                if (thumbnailCtr !== 0) {
+                if (photoCounter !== 0) {
                     notification.success(notificationConfig(`Successfully loaded all photos.`));
                 }
             },
@@ -71,7 +68,6 @@ export function usePhotoGrid() {
                 sub.unsubscribe();
             });
         };
-        // eslint-disable-next-line
     }, [useServer]);
 
     return {

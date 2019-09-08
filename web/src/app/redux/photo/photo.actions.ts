@@ -1,13 +1,13 @@
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
-export const ADD_PHOTO = 'ADD_PHOTO';
+export const NEXT_PHOTO = 'NEXT_PHOTO';
 export const SET_SKELETON = 'SET_SKELETON';
 export const SET_METADATA = 'SET_PHOTO_METADATA';
 
 // Actions
-export function addPhoto(photo: IThumbnail) {
+export function nextPhoto(photo: IThumbnail) {
     return {
-        type: ADD_PHOTO,
+        type: NEXT_PHOTO,
         payload: {
             photo,
         },

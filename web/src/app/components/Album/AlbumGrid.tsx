@@ -12,7 +12,7 @@ import { getThumbnail } from '../../services/photo.service';
 import { useEditAlbumModal } from './albums.hooks';
 
 // Types
-import { IGetAlbumsResult, IAlbumMetadata } from '../../interfaces/albums.interface';
+import { IAlbumsMetaData, IAlbumMetadata } from '../../interfaces/albums.interface';
 import { IThumbnail } from '../../interfaces/photos.interface';
 import { ApiResponse } from '../../interfaces/response.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
@@ -21,12 +21,13 @@ const { Title, Paragraph } = Typography;
 const { confirm } = Modal;
 
 function useFetchAlbums() {
-    const [response, setResponse] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
+    const [response, setResponse] = React.useState<ApiResponse<IAlbumsMetaData>>(null);
     const [error, setError] = React.useState(null);
 
     async function fetch() {
         const fetchAlbums = async () => {
             let albums = await getAlbums();
+            console.log({ albums });
             setResponse(albums);
         };
 
