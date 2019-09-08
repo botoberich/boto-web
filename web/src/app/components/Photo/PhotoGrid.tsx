@@ -9,18 +9,21 @@ import styles from './PhotoGrid.module.css';
 // State
 import { handleFetchThumbnails } from './photos.hooks';
 import { usePhotoContext } from '../../contexts/PhotoContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPhoto, setMetaData } from '../../redux/photo/photo.actions';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
+import { AppState } from '../../redux/root.reducer';
 
 const { Title, Paragraph } = Typography;
 
 export function usePhotoGrid() {
-    const { thumbnails, setThumbnails } = usePhotoContext();
     const [loading, setLoading] = React.useState(true);
     const { useServer } = useServiceContext();
+    const dispatch = useDispatch();
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
@@ -42,31 +45,16 @@ export function usePhotoGrid() {
                     return;
                 }
 
-                let skeletonThumbnails: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-                allMetadata.forEach(meta => {
-                    let photoId = meta._id;
-                    let dateString = new Date(meta.createdAt).toDateString();
-                    let thumbnail: IThumbnail = { b64: '', metaData: meta };
-                    skeletonThumbnails[dateString] = skeletonThumbnails[dateString]
-                        ? { ...skeletonThumbnails[dateString], ...{ [photoId]: thumbnail } }
-                        : { [photoId]: thumbnail };
-                });
-
-                setThumbnails(skeletonThumbnails);
+                dispatch(setMetaData(allMetadata));
             },
             onNext: res => {
                 if (res === null || res === undefined) {
                     return;
                 }
+
                 thumbnailCtr++;
 
-                /** hydrate the skeletons with b64 on each emission */
-                setThumbnails(thumbnails => {
-                    let dateString = new Date(res.metaData.createdAt).toDateString();
-                    let copy = { ...thumbnails };
-                    copy[dateString][res.metaData._id].b64 = res.b64;
-                    return copy;
-                });
+                dispatch(addPhoto(res));
             },
             onError: err => {
                 notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
@@ -79,38 +67,32 @@ export function usePhotoGrid() {
             },
         });
         return () => {
-            // State is being cached for some reason after page.
-            // Example: The last fetch call is storing the set of thumbnails,
-            // even page Photo screen and Detailed Album screen
-            // Will refactor state management later, using context or mobx
             subscription.then(sub => {
                 sub.unsubscribe();
-                setThumbnails({});
             });
         };
         // eslint-disable-next-line
     }, [useServer]);
 
     return {
-        thumbnails,
         loading,
     };
 }
 
-function PhotoGrid({ thumbnails, loading }) {
+function PhotoGrid({ skeleton, loading }) {
     return (
         <div className={styles.gridContainer}>
-            {!loading && Object.keys(thumbnails).length === 0 && <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>}
-            {Object.keys(thumbnails).length > 0 &&
-                Object.keys(thumbnails)
+            {!loading && Object.keys(skeleton).length === 0 && <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>}
+            {Object.keys(skeleton).length > 0 &&
+                Object.keys(skeleton)
                     .sort(compareDesc)
                     .map(date => {
                         return (
                             <div key={date}>
                                 <Title level={3}>{isToday(date) ? 'Today' : format(date, 'ddd, D MMM YYYY')}</Title>
                                 <div className={styles.grid}>
-                                    {Object.keys(thumbnails[date]).map(photoId => {
-                                        let b64 = thumbnails[date][photoId].b64;
+                                    {Object.keys(skeleton[date]).map(photoId => {
+                                        let b64 = skeleton[date][photoId].b64;
                                         if (!b64) {
                                             return <Skeleton key={photoId} active />;
                                         }
