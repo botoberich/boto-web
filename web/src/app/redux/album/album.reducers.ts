@@ -1,6 +1,6 @@
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
-import { IThumbnail } from '../../interfaces/photos.interface';
-import { NEXT_ALBUM_PHOTO, SET_ALBUM_METADATA } from './album.actions';
+import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { NEXT_ALBUM_PHOTO, SET_ALBUM_METADATA, SET_ALBUM_PHOTO_METADATA } from './album.actions';
 
 // Reducer
 interface AlbumReducerState {
@@ -8,6 +8,7 @@ interface AlbumReducerState {
         [id: string]: {
             photos: IThumbnail[];
             albumMetadata: IAlbumMetadata;
+            photoMetadata: IPhotoMetadata[];
         };
     };
 }
@@ -24,6 +25,7 @@ function AlbumReducer(state = INITIAL_STATE, action): AlbumReducerState {
                 [action.payload.albumID]: {
                     photos: [],
                     albumMetadata: action.payload.metadata,
+                    photoMetadata: [],
                 },
             };
             return {
@@ -31,9 +33,34 @@ function AlbumReducer(state = INITIAL_STATE, action): AlbumReducerState {
                 albums,
             };
         }
-        case NEXT_ALBUM_PHOTO: {
+        case SET_ALBUM_PHOTO_METADATA: {
+            const albums = {
+                ...state.albums,
+            };
+
+            if (albums[action.payload.albumID]) {
+                albums[action.payload.albumID].photoMetadata = action.payload.metadata;
+            }
+
             return {
                 ...state,
+                albums,
+            };
+        }
+        case NEXT_ALBUM_PHOTO: {
+            const albums = {
+                ...state.albums,
+            };
+
+            if (albums[action.payload.albumID]) {
+                albums[action.payload.albumID].photos = [...albums[action.payload.albumID].photos, action.payload.photo];
+            }
+
+            return {
+                ...state,
+                albums: {
+                    ...albums,
+                },
             };
         }
         default:

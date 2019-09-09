@@ -9,7 +9,7 @@ import 'react-image-lightbox/style.css';
 import { handleFetchAlbumThumbnails } from '../Album/albums.hooks';
 import { getAlbumById } from '../../services/album.service';
 import { usePhotoContext } from '../../contexts/PhotoContext';
-import { setAlbumMetaData } from '../../redux/album/album.actions';
+import { setAlbumMetaData, setAlbumPhotoMetaData, nextAlbumPhoto } from '../../redux/album/album.actions';
 import { useDispatch } from 'react-redux';
 
 // Types
@@ -23,7 +23,7 @@ function AlbumView({ title, loading, skeleton }) {
     return (
         <>
             <Title>{title}</Title>
-            <PhotoGrid skeleton={skeleton} loading={loading}></PhotoGrid>
+            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading}></PhotoGrid>}
         </>
     );
 }
@@ -62,29 +62,33 @@ export function useAlbumView({ albumID }) {
                 if (!albumRes) {
                     return;
                 }
-                
+
                 if (albumRes.status !== 'success') {
                     return;
                 }
 
-                console.log({ albumRes });
+                // console.log({ albumRes });
 
                 dispatch(setAlbumMetaData(albumRes.data.albumMetadata._id, albumRes.data.albumMetadata));
 
                 setTitle(albumRes.data.albumMetadata.title);
+
                 const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
+
                 let thumbnailCtr = 0;
 
                 subscription = handleFetchAlbumThumbnails(useServer, {
                     thumbnailIDs,
-                    onStart: (allMetadata: IPhotoMetadata[]) => {
-                        if (allMetadata === undefined) {
+                    onStart: (photosMetadata: IPhotoMetadata[]) => {
+                        if (photosMetadata === undefined) {
                             return;
                         }
-                        console.log({ albumID, allMetadata });
+
+                        dispatch(setAlbumPhotoMetaData(albumRes.data.albumMetadata._id, photosMetadata));
 
                         const thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-                        allMetadata.forEach(meta => {
+
+                        photosMetadata.forEach(meta => {
                             const photoId = meta._id;
                             const dateString = new Date(meta.createdAt).toDateString();
                             const thumbnail: IThumbnail = { b64: '', metaData: meta };
@@ -99,7 +103,12 @@ export function useAlbumView({ albumID }) {
                         if (res === null || res === undefined) {
                             return;
                         }
+
                         thumbnailCtr++;
+
+                        console.log('photo res', res);
+
+                        dispatch(nextAlbumPhoto(albumRes.data.albumMetadata._id, res));
 
                         /** hydrate the skeletons with b64 on each emission */
                         setThumbnails(thumbnails => {

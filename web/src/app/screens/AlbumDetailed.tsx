@@ -10,12 +10,11 @@ import AlbumView, { useAlbumView } from '../components/Album/AlbumView';
 function DetailedAlbumScreen({ albumID }) {
     const { title, loading } = useAlbumView({ albumID });
 
-    const skeleton = useSelector(state => {
-        console.log('state', state);
-        return albumSkeletonSelector(state, albumID);
-    });
+    const skeleton = useSelector(state => albumSkeletonSelector(state, albumID));
+
     console.log({ skeleton });
-    return <AlbumView title={title} skeleton={{}} loading={loading}></AlbumView>;
+
+    return <AlbumView title={title} skeleton={skeleton} loading={loading}></AlbumView>;
 }
 
 export default DetailedAlbumScreen;
