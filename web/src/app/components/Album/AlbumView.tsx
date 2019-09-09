@@ -8,13 +8,13 @@ import 'react-image-lightbox/style.css';
 // State
 import { handleFetchAlbumThumbnails } from '../Album/albums.hooks';
 import { getAlbumById } from '../../services/album.service';
-import { usePhotoContext } from '../../contexts/PhotoContext';
 import { setAlbumMetaData, setAlbumPhotoMetaData, nextAlbumPhoto } from '../../redux/album/album.actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { albumSkeletonSelector } from '../../redux/album/album.selectors';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
-import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
+import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 
 const { Title, Paragraph } = Typography;
@@ -31,11 +31,13 @@ function AlbumView({ title, loading, skeleton }) {
 export default AlbumView;
 
 export function useAlbumView({ albumID }) {
-    const [title, setTitle] = React.useState('');
-    const { thumbnails, setThumbnails } = usePhotoContext();
-    const [loading, setLoading] = React.useState(true);
-    const { useServer } = useServiceContext();
     const dispatch = useDispatch();
+    const { useServer } = useServiceContext();
+    const [title, setTitle] = React.useState('');
+    const [loading, setLoading] = React.useState(true);
+    const skeleton = useSelector(state => {
+        return albumSkeletonSelector(state, albumID);
+    });
 
     const notificationConfig = (msg: string): ArgsProps => ({
         // TODO: Refactor to use a global navigation singleton
@@ -51,6 +53,7 @@ export function useAlbumView({ albumID }) {
 
     React.useEffect(() => {
         let subscription;
+
         async function fetch() {
             if (albumID === null) {
                 return;
@@ -58,23 +61,23 @@ export function useAlbumView({ albumID }) {
 
             try {
                 const albumRes = await getAlbumById(albumID);
-
                 if (!albumRes) {
                     return;
                 }
 
                 if (albumRes.status !== 'success') {
+                    // Potential spot to retry and notify user
                     return;
                 }
 
-                // console.log({ albumRes });
-
+                // Prep the metadata to set up initial skeleton
                 dispatch(setAlbumMetaData(albumRes.data.albumMetadata._id, albumRes.data.albumMetadata));
 
+                // Set the album title
                 setTitle(albumRes.data.albumMetadata.title);
 
+                // Collect ids to retrieve the photo thumbnails
                 const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
-
                 let thumbnailCtr = 0;
 
                 subscription = handleFetchAlbumThumbnails(useServer, {
@@ -83,40 +86,14 @@ export function useAlbumView({ albumID }) {
                         if (photosMetadata === undefined) {
                             return;
                         }
-
                         dispatch(setAlbumPhotoMetaData(albumRes.data.albumMetadata._id, photosMetadata));
-
-                        const thumbnailsByDate: { [date: string]: { [photoId: string]: IThumbnail } } = {};
-
-                        photosMetadata.forEach(meta => {
-                            const photoId = meta._id;
-                            const dateString = new Date(meta.createdAt).toDateString();
-                            const thumbnail: IThumbnail = { b64: '', metaData: meta };
-                            thumbnailsByDate[dateString] = thumbnailsByDate[dateString]
-                                ? { ...thumbnailsByDate[dateString], ...{ [photoId]: thumbnail } }
-                                : { [photoId]: thumbnail };
-                        });
-
-                        setThumbnails(thumbnailsByDate);
                     },
                     onNext: res => {
                         if (res === null || res === undefined) {
                             return;
                         }
-
-                        thumbnailCtr++;
-
-                        console.log('photo res', res);
-
                         dispatch(nextAlbumPhoto(albumRes.data.albumMetadata._id, res));
-
-                        /** hydrate the skeletons with b64 on each emission */
-                        setThumbnails(thumbnails => {
-                            let dateString = new Date(res.metaData.createdAt).toDateString();
-                            let copy = { ...thumbnails };
-                            copy[dateString][res.metaData._id].b64 = res.b64;
-                            return copy;
-                        });
+                        thumbnailCtr++;
                     },
                     onError: err => {
                         notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
@@ -144,5 +121,5 @@ export function useAlbumView({ albumID }) {
         };
     }, [albumID]);
 
-    return { title, thumbnails, loading };
+    return { title, skeleton, loading };
 }

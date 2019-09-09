@@ -1,4 +1,5 @@
 export const SET_ALBUM_METADATA = 'SET_ALBUM_METADATA';
+export const SET_ALBUMS_METADATA = 'SET_ALBUMS_METADATA';
 export const SET_ALBUM_PHOTO_METADATA = 'SET_ALBUM_PHOTO_METADATA';
 export const NEXT_ALBUM_PHOTO = 'NEXT_ALBUM_PHOTO';
 
@@ -8,6 +9,15 @@ export const setAlbumMetaData = (albumID, metadata) => {
         payload: {
             albumID,
             metadata,
+        },
+    };
+};
+
+export const setAlbumsMetaData = albums => {
+    return {
+        type: SET_ALBUMS_METADATA,
+        payload: {
+            albums: albums,
         },
     };
 };
