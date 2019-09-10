@@ -22,6 +22,7 @@ import styles from './Header.module.css';
 // Types
 import { IMatchProps } from '../../interfaces/ui.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 
 const { Header } = Layout;
 
@@ -31,15 +32,16 @@ function PageHeader() {
     const { progressDispatch } = useProgressContext();
     const dispatch = useDispatch();
 
-    const btnShowHide = React.useMemo(
-        () => (selectedThumbnails.length > 0 ? `${styles.headerBtn} ${styles.headerBtnShown}` : `${styles.headerBtn} ${styles.headerBtnHidden}`),
-        [selectedThumbnails]
-    );
+    const noSelection = React.useMemo(() => selectedThumbnails.length === 0, [selectedThumbnails]);
 
-    const btnShowHideReverse = React.useMemo(
-        () => (selectedThumbnails.length === 0 ? `${styles.headerBtn} ${styles.headerBtnShown}` : `${styles.headerBtn} ${styles.headerBtnHidden}`),
-        [selectedThumbnails]
-    );
+    const variants: Variants = {
+        show: {
+            transform: 'translateY(0px)',
+        },
+        hide: {
+            transform: 'translateY(-50px)',
+        },
+    };
 
     return (
         <Header className={styles.header}>
@@ -50,34 +52,38 @@ function PageHeader() {
                 <Match path="/app">
                     {props =>
                         props.match && (
-                            <>
-                                <div className={btnShowHideReverse} style={{ margin: 0, position: 'absolute' }}>
+                            <AnimatePresence>
+                                <motion.div animate={noSelection ? 'show' : 'hide'} variants={variants} style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
                                         progressDispatch={progressDispatch}
                                         useServer={useServer}></Upload>
-                                </div>
+                                </motion.div>
 
-                                <>
-                                    <div className={btnShowHide}>
+                                <motion.nav
+                                    className={styles.nav}
+                                    initial={{ transform: 'translateY(-50px)' }}
+                                    animate={!noSelection ? 'show' : 'hide'}
+                                    variants={variants}>
+                                    <div className={styles.headerBtn}>
                                         <Tag className={styles.tag} color="#f50">
                                             {selectedThumbnails.length}
                                             <span className={styles.hideMobile}>&nbsp;selected</span>
                                         </Tag>
                                     </div>
-                                    <div className={btnShowHide}>
+                                    <div className={styles.headerBtn}>
                                         <AddToAlbum
                                             selectedThumbnails={selectedThumbnails}
                                             setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
                                     </div>
-                                    <div className={btnShowHide}>
+                                    <div className={styles.headerBtn}>
                                         <Download
                                             useServer={useServer}
                                             selectedThumbnails={selectedThumbnails}
                                             setSelectedThumbnails={setSelectedThumbnails}
                                         />
                                     </div>
-                                    <div className={btnShowHide}>
+                                    <div className={styles.headerBtn}>
                                         <Delete
                                             progressDispatch={progressDispatch}
                                             selectedThumbnails={selectedThumbnails}
@@ -86,8 +92,8 @@ function PageHeader() {
                                             removePhoto={metaData => dispatch(removePhoto(metaData))}
                                             useServer={useServer}></Delete>
                                     </div>
-                                </>
-                            </>
+                                </motion.nav>
+                            </AnimatePresence>
                         )
                     }
                 </Match>
@@ -95,14 +101,14 @@ function PageHeader() {
                 <Match path="/app/albums/:id">
                     {(props: IMatchProps) =>
                         props.match && (
-                            <div className={btnShowHide}>
+                            <motion.div variants={variants} animate={!noSelection ? 'show' : 'hide'} className={styles.headerBtn}>
                                 <RemoveFromAlbum
                                     albumId={props.match.id}
                                     removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.id, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                 />
-                            </div>
+                            </motion.div>
                         )
                     }
                 </Match>

@@ -23,34 +23,6 @@
     margin-left: 5px;
 }
 
-.headerBtnShown {
-    transform: translateY(0px);
-    animation: slideDown 0.5s;
-}
-
-.headerBtnHidden {
-    transform: translateY(-50px);
-    animation: slideUp 0.5s;
-}
-
-@keyframes slideDown {
-    0% {
-        transform: translateY(-50px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-@keyframes slideUp {
-    0% {
-        transform: translateY(0px);
-    }
-    100% {
-        transform: translateY(-50px);
-    }
-}
-
 @media (min-width: 576px) {
     .headerTitle {
         font-size: 24px;
