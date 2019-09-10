@@ -65,6 +65,7 @@ function useFetchAlbumCover(id) {
     const { useServer } = useServiceContext();
     const [cover, setCover] = React.useState<IThumbnail>(null);
     const [error, setError] = React.useState(null);
+
     React.useEffect(() => {
         async function fetchAlbumCover(id) {
             const resp = await getThumbnail(useServer, id);
@@ -96,7 +97,7 @@ function AlbumGrid() {
             <div className={styles.gridItem}>
                 <AlbumAdd></AlbumAdd>
             </div>
-            {Object.values(albums).map((album: IAlbumMetadata, i) => {
+            {Object.values(albums).map((album: IAlbumMetadata) => {
                 return (
                     <div className={styles.gridItem} key={album._id}>
                         <div className={styles.topOverlay}></div>

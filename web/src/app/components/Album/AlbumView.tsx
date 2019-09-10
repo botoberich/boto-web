@@ -59,6 +59,10 @@ export function useAlbumView({ albumID }) {
                 return;
             }
 
+            if (skeleton) {
+                return;
+            }
+
             try {
                 const albumRes = await getAlbumById(albumID);
                 if (!albumRes) {
