@@ -8,7 +8,7 @@ import { Typography, Button, notification } from 'antd';
 import styles from './AlbumCreate.module.css';
 
 // State
-import { usePhotoContext } from '../../contexts/PhotoContext';
+import { useSelectonContext } from '../../contexts/SelectionContext';
 import { createAlbum } from '../../services/album.service';
 import { useSelector } from 'react-redux';
 import { skeletonSelector } from '../../redux/photo/photo.selectors';
@@ -40,7 +40,7 @@ function AlbumCreate() {
     const { loading } = usePhotoGrid();
     const skeleton = useSelector(state => skeletonSelector(state));
 
-    const { selectedThumbnails } = usePhotoContext();
+    const { selectedThumbnails } = useSelectonContext();
 
     const handleNewAlbumCreation = React.useCallback(async () => {
         setValidInput(true);

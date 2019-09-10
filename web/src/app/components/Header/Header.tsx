@@ -6,7 +6,7 @@ import { Match } from '@reach/router';
 import { Layout, Avatar, Menu, Dropdown, Tag, Typography, Icon } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
-import { usePhotoContext } from '../../contexts/PhotoContext';
+import { useSelectonContext } from '../../contexts/SelectionContext';
 
 // UI
 import Upload from './Upload';
@@ -23,7 +23,7 @@ import { useServiceContext } from '../../contexts/ServiceContext';
 const { Header } = Layout;
 
 function PageHeader() {
-    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails, thumbnails } = usePhotoContext();
+    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails, thumbnails } = useSelectonContext();
 
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
