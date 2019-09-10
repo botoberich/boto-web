@@ -34,13 +34,11 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
         <>
             <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
                 <Button
-                    // disabled={selectedThumbnails.length === 0}
                     onClick={async () => {
                         try {
                             if (selectedThumbnails.length <= 0) {
                                 return;
                             }
-
                             setVisible(true);
                             const resp = await getAlbums();
                             if (resp.status === 'success') {
@@ -70,7 +68,6 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                 className={styles.listItem}
                                 key={album._id}
                                 onClick={async () => {
-                                    console.log('Saving photos to album ', album._id);
                                     setConfirmLoading(true);
                                     try {
                                         const res = await handleAddToAlbum({

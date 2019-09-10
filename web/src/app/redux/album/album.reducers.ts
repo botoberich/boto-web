@@ -1,6 +1,6 @@
-import { IAlbumMetadata, IAlbum } from '../../interfaces/albums.interface';
+import { IAlbumMetadata } from '../../interfaces/albums.interface';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
-import { NEXT_ALBUM_PHOTO, SET_ALBUM_METADATA, SET_ALBUMS_METADATA, SET_ALBUM_PHOTO_METADATA } from './album.actions';
+import { NEXT_ALBUM_PHOTO, SET_ALBUM_METADATA, SET_ALBUMS_METADATA, SET_ALBUM_PHOTO_METADATA, REMOVE_ALBUM_PHOTO } from './album.actions';
 
 // Reducer
 interface AlbumReducerState {
@@ -10,7 +10,6 @@ interface AlbumReducerState {
     source: {
         [id: string]: {
             photos: IThumbnail[];
-            albumMetadata: IAlbumMetadata;
             photoMetadata: IPhotoMetadata[];
         };
     };
@@ -70,6 +69,25 @@ function AlbumReducer(state = INITIAL_STATE, action): AlbumReducerState {
 
             if (source[action.payload.albumID]) {
                 source[action.payload.albumID].photos = [...source[action.payload.albumID].photos, action.payload.photo];
+            }
+
+            return {
+                ...state,
+                source,
+            };
+        }
+        case REMOVE_ALBUM_PHOTO: {
+            const source = {
+                ...state.source,
+            };
+
+            const albumSource = source[action.payload.albumID];
+
+            if (albumSource) {
+                action.payload.photoIDs.forEach(id => {
+                    albumSource.photos = albumSource.photos.filter(photo => photo.metaData._id !== id);
+                    albumSource.photoMetadata = albumSource.photoMetadata.filter(photoMeta => photoMeta._id !== id);
+                });
             }
 
             return {

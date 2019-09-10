@@ -9,6 +9,7 @@ import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/au
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { useSelectonContext } from '../../contexts/SelectionContext';
 import { removePhoto, newPhoto } from '../../redux/photo/photo.actions';
+import { removeAlbumPhotos } from '../../redux/album/album.actions'
 
 // UI
 import Upload from './Upload';
@@ -96,8 +97,7 @@ function PageHeader() {
                             <div className={btnShowHide}>
                                 <RemoveFromAlbum
                                     albumId={props.match.id}
-                                    // thumbnails={thumbnails}
-                                    // setThumbnails={setThumbnails}
+                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.id, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                 />

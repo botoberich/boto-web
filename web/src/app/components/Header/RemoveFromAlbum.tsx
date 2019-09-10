@@ -24,39 +24,23 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, setThumbnails, thumbnails }) {
+function RemoveFromAlbum({ albumId, removePhotosFromAlbum, selectedThumbnails, setSelectedThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <Button
                 disabled={selectedThumbnails.length === 0}
                 onClick={async () => {
                     try {
-                        notification.success(
-                            notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`)
-                        );
+                        notification.success(notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
 
                         const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
 
                         if (resp.status === 'success') {
-                            notification.success(
-                                notificationConfig(
-                                    `Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`
-                                )
-                            );
+                            console.log({ resp });
+                            removePhotosFromAlbum();
 
-                            let filteredThumbnails = { ...thumbnails };
-                            Object.entries(thumbnails).map(([date]) => {
-                                selectedThumbnails.map(removed => {
-                                    // Remove from DOM the removed photos
-                                    delete filteredThumbnails[date][removed];
+                            notification.success(notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
 
-                                    // Remove the data as well
-                                    if (Object.values(filteredThumbnails[date]).length === 0) {
-                                        delete filteredThumbnails[date];
-                                    }
-                                });
-                            });
-                            setThumbnails(filteredThumbnails);
                         } else {
                             notification.error(notificationConfig(`Trouble removing photos.`));
                         }

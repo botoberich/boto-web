@@ -13,17 +13,20 @@ const INITIAL_STATE = {
 
 function PhotoReducer(state = INITIAL_STATE, action): PhotoReducerState {
     switch (action.type) {
+        // When we upload a new photo, we need to set metadata and the photo
         case NEW_PHOTO:
             return {
                 ...state,
                 metaData: [...state.metaData, action.payload.photo.metaData],
                 photos: [...state.photos, action.payload.photo],
             };
+        // When only fetching uploads, we only need to add photo because the metadata already exists
         case NEXT_PHOTO:
             return {
                 ...state,
                 photos: [...state.photos, action.payload.photo],
             };
+        // Metadata is necessary to create the photo calendar skeleton
         case SET_METADATA:
             return {
                 ...state,
