@@ -1,4 +1,4 @@
-import { NEXT_PHOTO, SET_METADATA } from './photo.actions';
+import { NEXT_PHOTO, SET_METADATA, REMOVE_PHOTO } from './photo.actions';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
 interface PhotoReducerState {
@@ -22,6 +22,12 @@ function PhotoReducer(state = INITIAL_STATE, action): PhotoReducerState {
             return {
                 ...state,
                 metaData: [...action.payload.metaData],
+            };
+        case REMOVE_PHOTO:
+            return {
+                ...state,
+                metaData: state.metaData.filter(photoMeta => photoMeta._id !== action.payload.metaData._id),
+                photos: state.photos.filter(photo => photo.metaData._id !== action.payload.metaData._id),
             };
         default:
             return {

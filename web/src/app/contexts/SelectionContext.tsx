@@ -13,14 +13,14 @@ function useSelectonContext(): ISelectionContextValue {
 
 function SelectionProvider(props) {
     const [selectedThumbnails, setSelectedThumbnails] = React.useState([]);
-    const [loadingThumbnails, setloadingThumbnails] = React.useState([]);
+    const [loadingThumbnails, setLoadingThumbnails] = React.useState([]);
     const [loadingLightBox, setLoadingLightBox] = React.useState(false);
 
     const value = {
         selectedThumbnails,
         setSelectedThumbnails,
         loadingThumbnails,
-        setloadingThumbnails,
+        setLoadingThumbnails,
         loadingLightBox,
         setLoadingLightBox,
     };

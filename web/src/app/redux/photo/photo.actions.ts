@@ -1,7 +1,7 @@
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
 export const NEXT_PHOTO = 'NEXT_PHOTO';
-export const SET_SKELETON = 'SET_SKELETON';
+export const REMOVE_PHOTO = 'REMOVE_PHOTO';
 export const SET_METADATA = 'SET_PHOTO_METADATA';
 
 // Actions
@@ -14,20 +14,20 @@ export function nextPhoto(photo: IThumbnail) {
     };
 }
 
-export function setMetaData(metaData: IPhotoMetadata[]) {
+export function removePhoto(metaData: IPhotoMetadata) {
     return {
-        type: SET_METADATA,
+        type: REMOVE_PHOTO,
         payload: {
             metaData,
         },
     };
 }
 
-export function setSkeleton(skeleton) {
+export function setMetaData(metaData: IPhotoMetadata[]) {
     return {
-        type: SET_SKELETON,
+        type: SET_METADATA,
         payload: {
-            skeleton,
+            metaData,
         },
     };
 }
