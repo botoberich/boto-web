@@ -28,7 +28,7 @@ function Upload({ useServer, addPhoto, progressDispatch }) {
                 }}
                 type="file"
             />
-            <Icon type="cloud-upload" style={{ marginRight: '5px', color: '#1890ff' }} />
+            <Icon type="cloud-upload" className={styles.uploadIcon} style={{ marginRight: '5px', color: '#1890ff' }} />
             <span className={styles.hideMobile}>Upload</span>
         </label>
     );

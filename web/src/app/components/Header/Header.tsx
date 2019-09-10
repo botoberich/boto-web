@@ -9,7 +9,7 @@ import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/au
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { useSelectonContext } from '../../contexts/SelectionContext';
 import { removePhoto, newPhoto } from '../../redux/photo/photo.actions';
-import { removeAlbumPhotos } from '../../redux/album/album.actions'
+import { removeAlbumPhotos } from '../../redux/album/album.actions';
 
 // UI
 import Upload from './Upload';
@@ -51,19 +51,20 @@ function PageHeader() {
                     {props =>
                         props.match && (
                             <>
-                                <div className={btnShowHide}>
-                                    <Tag className={styles.tag} color="#f50">
-                                        {selectedThumbnails.length}
-                                        <span className={styles.hideMobile}>&nbsp;selected</span>
-                                    </Tag>
-                                </div>
-                                <div className={btnShowHideReverse}>
+                                <div className={btnShowHideReverse} style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
                                         progressDispatch={progressDispatch}
                                         useServer={useServer}></Upload>
                                 </div>
+
                                 <>
+                                    <div className={btnShowHide}>
+                                        <Tag className={styles.tag} color="#f50">
+                                            {selectedThumbnails.length}
+                                            <span className={styles.hideMobile}>&nbsp;selected</span>
+                                        </Tag>
+                                    </div>
                                     <div className={btnShowHide}>
                                         <AddToAlbum
                                             selectedThumbnails={selectedThumbnails}
@@ -105,11 +106,10 @@ function PageHeader() {
                         )
                     }
                 </Match>
-
-                <div className={styles.navItem} style={{ marginLeft: '25px' }}>
-                    <UserAvatar></UserAvatar>
-                </div>
             </nav>
+            <div className={styles.navItem} style={{ marginLeft: '25px' }}>
+                <UserAvatar></UserAvatar>
+            </div>
         </Header>
     );
 }
@@ -172,7 +172,7 @@ function UserAvatar() {
                     </Menu.Item>
                 </Menu>
             }>
-            <div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar className={styles.avatar} icon="user" />
                 <span className={`${styles.hideMobile} ${styles.userName}`}>{userName}</span>
             </div>
