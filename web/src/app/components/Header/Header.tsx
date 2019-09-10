@@ -3,10 +3,13 @@ import { Link, navigate } from 'gatsby';
 import { Match } from '@reach/router';
 
 // State
+import { useDispatch } from 'react-redux';
 import { Layout, Avatar, Menu, Dropdown, Tag, Typography, Icon } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
-import { usePhotoContext } from '../../contexts/PhotoContext';
+import { useSelectonContext } from '../../contexts/SelectionContext';
+import { removePhoto, newPhoto } from '../../redux/photo/photo.actions';
+import { removeAlbumPhotos } from '../../redux/album/album.actions'
 
 // UI
 import Upload from './Upload';
@@ -23,10 +26,10 @@ import { useServiceContext } from '../../contexts/ServiceContext';
 const { Header } = Layout;
 
 function PageHeader() {
-    const { selectedThumbnails, setSelectedThumbnails, setThumbnails, setloadingThumbnails, thumbnails } = usePhotoContext();
-
+    const { selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails } = useSelectonContext();
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
+    const dispatch = useDispatch();
 
     const btnShowHide = React.useMemo(
         () => (selectedThumbnails.length > 0 ? `${styles.headerBtn} ${styles.headerBtnShown}` : `${styles.headerBtn} ${styles.headerBtnHidden}`),
@@ -55,9 +58,11 @@ function PageHeader() {
                                     </Tag>
                                 </div>
                                 <div className={btnShowHideReverse}>
-                                    <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch} useServer={useServer}></Upload>
+                                    <Upload
+                                        addPhoto={photo => dispatch(newPhoto(photo))}
+                                        progressDispatch={progressDispatch}
+                                        useServer={useServer}></Upload>
                                 </div>
-
                                 <>
                                     <div className={btnShowHide}>
                                         <AddToAlbum
@@ -76,8 +81,8 @@ function PageHeader() {
                                             progressDispatch={progressDispatch}
                                             selectedThumbnails={selectedThumbnails}
                                             setSelectedThumbnails={setSelectedThumbnails}
-                                            setloadingThumbnails={setloadingThumbnails}
-                                            setThumbnails={setThumbnails}
+                                            setLoadingThumbnails={setLoadingThumbnails}
+                                            removePhoto={metaData => dispatch(removePhoto(metaData))}
                                             useServer={useServer}></Delete>
                                     </div>
                                 </>
@@ -87,13 +92,12 @@ function PageHeader() {
                 </Match>
 
                 <Match path="/app/albums/:id">
-                    {props =>
+                    {(props: IMatchProps) =>
                         props.match && (
                             <div className={btnShowHide}>
                                 <RemoveFromAlbum
                                     albumId={props.match.id}
-                                    thumbnails={thumbnails}
-                                    setThumbnails={setThumbnails}
+                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.id, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                 />

@@ -62,7 +62,7 @@ function UploadOverlay({ setOverlayVisible }) {
                 setOverlayVisible(false);
             }
         },
-        [uploadingInProgress]
+        [setOverlayVisible]
     );
 
     return ReactDOM.createPortal(

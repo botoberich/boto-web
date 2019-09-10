@@ -1,5 +1,5 @@
 import React from 'react';
-import { navigate, Link } from 'gatsby';
+import { Link } from 'gatsby';
 
 // UI
 import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
@@ -7,27 +7,39 @@ import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
 // State
+import { useDispatch, useSelector } from 'react-redux';
 import { getAlbums, deleteAlbum } from '../../services/album.service';
 import { getThumbnail } from '../../services/photo.service';
 import { useEditAlbumModal } from './albums.hooks';
+import { setAlbumsMetaData } from '../../redux/album/album.actions';
 
 // Types
-import { IGetAlbumsResult, IAlbumMetadata } from '../../interfaces/albums.interface';
+import { IAlbumsMetadata, IAlbumMetadata } from '../../interfaces/albums.interface';
 import { IThumbnail } from '../../interfaces/photos.interface';
-import { ApiResponse } from '../../interfaces/response.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
+import { albumsSelector } from '../../redux/album/album.selectors';
 
 const { Title, Paragraph } = Typography;
 const { confirm } = Modal;
 
 function useFetchAlbums() {
-    const [response, setResponse] = React.useState<ApiResponse<IGetAlbumsResult>>(null);
     const [error, setError] = React.useState(null);
+    const dispatch = useDispatch();
+    const albums: IAlbumsMetadata = useSelector(state => albumsSelector(state));
 
     async function fetch() {
         const fetchAlbums = async () => {
-            let albums = await getAlbums();
-            setResponse(albums);
+            let resp = await getAlbums();
+
+            if (!resp) {
+                return;
+            }
+
+            if (resp.status !== 'success') {
+                return;
+            }
+
+            dispatch(setAlbumsMetaData(resp.data));
         };
 
         try {
@@ -42,16 +54,18 @@ function useFetchAlbums() {
         fetch();
     }, []);
 
-    return { response, error, refetchAlbums: fetch };
+    return { albums, error, refetchAlbums: fetch };
 }
 
 function useFetchAlbumCover(id) {
     if (!id) {
         return {};
     }
+
     const { useServer } = useServiceContext();
     const [cover, setCover] = React.useState<IThumbnail>(null);
     const [error, setError] = React.useState(null);
+
     React.useEffect(() => {
         async function fetchAlbumCover(id) {
             const resp = await getThumbnail(useServer, id);
@@ -72,35 +86,31 @@ function useFetchAlbumCover(id) {
 }
 
 function AlbumGrid() {
-    const { response, refetchAlbums } = useFetchAlbums();
+    const { albums, refetchAlbums } = useFetchAlbums();
 
-    if (!response) {
+    if (!albums) {
         return null;
     }
 
-    if (response.status === 'success') {
-        return (
-            <div className={styles.grid}>
-                <div className={styles.gridItem}>
-                    <AlbumAdd></AlbumAdd>
-                </div>
-                {Object.values(response.data).map((album: IAlbumMetadata, i) => {
-                    return (
-                        <div className={styles.gridItem} key={album._id}>
-                            <div className={styles.topOverlay}></div>
-                            <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
-                            <Link to={`/app/albums/${album._id}`} key={album._id}>
-                                <AlbumCover coverId={album.coverId}></AlbumCover>
-                            </Link>
-                            <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
-                        </div>
-                    );
-                })}
+    return (
+        <div className={styles.grid}>
+            <div className={styles.gridItem}>
+                <AlbumAdd></AlbumAdd>
             </div>
-        );
-    }
-
-    return null;
+            {Object.values(albums).map((album: IAlbumMetadata) => {
+                return (
+                    <div className={styles.gridItem} key={album._id}>
+                        <div className={styles.topOverlay}></div>
+                        <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
+                        <Link to={`/app/albums/${album._id}`} key={album._id}>
+                            <AlbumCover coverId={album.coverId}></AlbumCover>
+                        </Link>
+                        <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
+                    </div>
+                );
+            })}
+        </div>
+    );
 }
 
 function AlbumCover({ coverId }) {

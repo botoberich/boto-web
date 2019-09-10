@@ -26,10 +26,10 @@ export interface IRemoveFromAlbumResult {
     $photos: Subject<PhotoModel>;
 }
 
-export interface IGetAlbumsResult {
+export interface IAlbumsMetadata {
     albums: { [albumId: string]: IAlbumMetadata };
 }
-export interface IGetSingleAlbumResult {
+export interface IAlbum {
     photos: IPhotoMetadata[];
     albumMetadata: IAlbumMetadata;
 }

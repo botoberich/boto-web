@@ -7,7 +7,7 @@ import { handleFileUpload } from '../Photo/photos.hooks';
 import { Icon } from 'antd';
 import styles from './Upload.module.css';
 
-function Upload({ useServer, setThumbnails, progressDispatch }) {
+function Upload({ useServer, addPhoto, progressDispatch }) {
     return (
         <label className={styles.uploadFileLabel}>
             <input
@@ -18,13 +18,7 @@ function Upload({ useServer, setThumbnails, progressDispatch }) {
                     handleFileUpload(useServer, e, {
                         onStart: payload => progressDispatch({ type: 'START', payload }),
                         onNext: res => {
-                            setThumbnails(thumbnails => {
-                                let photoId = res.metaData._id;
-                                let dateString = new Date(res.metaData.createdAt).toDateString();
-                                let copy = { ...thumbnails };
-                                copy[dateString] = copy[dateString] ? { ...copy[dateString], ...{ [photoId]: res } } : { [photoId]: res };
-                                return copy;
-                            });
+                            addPhoto(res);
                             progressDispatch({ type: 'NEXT' });
                         },
                         onComplete: () => {

@@ -4,14 +4,14 @@ import React, { useCallback, useState, useEffect } from 'react';
 import PhotoGrid from '../components/PhotoGrid';
 import UploadOverlay from '../components/uploadOverlay';
 import 'react-image-lightbox/style.css';
-import { usePhotoContext } from '../contexts/PhotoContext';
+import { useSelectonContext } from '../contexts/SelectionContext';
 import { Button, Input } from 'antd';
 import { createAlbum, removeFromAlbum, getAlbums, getAlbumById } from '../services/album.service';
 import { getThumbnailsByIds } from '../services/photo.service';
 import { gaiaGet } from '../services/http.service';
 
 function ApiTestScreen() {
-    let { selectedThumbnails } = usePhotoContext();
+    let { selectedThumbnails } = useSelectonContext();
     let [albumId, setAlbumId] = useState('');
 
     useEffect(() => {
