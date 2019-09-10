@@ -9,7 +9,7 @@ import styles from './Upload.module.css';
 
 function Upload({ useServer, setThumbnails, progressDispatch }) {
     return (
-        <label>
+        <label className={styles.uploadFileLabel}>
             <input
                 className={styles.uploadFile}
                 multiple
@@ -34,7 +34,7 @@ function Upload({ useServer, setThumbnails, progressDispatch }) {
                 }}
                 type="file"
             />
-            <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
+            <Icon type="cloud-upload" style={{ marginRight: '5px', color: '#1890ff' }} />
             <span className={styles.hideMobile}>Upload</span>
         </label>
     );

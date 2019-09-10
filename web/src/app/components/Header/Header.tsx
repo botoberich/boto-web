@@ -28,145 +28,79 @@ function PageHeader() {
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
 
+    const btnShowHide = React.useMemo(
+        () => (selectedThumbnails.length > 0 ? `${styles.headerBtn} ${styles.headerBtnShown}` : `${styles.headerBtn} ${styles.headerBtnHidden}`),
+        [selectedThumbnails]
+    );
+
+    const btnShowHideReverse = React.useMemo(
+        () => (selectedThumbnails.length === 0 ? `${styles.headerBtn} ${styles.headerBtnShown}` : `${styles.headerBtn} ${styles.headerBtnHidden}`),
+        [selectedThumbnails]
+    );
+
     return (
         <Header className={styles.header}>
             <Match path="/app/:title/*">
                 {(props: IMatchProps) => <span className={styles.headerTitle}>{props.match ? props.match.title : 'photos'}</span>}
             </Match>
             <nav className={styles.nav}>
-                <div className={styles.navItem}>
-                    {selectedThumbnails.length > 0 && (
-                        <Tag className={styles.tag} color="#f50">
-                            {selectedThumbnails.length}
-                            <span className={styles.hideMobile}>&nbsp;selected</span>
-                        </Tag>
-                    )}
-                </div>
+                <Match path="/app">
+                    {props =>
+                        props.match && (
+                            <>
+                                <div className={btnShowHide}>
+                                    <Tag className={styles.tag} color="#f50">
+                                        {selectedThumbnails.length}
+                                        <span className={styles.hideMobile}>&nbsp;selected</span>
+                                    </Tag>
+                                </div>
+                                <div className={btnShowHideReverse}>
+                                    <Upload setThumbnails={setThumbnails} progressDispatch={progressDispatch} useServer={useServer}></Upload>
+                                </div>
 
-                {/* Additive Actions */}
-                <div className={styles.navItem}>
-                    <Dropdown
-                        trigger={['click']}
-                        overlayClassName={styles.navDropdown}
-                        overlay={
-                            <Menu>
-                                <Menu.Item>
-                                    <Match path="/app/">
-                                        {props =>
-                                            props.match && (
-                                                <div className={styles.navItem}>
-                                                    <Upload
-                                                        setThumbnails={setThumbnails}
-                                                        progressDispatch={progressDispatch}
-                                                        useServer={useServer}></Upload>
-                                                </div>
-                                            )
-                                        }
-                                    </Match>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Match path="/app">
-                                        {props =>
-                                            props.match && (
-                                                <div className={styles.navItem}>
-                                                    <AddToAlbum
-                                                        selectedThumbnails={selectedThumbnails}
-                                                        setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
-                                                </div>
-                                            )
-                                        }
-                                    </Match>
-                                </Menu.Item>
-                            </Menu>
-                        }>
-                        <Icon type="plus-circle" theme="twoTone" twoToneColor="#1890ff" style={{ fontSize: '24px' }} />
-                    </Dropdown>
-                </div>
+                                <>
+                                    <div className={btnShowHide}>
+                                        <AddToAlbum
+                                            selectedThumbnails={selectedThumbnails}
+                                            setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
+                                    </div>
+                                    <div className={btnShowHide}>
+                                        <Download
+                                            useServer={useServer}
+                                            selectedThumbnails={selectedThumbnails}
+                                            setSelectedThumbnails={setSelectedThumbnails}
+                                        />
+                                    </div>
+                                    <div className={btnShowHide}>
+                                        <Delete
+                                            progressDispatch={progressDispatch}
+                                            selectedThumbnails={selectedThumbnails}
+                                            setSelectedThumbnails={setSelectedThumbnails}
+                                            setloadingThumbnails={setloadingThumbnails}
+                                            setThumbnails={setThumbnails}
+                                            useServer={useServer}></Delete>
+                                    </div>
+                                </>
+                            </>
+                        )
+                    }
+                </Match>
 
-                {/* Deletion/Removal Actions */}
-                <div className={styles.navItem}>
-                    <Dropdown
-                        trigger={['click']}
-                        overlayClassName={styles.navDropdown}
-                        overlay={
-                            <Menu>
-                                <Menu.Item>
-                                    <Match path="/app/">
-                                        {props =>
-                                            props.match && (
-                                                <div className={styles.navItem}>
-                                                    <Delete
-                                                        progressDispatch={progressDispatch}
-                                                        selectedThumbnails={selectedThumbnails}
-                                                        setSelectedThumbnails={setSelectedThumbnails}
-                                                        setloadingThumbnails={setloadingThumbnails}
-                                                        setThumbnails={setThumbnails}
-                                                        useServer={useServer}></Delete>
-                                                </div>
-                                            )
-                                        }
-                                    </Match>
-                                </Menu.Item>
-
-                                <Match path="/app/albums/:id">
-                                    {(props: IMatchProps) => {
-                                        if (!props.match) {
-                                            return null;
-                                        }
-                                        return (
-                                            <Menu.Item>
-                                                <div className={styles.navItem}>
-                                                    <RemoveFromAlbum
-                                                        albumId={props.match.id}
-                                                        thumbnails={thumbnails}
-                                                        setThumbnails={setThumbnails}
-                                                        selectedThumbnails={selectedThumbnails}
-                                                        setSelectedThumbnails={setSelectedThumbnails}
-                                                    />
-                                                </div>
-                                            </Menu.Item>
-                                        );
-                                    }}
-                                </Match>
-                            </Menu>
-                        }>
-                        <Icon type="minus-circle" theme="twoTone" twoToneColor="#eb2f96" style={{ fontSize: '24px' }} />
-                    </Dropdown>
-                </div>
-
-                {/* Additional Actions */}
-                <div className={styles.navItem}>
-                    <Dropdown
-                        trigger={['click']}
-                        overlayClassName={styles.navDropdown}
-                        overlay={
-                            <Menu>
-                                <Menu.Item>
-                                    <Match path="/app/">
-                                        {props1 => (
-                                            <Match path="/app/albums/:id">
-                                                {props2 => {
-                                                    if (props1.match || props2.match) {
-                                                        return (
-                                                            <div className={styles.navItem}>
-                                                                <Download
-                                                                    useServer={useServer}
-                                                                    selectedThumbnails={selectedThumbnails}
-                                                                    setSelectedThumbnails={setSelectedThumbnails}
-                                                                />
-                                                            </div>
-                                                        );
-                                                    }
-                                                }}
-                                            </Match>
-                                        )}
-                                    </Match>
-                                </Menu.Item>
-                            </Menu>
-                        }>
-                        <Icon type="more" style={{ fontSize: '24px' }} />
-                    </Dropdown>
-                </div>
+                <Match path="/app/albums/:id">
+                    {props =>
+                        props.match && (
+                            <div className={btnShowHide}>
+                                <RemoveFromAlbum
+                                    albumId={props.match.id}
+                                    thumbnails={thumbnails}
+                                    setThumbnails={setThumbnails}
+                                    selectedThumbnails={selectedThumbnails}
+                                    setSelectedThumbnails={setSelectedThumbnails}
+                                />
+                            </div>
+                        )
+                    }
+                </Match>
 
                 <div className={styles.navItem} style={{ marginLeft: '25px' }}>
                     <UserAvatar></UserAvatar>

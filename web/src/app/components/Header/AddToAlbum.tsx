@@ -32,17 +32,15 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
 
     return (
         <>
-            <Tooltip
-                placement="bottom"
-                title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-                <div
+            <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
+                <Button
                     // disabled={selectedThumbnails.length === 0}
                     onClick={async () => {
                         try {
                             if (selectedThumbnails.length <= 0) {
                                 return;
                             }
-                            
+
                             setVisible(true);
                             const resp = await getAlbums();
                             if (resp.status === 'success') {
@@ -54,7 +52,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                     }}>
                     <Icon type="wallet" theme="twoTone" />
                     <span className={styles.hideMobile}>Add To Album</span>
-                </div>
+                </Button>
             </Tooltip>
 
             <Modal
@@ -82,9 +80,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                         if (res.status === 'success') {
                                             notification.success(
                                                 notificationConfig(
-                                                    `Successfully added ${
-                                                        selectedThumbnails.length > 1 ? 'photos' : 'photo'
-                                                    } to album.`
+                                                    `Successfully added ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} to album.`
                                                 )
                                             );
                                         } else {
