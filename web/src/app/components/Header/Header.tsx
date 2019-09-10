@@ -8,7 +8,7 @@ import { Layout, Avatar, Menu, Dropdown, Tag, Typography, Icon } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { useSelectonContext } from '../../contexts/SelectionContext';
-import { nextPhoto, removePhoto } from '../../redux/photo/photo.actions';
+import { removePhoto, newPhoto } from '../../redux/photo/photo.actions';
 
 // UI
 import Upload from './Upload';
@@ -58,11 +58,10 @@ function PageHeader() {
                                 </div>
                                 <div className={btnShowHideReverse}>
                                     <Upload
-                                        addPhoto={photo => dispatch(nextPhoto(photo))}
+                                        addPhoto={photo => dispatch(newPhoto(photo))}
                                         progressDispatch={progressDispatch}
                                         useServer={useServer}></Upload>
                                 </div>
-
                                 <>
                                     <div className={btnShowHide}>
                                         <AddToAlbum

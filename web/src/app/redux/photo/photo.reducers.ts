@@ -1,4 +1,4 @@
-import { NEXT_PHOTO, SET_METADATA, REMOVE_PHOTO } from './photo.actions';
+import { NEXT_PHOTO, SET_METADATA, REMOVE_PHOTO, NEW_PHOTO } from './photo.actions';
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 
 interface PhotoReducerState {
@@ -13,6 +13,12 @@ const INITIAL_STATE = {
 
 function PhotoReducer(state = INITIAL_STATE, action): PhotoReducerState {
     switch (action.type) {
+        case NEW_PHOTO:
+            return {
+                ...state,
+                metaData: [...state.metaData, action.payload.photo.metaData],
+                photos: [...state.photos, action.payload.photo],
+            };
         case NEXT_PHOTO:
             return {
                 ...state,
