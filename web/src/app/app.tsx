@@ -4,7 +4,7 @@ import loadable from '@loadable/component';
 
 // State
 import { useOverlay } from './contexts/OverlayContext';
-import { usePhotoContext } from './contexts/PhotoContext';
+import { useSelectonContext } from './contexts/SelectionContext';
 
 // UI
 import AppLayout from './components/layout';
@@ -69,7 +69,7 @@ function AppRoot(props) {
 }
 
 function LightBoxLoader() {
-    const { loadingLightBox } = usePhotoContext();
+    const { loadingLightBox } = useSelectonContext();
     if (loadingLightBox) {
         return (
             <div className={styles.loadingOverlay}>

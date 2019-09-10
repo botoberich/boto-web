@@ -32,17 +32,13 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
 
     return (
         <>
-            <Tooltip
-                placement="bottom"
-                title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-                <div
-                    // disabled={selectedThumbnails.length === 0}
+            <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
+                <Button
                     onClick={async () => {
                         try {
                             if (selectedThumbnails.length <= 0) {
                                 return;
                             }
-                            
                             setVisible(true);
                             const resp = await getAlbums();
                             if (resp.status === 'success') {
@@ -54,7 +50,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                     }}>
                     <Icon type="wallet" theme="twoTone" />
                     <span className={styles.hideMobile}>Add To Album</span>
-                </div>
+                </Button>
             </Tooltip>
 
             <Modal
@@ -72,7 +68,6 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                 className={styles.listItem}
                                 key={album._id}
                                 onClick={async () => {
-                                    console.log('Saving photos to album ', album._id);
                                     setConfirmLoading(true);
                                     try {
                                         const res = await handleAddToAlbum({
@@ -82,9 +77,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                         if (res.status === 'success') {
                                             notification.success(
                                                 notificationConfig(
-                                                    `Successfully added ${
-                                                        selectedThumbnails.length > 1 ? 'photos' : 'photo'
-                                                    } to album.`
+                                                    `Successfully added ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} to album.`
                                                 )
                                             );
                                         } else {

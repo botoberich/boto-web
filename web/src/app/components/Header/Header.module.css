@@ -19,6 +19,10 @@
     text-transform: capitalize;
 }
 
+.headerBtn {
+    margin-left: 5px;
+}
+
 @media (min-width: 576px) {
     .headerTitle {
         font-size: 24px;
@@ -66,9 +70,9 @@
     min-width: 32px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 650px) {
     .hideMobile,
     .navItem .hideMobile {
-        display: none;
+        display: none !important;
     }
 }

@@ -24,23 +24,19 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function Download({ selectedThumbnails, setSelectedThumbnails }) {
+function Download({ useServer, selectedThumbnails, setSelectedThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-            <div
+            <Button
                 // disabled={selectedThumbnails.length === 0}
                 onClick={e => {
                     try {
                         if (selectedThumbnails.length <= 0) {
                             return;
                         }
-                        
-                        handleDownloadPhotos(selectedThumbnails);
-                        notification.success(
-                            notificationConfig(
-                                `Successfully downloaded ${selectedThumbnails.length > 1 ? 'files' : 'file'}.`
-                            )
-                        );
+
+                        handleDownloadPhotos(useServer, selectedThumbnails);
+                        notification.success(notificationConfig(`Successfully downloaded ${selectedThumbnails.length > 1 ? 'files' : 'file'}.`));
                     } catch (err) {
                         notification.error(notificationConfig(`Error downloading files. Please contact support.`));
                     }
@@ -49,7 +45,7 @@ function Download({ selectedThumbnails, setSelectedThumbnails }) {
                 }}>
                 <Icon type="copy" theme="twoTone" twoToneColor="#52c41a" />
                 <span className={styles.hideMobile}>Download</span>
-            </div>
+            </Button>
         </Tooltip>
     );
 }

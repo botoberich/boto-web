@@ -1,6 +1,6 @@
-@media (max-width: 800px) {
+@media (max-width: 650px) {
     .hideMobile,
     .navItem .hideMobile {
-        display: none;
+        display: none !important;
     }
 }

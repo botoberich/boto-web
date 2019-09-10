@@ -8,7 +8,8 @@ import styles from './PhotoGridItem.module.css';
 
 // State
 import { getPhotoById } from '../../services/photo.service';
-import { usePhotoContext } from '../../contexts/PhotoContext';
+import { useSelectonContext } from '../../contexts/SelectionContext';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const TIME_TO_DOWNLOAD = 1000;
 
@@ -19,7 +20,8 @@ function PhotoGridItem({ id, src }) {
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
 
-    const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox } = usePhotoContext();
+    const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox } = useSelectonContext();
+    const { useServer } = useServiceContext();
 
     React.useEffect(() => {
         return () => {
@@ -41,7 +43,7 @@ function PhotoGridItem({ id, src }) {
             if (originalSrc.current === '' && photoDownloading === false) {
                 setPhotoDownloading(true);
                 setLoadingLightBox(true);
-                const photo = await getPhotoById(id);
+                const photo = await getPhotoById(useServer, id);
                 if (photo.status === 'success') {
                     // eslint-disable-next-line
                     originalSrc.current = `data:image/png;base64,${photo.data.b64}`;

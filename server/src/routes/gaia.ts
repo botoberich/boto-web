@@ -12,7 +12,7 @@ router.post('/get', async (req, res: IResponse, next) => {
     }
 });
 
-router.post('/post', async (req, res: IResponse, next) => {
+router.post('/put', async (req, res: IResponse, next) => {
     try {
         let data = await res.blockstack.putFile(req.body.path, req.body.content);
         res.send(data);

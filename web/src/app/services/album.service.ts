@@ -3,8 +3,8 @@ import {
     ICreateAlbumResult,
     IAddToAlbumResult,
     IRemoveFromAlbumResult,
-    IGetAlbumsResult,
-    IGetSingleAlbumResult,
+    IAlbumsMetadata,
+    IAlbum,
 } from '../interfaces/albums.interface';
 import Album from '../models/album.model';
 import uuid from 'uuid/v4';
@@ -20,17 +20,14 @@ import { PhotoModel } from '../models';
 const getPhotosByAlbumId = async (albumId): Promise<PhotoModel[]> => {
     try {
         let ownPhotos = await Photo.fetchOwnList();
-        let photos = ownPhotos.filter(photo => JSON.parse(photo.attrs.albumIds).some(id => id === albumId));
+        let photos = ownPhotos.filter(photo => JSON.parse(photo.attrs.albumIds || '[]').some(id => id === albumId));
         return photos;
     } catch (err) {
         throw new Error(err);
     }
 };
 
-export const createAlbum = async (
-    photoIds: string[],
-    albumMetadata: IAlbumMetadata
-): Promise<ApiResponse<ICreateAlbumResult>> => {
+export const createAlbum = async (photoIds: string[], albumMetadata: IAlbumMetadata): Promise<ApiResponse<ICreateAlbumResult>> => {
     try {
         let albumId = uuid();
         let album = new Album({
@@ -102,7 +99,7 @@ export const removeFromAlbum = async (photoIds, albumId): Promise<ApiResponse<IR
     }
 };
 
-export const getAlbums = async (): Promise<ApiResponse<IGetAlbumsResult>> => {
+export const getAlbums = async (): Promise<ApiResponse<IAlbumsMetadata>> => {
     try {
         let albums = await Album.fetchOwnList();
         let albumsMap = {};
@@ -113,7 +110,7 @@ export const getAlbums = async (): Promise<ApiResponse<IGetAlbumsResult>> => {
     }
 };
 
-export const getAlbumById = async (albumId): Promise<ApiResponse<IGetSingleAlbumResult>> => {
+export const getAlbumById = async (albumId): Promise<ApiResponse<IAlbum>> => {
     try {
         let [album, photos] = await Promise.all([Album.findById(albumId), getPhotosByAlbumId(albumId)]);
         let photosMap = {};
@@ -124,10 +121,7 @@ export const getAlbumById = async (albumId): Promise<ApiResponse<IGetSingleAlbum
     }
 };
 
-export const updateAlbumMetadata = async (
-    albumId: string,
-    newMetadata: IAlbumMetadata
-): Promise<ApiResponse<IAlbumMetadata>> => {
+export const updateAlbumMetadata = async (albumId: string, newMetadata: IAlbumMetadata): Promise<ApiResponse<IAlbumMetadata>> => {
     try {
         let album = await Album.findById(albumId);
         album.update({
@@ -141,14 +135,14 @@ export const updateAlbumMetadata = async (
     }
 };
 
-export const deleteAlbum = async (albumId: string, keepPhotos: boolean): Promise<ApiResponse<IAlbumMetadata>> => {
+export const deleteAlbum = async (useServer: boolean, albumId: string, keepPhotos: boolean): Promise<ApiResponse<IAlbumMetadata>> => {
     try {
         let album = await Album.findById(albumId);
         await album.destroy();
         if (!keepPhotos) {
             let photos = await getPhotosByAlbumId(albumId);
             let photoIds = photos.map(photo => photo._id);
-            await deletePhotos(photoIds);
+            await deletePhotos(useServer, photoIds);
         }
         return success(album.attrs);
     } catch (err) {

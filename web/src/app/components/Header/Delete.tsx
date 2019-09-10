@@ -1,52 +1,46 @@
 import React from 'react';
 
-import { handleDeletePhotos } from '../Photo/photos.hooks'
+import { handleDeletePhotos } from '../Photo/photos.hooks';
 
 // UI
 import { Tooltip, Button, Icon } from 'antd';
 import styles from './Delete.module.css';
 
-function Delete({ selectedThumbnails, setSelectedThumbnails, progressDispatch, setloadingThumbnails, setThumbnails }) {
+// Types
+import { IPhotoMetadata } from '../../interfaces/photos.interface';
+
+function Delete({ useServer, selectedThumbnails, setSelectedThumbnails, progressDispatch, setLoadingThumbnails, removePhoto }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-            <div
+            <Button
                 // disabled={selectedThumbnails.length === 0}
                 onClick={() => {
                     if (selectedThumbnails.length <= 0) {
                         return;
                     }
-                    
-                    handleDeletePhotos([...selectedThumbnails], {
+                    handleDeletePhotos(useServer, [...selectedThumbnails], {
                         onStart: payload => {
-                            setloadingThumbnails(selectedThumbnails);
+                            setLoadingThumbnails(selectedThumbnails);
                             progressDispatch({ type: 'START', payload });
                         },
-                        onNext: metaData => {
-                            setThumbnails(thumbnails => {
-                                let dateString = new Date(metaData.createdAt).toDateString();
-                                let copy = { ...thumbnails };
-                                delete copy[dateString][metaData._id];
-                                if (Object.keys(copy[dateString]).length === 0) {
-                                    delete copy[dateString];
-                                }
-                                return copy;
-                            });
+                        onNext: (metaData: IPhotoMetadata) => {
+                            removePhoto(metaData);
                             progressDispatch({ type: 'NEXT' });
                         },
                         onComplete: () => {
                             progressDispatch({ type: 'END' });
-                            setloadingThumbnails([]);
+                            setLoadingThumbnails([]);
                             setSelectedThumbnails([]);
                         },
                         onError: () => {
-                            setloadingThumbnails([]);
+                            setLoadingThumbnails([]);
                             setSelectedThumbnails([]);
                         },
                     });
                 }}>
                 <Icon type="delete" theme="twoTone" twoToneColor="#eb2f96" />
                 <span className={styles.hideMobile}>Delete</span>
-            </div>
+            </Button>
         </Tooltip>
     );
 }

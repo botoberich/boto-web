@@ -7,26 +7,18 @@ import { handleFileUpload } from '../Photo/photos.hooks';
 import { Icon } from 'antd';
 import styles from './Upload.module.css';
 
-function Upload({ setThumbnails, progressDispatch }) {
+function Upload({ useServer, addPhoto, progressDispatch }) {
     return (
-        <label>
+        <label className={styles.uploadFileLabel}>
             <input
                 className={styles.uploadFile}
                 multiple
                 accept="image/*"
                 onChange={e => {
-                    handleFileUpload(e, {
+                    handleFileUpload(useServer, e, {
                         onStart: payload => progressDispatch({ type: 'START', payload }),
                         onNext: res => {
-                            setThumbnails(thumbnails => {
-                                let photoId = res.metaData._id;
-                                let dateString = new Date(res.metaData.createdAt).toDateString();
-                                let copy = { ...thumbnails };
-                                copy[dateString] = copy[dateString]
-                                    ? { ...copy[dateString], ...{ [photoId]: res } }
-                                    : { [photoId]: res };
-                                return copy;
-                            });
+                            addPhoto(res);
                             progressDispatch({ type: 'NEXT' });
                         },
                         onComplete: () => {
@@ -36,11 +28,10 @@ function Upload({ setThumbnails, progressDispatch }) {
                 }}
                 type="file"
             />
-            <Icon type="cloud-upload" style={{ color: '#1890ff' }} />
+            <Icon type="cloud-upload" className={styles.uploadIcon} style={{ marginRight: '5px', color: '#1890ff' }} />
             <span className={styles.hideMobile}>Upload</span>
         </label>
     );
 }
 
 export default Upload;
- 
