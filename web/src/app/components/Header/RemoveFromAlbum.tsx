@@ -44,7 +44,6 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
 
                         if (resp.status === 'success') {
                             dispatch(removeAlbumPhotos(albumId, selectedThumbnails));
-
                             // Have to subtract because currentPhotos does not update in time after the recent photo removal
                             if (currentPhotos.length - selectedThumbnails.length <= 0) {
                                 // Use promise to not delay the notification
@@ -55,10 +54,7 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
                                 });
                             }
 
-                            notification.success(notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
-
                             setLoadingThumbnails([]);
-
                             notification.success(
                                 notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`)
                             );
