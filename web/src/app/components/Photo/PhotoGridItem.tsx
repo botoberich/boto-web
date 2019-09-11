@@ -2,12 +2,14 @@ import React from 'react';
 
 // UI
 import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 import { Icon, Button, Spin } from 'antd';
 import styles from './PhotoGridItem.module.css';
 
 // State
 import { getPhotoById } from '../../services/photo.service';
 import { useSelectonContext } from '../../contexts/SelectionContext';
+import { useServiceContext } from '../../contexts/ServiceContext';
 
 const TIME_TO_DOWNLOAD = 1000;
 
@@ -18,29 +20,37 @@ function PhotoGridItem({ id, src }) {
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
 
-    const { selectedThumbnails, setSelectedThumbnails, loadingThumbnails, setLoadingLightBox } = useSelectonContext();
+    const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox, loadingLightBox, loadingThumbnails } = useSelectonContext();
+    const { useServer } = useServiceContext();
+
+    React.useEffect(() => {
+        return () => {
+            setSelectedThumbnails([]);
+        };
+    }, []);
 
     const handlePhotoDownload = React.useCallback(
         async e => {
             e.persist();
-            // We don't want to download the photo if the user is only selecting the photo
-            if ((editButton.current !== null && editButton.current.buttonNode === e.target) || loadingThumbnails.indexOf(id) === -1) {
+            e.stopPropagation();
+
+            // Download the photo if the user is only selecting the photo
+            if (editButton.current !== null && editButton.current.buttonNode === e.target) {
                 return;
             }
+
             // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
-            if (originalSrc.current === '' && photoDownloading === false) {
-                setPhotoDownloading(true);
+            if (originalSrc.current === '' && loadingLightBox === false) {
                 setLoadingLightBox(true);
-                const photo = await getPhotoById(id);
+                const photo = await getPhotoById(useServer, id);
                 if (photo.status === 'success') {
                     // eslint-disable-next-line
                     originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
                 }
-                setPhotoDownloading(false);
                 setLoadingLightBox(false);
             }
         },
-        [id, photoDownloading, setLoadingLightBox]
+        [id, loadingLightBox, setLoadingLightBox]
     );
 
     const handleInitiateDownload = React.useCallback(
@@ -92,7 +102,15 @@ function PhotoGridItem({ id, src }) {
                         backgroundImage: `url("${src}")`,
                     }}
                 />
-                {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
+                {open && (
+                    <Lightbox
+                        mainSrc={originalSrc.current}
+                        onCloseRequest={() => {
+                            setOpen(false);
+                            setLoadingLightBox(false);
+                        }}
+                    />
+                )}
             </div>
             {loadingThumbnails.indexOf(id) !== -1 && (
                 <div className={styles.spinner}>
