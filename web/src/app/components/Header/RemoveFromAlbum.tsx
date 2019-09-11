@@ -1,7 +1,11 @@
 import React from 'react';
 
 // State
+import { updateAlbumMetadata } from '../../services/album.service';
 import { handleRemoveFromAlbum } from '../Album/albums.hooks';
+import { removeAlbumPhotos, setAlbumMetaData } from '../../redux/album/album.actions';
+import { albumPhotosSelector } from '../../redux/album/album.selectors';
+import { useDispatch, useSelector } from 'react-redux';
 
 // UI
 import { Tooltip, Button, Icon, notification, Typography } from 'antd';
@@ -24,7 +28,10 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function RemoveFromAlbum({ albumId, removePhotosFromAlbum, selectedThumbnails, setSelectedThumbnails }) {
+function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails }) {
+    const dispatch = useDispatch();
+    const currentPhotos = useSelector(state => albumPhotosSelector(state, albumId));
+
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <Button
@@ -36,11 +43,19 @@ function RemoveFromAlbum({ albumId, removePhotosFromAlbum, selectedThumbnails, s
                         const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
 
                         if (resp.status === 'success') {
-                            console.log({ resp });
-                            removePhotosFromAlbum();
+                            dispatch(removeAlbumPhotos(albumId, selectedThumbnails));
+
+                            // Have to subtract because currentPhotos does not update in time after the recent photo removal
+                            if (currentPhotos.length - selectedThumbnails.length <= 0) {
+                                // Use promise to not delay the notification
+                                updateAlbumMetadata(albumId, { coverId: '' }).then(res => {
+                                    if (res && res.status === 'success') {
+                                        dispatch(setAlbumMetaData(albumId, res.data));
+                                    }
+                                });
+                            }
 
                             notification.success(notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
-
                         } else {
                             notification.error(notificationConfig(`Trouble removing photos.`));
                         }

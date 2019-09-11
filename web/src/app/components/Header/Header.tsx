@@ -104,7 +104,6 @@ function PageHeader() {
                             <motion.div variants={variants} animate={!noSelection ? 'show' : 'hide'} className={styles.headerBtn}>
                                 <RemoveFromAlbum
                                     albumId={props.match.id}
-                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.id, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                 />
