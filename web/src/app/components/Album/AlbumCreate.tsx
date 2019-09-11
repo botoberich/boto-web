@@ -71,19 +71,17 @@ function AlbumCreate() {
     return (
         <>
             <div className={styles.inputContainer}>
-                <Title level={1}>Create a new album</Title>
-                <div className={styles.row}>
-                    <div>
-                        <AlbumForm
-                            setTitle={setTitle}
-                            title={title}
-                            setDesc={setDesc}
-                            desc={desc}
-                            setValidInput={setValidInput}
-                            validInput={validInput}></AlbumForm>
-                    </div>
+                <div>
+                    <AlbumForm
+                        setTitle={setTitle}
+                        title={title}
+                        setDesc={setDesc}
+                        desc={desc}
+                        setValidInput={setValidInput}
+                        validInput={validInput}></AlbumForm>
                 </div>
-                <div className={`${styles.row} ${styles.btnRow}`}>
+
+                <div className={`${styles.btnRow}`}>
                     <Button disabled={title.length === 0} onClick={handleNewAlbumCreation} size="large" type="primary">
                         Create
                     </Button>

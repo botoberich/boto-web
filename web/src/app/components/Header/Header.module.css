@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     left: 0;
-    padding: 0 24px;
+    padding: 0 35px;
     width: 100%;
     z-index: 100;
 }
@@ -26,6 +26,7 @@
 @media (min-width: 576px) {
     .headerTitle {
         font-size: 24px;
+        width: 100%;
     }
 }
 

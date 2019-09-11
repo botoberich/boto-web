@@ -4,8 +4,6 @@
 
 .children {
     background: #fff;
-    margin-top: 32px;
-    padding: 16px 32px;
 }
 
 .layout {
@@ -14,10 +12,16 @@
 
 @media (min-width: 568px) {
     .content {
-        margin: 16px 32px;
+        margin: 25px 35px;
     }
 
     .children {
         padding: 0;
+    }
+}
+
+@media (max-width: 650px) {
+    .content {
+        margin: 25px 35px;
     }
 }
