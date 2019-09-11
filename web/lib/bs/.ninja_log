@@ -1,0 +1,23 @@
+# ninja log v5
+1	25	1568243091540013779	BotoPhotosWeb.cmi	9f9d89d23f7cd179
+0	39	1568243091555688137	src/app/components/Header/SetCover.mlast	5d0ac07e94e40773
+39	52	1568243091568888373	src/app/components/Header/SetCover.d	adcfb64474eda049
+52	96	1568243091612175671	src/app/components/Header/SetCover-BotoPhotosWeb.cmj	3dd8e29b99a4026d
+52	96	1568243091612175671	/Users/dennis/Desktop/boto-web/web/src/app/components/Header/SetCover.bs.js	3dd8e29b99a4026d
+52	96	1568243091612175671	src/app/components/Header/SetCover-BotoPhotosWeb.cmi	3dd8e29b99a4026d
+1	22	1568243095078565780	BotoPhotosWeb.cmi	9f9d89d23f7cd179
+0	39	1568243095121860191	src/app/components/Header/SetCover.mlast	5d0ac07e94e40773
+40	52	1568243095121860191	src/app/components/Header/SetCover.d	adcfb64474eda049
+52	97	1568243095121860191	src/app/components/Header/SetCover-BotoPhotosWeb.cmj	3dd8e29b99a4026d
+52	97	1568243095121860191	/Users/dennis/Desktop/boto-web/web/src/app/components/Header/SetCover.bs.js	3dd8e29b99a4026d
+52	97	1568243095121860191	src/app/components/Header/SetCover-BotoPhotosWeb.cmi	3dd8e29b99a4026d
+0	141	1568243127260262743	src/app/components/Header/SetCover.mlast	5d0ac07e94e40773
+142	198	1568243127260262743	src/app/components/Header/SetCover.d	adcfb64474eda049
+198	264	1568243127260262743	src/app/components/Header/SetCover-BotoPhotosWeb.cmj	3dd8e29b99a4026d
+198	264	1568243127260262743	/Users/dennis/Desktop/boto-web/web/src/app/components/Header/SetCover.bs.js	3dd8e29b99a4026d
+198	264	1568243127260262743	src/app/components/Header/SetCover-BotoPhotosWeb.cmi	3dd8e29b99a4026d
+0	63	1568243127260262743	src/app/components/Header/SetCover-BotoPhotosWeb.cmj	3dd8e29b99a4026d
+0	63	1568243127260262743	/Users/dennis/Desktop/boto-web/web/src/app/components/Header/SetCover.bs.js	3dd8e29b99a4026d
+0	63	1568243127260262743	src/app/components/Header/SetCover-BotoPhotosWeb.cmi	3dd8e29b99a4026d
+0	37	1568243323898363088	src/app/components/Header/SetCover.mlast	5d0ac07e94e40773
+37	52	1568243323898363088	src/app/components/Header/SetCover.d	adcfb64474eda049
