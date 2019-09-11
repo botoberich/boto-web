@@ -28,7 +28,7 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails }) {
+function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails }) {
     const dispatch = useDispatch();
     const currentPhotos = useSelector(state => albumPhotosSelector(state, albumId));
 
@@ -38,7 +38,7 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails })
                 disabled={selectedThumbnails.length === 0}
                 onClick={async () => {
                     try {
-                        notification.success(notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
+                        setLoadingThumbnails(selectedThumbnails);
 
                         const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
 
@@ -56,6 +56,12 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails })
                             }
 
                             notification.success(notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
+
+                            setLoadingThumbnails([]);
+
+                            notification.success(
+                                notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`)
+                            );
                         } else {
                             notification.error(notificationConfig(`Trouble removing photos.`));
                         }

@@ -5,11 +5,12 @@ import { handleAddToAlbum } from '../Album/albums.hooks';
 import { getAlbums } from '../../services/album.service';
 
 // UI
-import { Tooltip, Button, Icon, notification, Typography, Modal } from 'antd';
+import { Tooltip, Button, Icon, notification, Typography, Modal, Empty } from 'antd';
 import styles from './AddToAlbum.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
+import { navigate } from 'gatsby';
 
 const { Paragraph } = Typography;
 
@@ -93,13 +94,21 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                     }
                                 }}>
                                 <span className={styles.icon}>
-                                    <Icon type="fire" theme="twoTone" />{' '}
+                                    <Icon type="book" theme="twoTone" />{' '}
                                 </span>
                                 {album.title}
                             </li>
                         );
                     })}
                 </ul>
+
+                {albums.length === 0 && (
+                    <Empty style={{ marginBottom: '10px' }} description={<span>No albums 😢</span>}>
+                        <Button onClick={() => navigate('/app/albums/new')} type="primary">
+                            Create One
+                        </Button>
+                    </Empty>
+                )}
             </Modal>
         </>
     );

@@ -40,7 +40,7 @@
     grid-auto-rows: minmax(150px, auto);
     grid-gap: 24px;
     justify-content: center;
-    margin: 24px auto;
+    margin: 0px auto;
 }
 
 .gridItem {
@@ -49,7 +49,7 @@
     border-radius: 8px;
     height: 240px;
     position: relative;
-    margin-top: 24px;
+    /* margin-top: 24px; */
 }
 
 .moreButton {
@@ -60,14 +60,6 @@
     right: 0;
     top: 0;
     filter: drop-shadow(1.6px 1.4px 5.3px rgba(0, 0.8, 0, 0.8));
-}
-
-.noData {
-    left: 50%;
-    opacity: 1;
-    position: absolute;
-    top: 40%;
-    transform: translate(-50%, -50%);
 }
 
 .topOverlay {
