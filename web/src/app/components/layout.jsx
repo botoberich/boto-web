@@ -8,7 +8,7 @@ import { StaticQuery, graphql } from 'gatsby';
 // UI
 import './index.css';
 import { Affix, Layout } from 'antd';
-import SideNav from './sideNav';
+import Sidebar from './sideNav';
 import Header from './Header/Header.tsx';
 import styles from './layout.module.css';
 
@@ -30,7 +30,7 @@ const PageLayout = ({ children }) => {
             `}
             render={data => (
                 <Layout className={styles.layout} hasSider>
-                    <SideNav></SideNav>
+                    <Sidebar></Sidebar>
                     <Layout className={styles.layout}>
                         <Affix>
                             <Header siteTitle={data.site.siteMetadata.title} />

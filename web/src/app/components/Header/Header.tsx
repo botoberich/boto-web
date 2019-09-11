@@ -23,6 +23,7 @@ import styles from './Header.module.css';
 import { IMatchProps } from '../../interfaces/ui.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
+import Sidebar from '../sideNav';
 
 const { Header } = Layout;
 
@@ -45,6 +46,7 @@ function PageHeader() {
 
     return (
         <Header className={styles.header}>
+            {/* <Sidebar className={styles.sideBar}></Sidebar> */}
             <Match path="/app/:title/*">
                 {(props: IMatchProps) => {
                     let title = props.match ? props.match.title : 'Photos';
