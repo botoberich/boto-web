@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'gatsby';
 
 // UI
-import { Icon, Menu, Dropdown, Typography, Modal, Empty } from 'antd';
+import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
 import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
