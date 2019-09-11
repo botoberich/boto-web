@@ -8,6 +8,7 @@ export interface ProgressStartingPayload {
 interface IMatchParams {
     id: string;
     title: string;
+    param?: string;
 }
 
 export interface IMatchProps extends MatchRenderProps<IMatchParams> {

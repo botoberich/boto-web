@@ -4,12 +4,11 @@ import { Match } from '@reach/router';
 
 // State
 import { useDispatch } from 'react-redux';
-import { Layout, Avatar, Menu, Dropdown, Tag, Typography, Icon } from 'antd';
+import { Layout, Avatar, Menu, Dropdown, Tag } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { useSelectonContext } from '../../contexts/SelectionContext';
 import { removePhoto, newPhoto } from '../../redux/photo/photo.actions';
-import { removeAlbumPhotos } from '../../redux/album/album.actions';
 
 // UI
 import Upload from './Upload';
@@ -23,7 +22,7 @@ import styles from './Header.module.css';
 import { IMatchProps } from '../../interfaces/ui.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
-import Sidebar from '../sideNav';
+// import Sidebar from '../sideNav';
 
 const { Header } = Layout;
 
@@ -123,7 +122,6 @@ function PageHeader() {
                                 className={styles.headerBtn}>
                                 <RemoveFromAlbum
                                     albumId={props.match.param}
-                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.param, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                     setLoadingThumbnails={setLoadingThumbnails}
