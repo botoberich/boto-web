@@ -24,23 +24,24 @@ const notificationConfig = (msg: string): ArgsProps => ({
     ),
 });
 
-function RemoveFromAlbum({ albumId, removePhotosFromAlbum, selectedThumbnails, setSelectedThumbnails }) {
+function RemoveFromAlbum({ albumId, removePhotosFromAlbum, selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails }) {
     return (
         <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
             <Button
                 disabled={selectedThumbnails.length === 0}
                 onClick={async () => {
                     try {
-                        notification.success(notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
-
+                        // notification.success(notificationConfig(`Removing ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
+                        setLoadingThumbnails(selectedThumbnails);
                         const resp = await handleRemoveFromAlbum({ albumId, photoIds: selectedThumbnails });
 
                         if (resp.status === 'success') {
                             console.log({ resp });
                             removePhotosFromAlbum();
-
-                            notification.success(notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'}.`));
-
+                            setLoadingThumbnails([]);
+                            notification.success(
+                                notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`)
+                            );
                         } else {
                             notification.error(notificationConfig(`Trouble removing photos.`));
                         }

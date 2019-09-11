@@ -120,6 +120,7 @@ function PageHeader() {
                                     removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.param, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
+                                    setLoadingThumbnails={setLoadingThumbnails}
                                 />
                             </motion.div>
                         )
