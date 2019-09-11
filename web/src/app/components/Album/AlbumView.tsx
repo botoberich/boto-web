@@ -123,7 +123,7 @@ export function useAlbumView({ albumID }) {
                 });
             }
         };
-    }, [albumID]);
+    }, [albumID, loading]);
 
     return { title, skeleton, loading };
 }

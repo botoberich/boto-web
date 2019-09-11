@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'gatsby';
 
 // UI
-import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
+import { Icon, Menu, Dropdown, Typography, Modal, Empty } from 'antd';
 import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
@@ -88,8 +88,8 @@ function useFetchAlbumCover(id) {
 function AlbumGrid() {
     const { albums, refetchAlbums } = useFetchAlbums();
 
-    if (!albums) {
-        return null;
+    if (!albums || Object.entries(albums).length === 0) {
+        return <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>;
     }
 
     return (
@@ -97,9 +97,9 @@ function AlbumGrid() {
             <div className={styles.gridItem}>
                 <AlbumAdd></AlbumAdd>
             </div>
-            {Object.values(albums).map((album: IAlbumMetadata) => {
+            {Object.values(albums).map((album: IAlbumMetadata, i) => {
                 return (
-                    <div className={styles.gridItem} key={album._id}>
+                    <div className={styles.gridItem} key={album._id || i}>
                         <div className={styles.topOverlay}></div>
                         <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
                         <Link to={`/app/albums/${album._id}`} key={album._id}>
