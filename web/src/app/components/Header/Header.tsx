@@ -61,7 +61,11 @@ function PageHeader() {
                     {props =>
                         props.match && (
                             <AnimatePresence key="navbar">
-                                <motion.div animate={noSelection ? 'show' : 'hide'} variants={variants} style={{ margin: 0, position: 'absolute' }}>
+                                <motion.div
+                                    key={0}
+                                    animate={noSelection ? 'show' : 'hide'}
+                                    variants={variants}
+                                    style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
                                         progressDispatch={progressDispatch}
@@ -69,6 +73,7 @@ function PageHeader() {
                                 </motion.div>
 
                                 <motion.nav
+                                    key={1}
                                     className={styles.nav}
                                     initial={{ transform: 'translateY(-50px)' }}
                                     animate={!noSelection ? 'show' : 'hide'}
@@ -111,6 +116,7 @@ function PageHeader() {
                         props.match &&
                         props.match.param !== 'new' && (
                             <motion.div
+                                key={2}
                                 variants={variants}
                                 initial={{ transform: 'translateY(-50px)' }}
                                 animate={!noSelection ? 'show' : 'hide'}
