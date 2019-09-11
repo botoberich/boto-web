@@ -3,13 +3,13 @@ import { IThumbnail } from '../../interfaces/photos.interface';
 
 export const albumsSelector = state => state.album.albums
 
-const albumSkeletonMetaSelector = (state, albumId) => {
+export const albumSkeletonMetaSelector = (state, albumId) => {
     if (state.album.source[albumId]) {
         return state.album.source[albumId].photoMetadata;
     }
 };
 
-const albumPhotosSelector = (state, albumId) => {
+export const albumPhotosSelector = (state, albumId) => {
     if (state.album.source[albumId]) {
         return state.album.source[albumId].photos;
     }

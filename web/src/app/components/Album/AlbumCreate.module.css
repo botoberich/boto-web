@@ -1,12 +1,9 @@
 .btnRow {
     display: flex;
     justify-content: flex-end;
+    margin-top: 24px;
 }
 
 .inputContainer {
     max-width: 480px;
-}
-
-.row {
-    margin-top: 24px;
 }

@@ -59,18 +59,29 @@ export function useAlbumView({ albumID }) {
                 return;
             }
 
-            if (skeleton) {
-                return;
-            }
-
             try {
                 const albumRes = await getAlbumById(albumID);
+
                 if (!albumRes) {
                     return;
                 }
 
                 if (albumRes.status !== 'success') {
                     // Potential spot to retry and notify user
+                    return;
+                }
+
+                // To minimize the need to fetch the album view, we count the number of photos in Redux
+                // and compare it to the album's metadata
+                let currentPhotoCount = 0;
+
+                if (skeleton) {
+                    Object.values(skeleton).forEach(date => {
+                        currentPhotoCount += Object.values(date).length;
+                    });
+                }
+
+                if (currentPhotoCount !== 0 && currentPhotoCount === albumRes.data.photos.length) {
                     return;
                 }
 
@@ -123,7 +134,7 @@ export function useAlbumView({ albumID }) {
                 });
             }
         };
-    }, [albumID]);
+    }, [albumID, loading]);
 
     return { title, skeleton, loading };
 }

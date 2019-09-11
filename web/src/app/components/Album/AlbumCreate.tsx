@@ -4,7 +4,7 @@ import { navigate } from 'gatsby';
 // UI
 import AlbumForm, { useAlbumForm } from './AlbumForm';
 import PhotoGrid, { usePhotoGrid } from '../Photo/PhotoGrid';
-import { Typography, Button, notification } from 'antd';
+import { Typography, Button, notification, Icon } from 'antd';
 import styles from './AlbumCreate.module.css';
 
 // State
@@ -41,6 +41,7 @@ function AlbumCreate() {
     const skeleton = useSelector(state => skeletonSelector(state));
 
     const { selectedThumbnails } = useSelectonContext();
+    const [creating, setCreating] = React.useState(false);
 
     const handleNewAlbumCreation = React.useCallback(async () => {
         setValidInput(true);
@@ -57,12 +58,13 @@ function AlbumCreate() {
         };
 
         notification.success(notificationConfig('Creating your album'));
-
+        setCreating(true);
         const resp = await createAlbum(selectedThumbnails, albumMetaData);
 
         if (resp.status === 'success') {
             const albumId = resp.data.albumMetadata._id;
             setTimeout(() => {
+                setCreating(false);
                 navigate(`/app/albums/${albumId}`);
             }, 1000);
         }
@@ -71,21 +73,19 @@ function AlbumCreate() {
     return (
         <>
             <div className={styles.inputContainer}>
-                <Title level={1}>Create a new album</Title>
-                <div className={styles.row}>
-                    <div>
-                        <AlbumForm
-                            setTitle={setTitle}
-                            title={title}
-                            setDesc={setDesc}
-                            desc={desc}
-                            setValidInput={setValidInput}
-                            validInput={validInput}></AlbumForm>
-                    </div>
+                <div>
+                    <AlbumForm
+                        setTitle={setTitle}
+                        title={title}
+                        setDesc={setDesc}
+                        desc={desc}
+                        setValidInput={setValidInput}
+                        validInput={validInput}></AlbumForm>
                 </div>
-                <div className={`${styles.row} ${styles.btnRow}`}>
-                    <Button disabled={title.length === 0} onClick={handleNewAlbumCreation} size="large" type="primary">
-                        Create
+
+                <div className={styles.btnRow}>
+                    <Button disabled={title.length === 0 || creating} onClick={handleNewAlbumCreation} size="large" type="primary">
+                        {creating ? <Icon type="loading" style={{ fontSize: 10 }} spin /> : 'Create'}
                     </Button>
                 </div>
             </div>

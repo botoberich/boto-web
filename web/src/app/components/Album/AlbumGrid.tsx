@@ -88,18 +88,14 @@ function useFetchAlbumCover(id) {
 function AlbumGrid() {
     const { albums, refetchAlbums } = useFetchAlbums();
 
-    if (!albums) {
-        return null;
-    }
-
     return (
         <div className={styles.grid}>
             <div className={styles.gridItem}>
                 <AlbumAdd></AlbumAdd>
             </div>
-            {Object.values(albums).map((album: IAlbumMetadata) => {
+            {albums && Object.values(albums).map((album: IAlbumMetadata, i) => {
                 return (
-                    <div className={styles.gridItem} key={album._id}>
+                    <div className={styles.gridItem} key={album._id || i}>
                         <div className={styles.topOverlay}></div>
                         <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
                         <Link to={`/app/albums/${album._id}`} key={album._id}>

@@ -33,7 +33,7 @@ function AlbumForm({ setTitle, title, setDesc, desc, validInput, setValidInput }
                         prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
                         required
                         suffix={
-                            <Tooltip title="This will be editable soon.">
+                            <Tooltip title="Enter the title for the album">
                                 <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
                             </Tooltip>
                         }
@@ -47,7 +47,7 @@ function AlbumForm({ setTitle, title, setDesc, desc, validInput, setValidInput }
                     placeholder="Description"
                     prefix={<Icon type="tags" style={{ color: 'rgba(0,0,0,.25)' }} />}
                     suffix={
-                        <Tooltip title="This will be editable soon.">
+                        <Tooltip title="Enter the description for the album">
                             <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
                         </Tooltip>
                     }

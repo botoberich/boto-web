@@ -20,7 +20,7 @@ function PhotoGridItem({ id, src }) {
     const originalSrc = React.useRef('');
     const timeoutId = React.useRef(null);
 
-    const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox } = useSelectonContext();
+    const { selectedThumbnails, setSelectedThumbnails, setLoadingLightBox, loadingLightBox, loadingThumbnails } = useSelectonContext();
     const { useServer } = useServiceContext();
 
     React.useEffect(() => {
@@ -40,19 +40,17 @@ function PhotoGridItem({ id, src }) {
             }
 
             // This fetch can be triggered on click or on mouse hover. Make sure it's only ever triggered once
-            if (originalSrc.current === '' && photoDownloading === false) {
-                setPhotoDownloading(true);
+            if (originalSrc.current === '' && loadingLightBox === false) {
                 setLoadingLightBox(true);
                 const photo = await getPhotoById(useServer, id);
                 if (photo.status === 'success') {
                     // eslint-disable-next-line
                     originalSrc.current = `data:image/png;base64,${photo.data.b64}`;
                 }
-                setPhotoDownloading(false);
                 setLoadingLightBox(false);
             }
         },
-        [id, photoDownloading, setLoadingLightBox]
+        [id, loadingLightBox, setLoadingLightBox]
     );
 
     const handleInitiateDownload = React.useCallback(
@@ -91,20 +89,35 @@ function PhotoGridItem({ id, src }) {
                 type="link">
                 <Icon type="check-circle" theme={selectedThumbnails.indexOf(id) !== -1 ? 'twoTone' : 'filled'}></Icon>
             </Button>
-            <div className={styles.topOverlay} aria-hidden="true"></div>
+            <div className={styles.topOverlay}></div>
             <div
-                aria-label="View"
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                    loadingThumbnails.indexOf(id) === -1 && setOpen(true);
+                }}
                 className={`${selectedThumbnails.indexOf(id) !== -1 ? styles.scaleDown : ''} ${styles.imageContainer}`}>
                 <div
                     aria-label={`PhotoId: ${id}`}
-                    className={`${styles.img}`}
+                    className={`${styles.img} ${loadingThumbnails.indexOf(id) !== -1 ? styles.thumbnailLoading : ''}`}
                     style={{
                         backgroundImage: `url("${src}")`,
                     }}
                 />
-                {open && <Lightbox mainSrc={originalSrc.current} onCloseRequest={() => setOpen(false)} />}
+                {open && (
+                    <Lightbox
+                        mainSrc={originalSrc.current}
+                        onCloseRequest={() => {
+                            setOpen(false);
+                            setLoadingLightBox(false);
+                        }}
+                    />
+                )}
             </div>
+            {loadingThumbnails.indexOf(id) !== -1 && (
+                <div className={styles.spinner}>
+                    <Icon type="loading" style={{ fontSize: 35 }} spin />
+                </div>
+            )}
+            <div className={styles.hoverOverlay} />
         </div>
     );
 }
