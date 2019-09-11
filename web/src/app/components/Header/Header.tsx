@@ -60,7 +60,7 @@ function PageHeader() {
                 <Match path="/app">
                     {props =>
                         props.match && (
-                            <AnimatePresence>
+                            <AnimatePresence key="navbar">
                                 <motion.div animate={noSelection ? 'show' : 'hide'} variants={variants} style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
