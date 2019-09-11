@@ -23,6 +23,7 @@ import styles from './Header.module.css';
 import { IMatchProps } from '../../interfaces/ui.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
+import Sidebar from '../sideNav';
 
 const { Header } = Layout;
 
@@ -45,14 +46,21 @@ function PageHeader() {
 
     return (
         <Header className={styles.header}>
+            {/* <Sidebar className={styles.sideBar}></Sidebar> */}
             <Match path="/app/:title/*">
-                {(props: IMatchProps) => <span className={styles.headerTitle}>{props.match ? props.match.title : 'photos'}</span>}
+                {(props: IMatchProps) => {
+                    let title = props.match ? props.match.title : 'Photos';
+                    if (props.match && props.match['*'] === 'new' && props.match.title === 'albums') {
+                        title = 'Create Album';
+                    }
+                    return <span className={styles.headerTitle}>{title}</span>;
+                }}
             </Match>
             <nav className={styles.nav}>
                 <Match path="/app">
                     {props =>
                         props.match && (
-                            <AnimatePresence>
+                            <AnimatePresence key="navbar">
                                 <motion.div animate={noSelection ? 'show' : 'hide'} variants={variants} style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
@@ -98,13 +106,18 @@ function PageHeader() {
                     }
                 </Match>
 
-                <Match path="/app/albums/:id">
+                <Match path="/app/albums/:param">
                     {(props: IMatchProps) =>
-                        props.match && (
-                            <motion.div variants={variants} animate={!noSelection ? 'show' : 'hide'} className={styles.headerBtn}>
+                        props.match &&
+                        props.match.param !== 'new' && (
+                            <motion.div
+                                variants={variants}
+                                initial={{ transform: 'translateY(-50px)' }}
+                                animate={!noSelection ? 'show' : 'hide'}
+                                className={styles.headerBtn}>
                                 <RemoveFromAlbum
-                                    albumId={props.match.id}
-                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.id, selectedThumbnails))}
+                                    albumId={props.match.param}
+                                    removePhotosFromAlbum={() => dispatch(removeAlbumPhotos(props.match.param, selectedThumbnails))}
                                     selectedThumbnails={selectedThumbnails}
                                     setSelectedThumbnails={setSelectedThumbnails}
                                 />

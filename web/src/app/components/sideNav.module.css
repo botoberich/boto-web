@@ -33,3 +33,16 @@
         display: none;
     }
 }
+
+@media (max-width: 650px) {
+    .sider {
+        position: fixed;
+        height: 100vh;
+    }
+
+    .sider ul {
+        margin: 0;
+        padding-left: 8px;
+        box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.1) !important;
+    }
+}
