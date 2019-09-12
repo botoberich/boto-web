@@ -11,20 +11,9 @@ import styles from './SetAlbumCover.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
+import { notifySuccess, notifyError } from '../../utils/notification';
 
 const { Paragraph } = Typography;
-
-// TODO: Again, refactor this to use a single notification config later
-const notificationConfig = (msg: string): ArgsProps => ({
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: 3,
-    message: (
-        <div>
-            <Paragraph>{msg}</Paragraph>
-        </div>
-    ),
-});
 
 function SetAlbumCover({ albumId, selectedThumbnails, setSelectedThumbnails }) {
     const dispatch = useDispatch();
@@ -45,9 +34,9 @@ function SetAlbumCover({ albumId, selectedThumbnails, setSelectedThumbnails }) {
                                 // dispatch(setAlbumMetaData(albumId, res.data));
                             }
                         });
-                        notification.success(notificationConfig(`Changed album cover.`));
+                        notifySuccess(`Successfully changed album cover.`);
                     } catch (err) {
-                        notification.error(notificationConfig(`Error changing album cover.`));
+                        notifyError(`Unable to change album cover. Please contact support`);
                     }
 
                     setSelectedThumbnails([]);

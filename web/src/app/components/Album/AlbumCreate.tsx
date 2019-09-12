@@ -16,6 +16,7 @@ import { skeletonSelector } from '../../redux/photo/photo.selectors';
 // Types
 import { ArgsProps } from 'antd/lib/notification';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
+import { notifySuccess } from '../../utils/notification';
 
 const { Title, Paragraph } = Typography;
 
@@ -23,18 +24,6 @@ function AlbumCreate() {
     const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
         initialDesc: '',
         initialTitle: '',
-    });
-
-    const notificationConfig = (msg: string): ArgsProps => ({
-        // TODO: Refactor to use a global navigation singleton
-        placement: 'bottomRight',
-        bottom: 50,
-        duration: 3,
-        message: (
-            <div>
-                <Paragraph>{msg}</Paragraph>
-            </div>
-        ),
     });
 
     const { loading } = usePhotoGrid();
@@ -57,7 +46,7 @@ function AlbumCreate() {
             coverId: selectedThumbnails[0],
         };
 
-        notification.success(notificationConfig('Creating your album'));
+        notifySuccess('Creating your album');
         setCreating(true);
         const resp = await createAlbum(selectedThumbnails, albumMetaData);
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'gatsby';
+import { Link, navigate } from 'gatsby';
 
 // UI
-import { Icon, Menu, Dropdown, Typography, Modal } from 'antd';
+import { Icon, Menu, Dropdown, Typography, Modal, notification } from 'antd';
 import AlbumAdd from './AlbumAdd';
 import styles from './AlbumGrid.module.css';
 
@@ -18,6 +18,7 @@ import { IAlbumsMetadata, IAlbumMetadata } from '../../interfaces/albums.interfa
 import { IThumbnail } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 import { albumsSelector } from '../../redux/album/album.selectors';
+import { notifyInfo, notifyDestroy } from '../../utils/notification';
 
 const { Title, Paragraph } = Typography;
 const { confirm } = Modal;
@@ -93,18 +94,19 @@ function AlbumGrid() {
             <div className={styles.gridItem}>
                 <AlbumAdd></AlbumAdd>
             </div>
-            {albums && Object.values(albums).map((album: IAlbumMetadata, i) => {
-                return (
-                    <div className={styles.gridItem} key={album._id || i}>
-                        <div className={styles.topOverlay}></div>
-                        <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
-                        <Link to={`/app/albums/${album._id}`} key={album._id}>
-                            <AlbumCover coverId={album.coverId}></AlbumCover>
-                        </Link>
-                        <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
-                    </div>
-                );
-            })}
+            {albums &&
+                Object.values(albums).map((album: IAlbumMetadata, i) => {
+                    return (
+                        <div className={styles.gridItem} key={album._id || i}>
+                            <div className={styles.topOverlay}></div>
+                            <AlbumMenu album={album} refetchAlbums={refetchAlbums}></AlbumMenu>
+                            <Link to={`/app/albums/${album._id}`} key={album._id}>
+                                <AlbumCover coverId={album.coverId}></AlbumCover>
+                            </Link>
+                            <AlbumHeader description={album.description} title={album.title}></AlbumHeader>
+                        </div>
+                    );
+                })}
         </div>
     );
 }
@@ -167,6 +169,14 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
             <Dropdown
                 overlay={
                     <Menu>
+                        <Menu.Item
+                            key="add"
+                            onClick={() => {
+                                notifyInfo('Please select photos to add to the album of your choice.', { duration: 10 });
+                                navigate('/app');
+                            }}>
+                            Add Photos
+                        </Menu.Item>
                         <Menu.Item key="edit" onClick={handleModalOpen}>
                             Edit
                         </Menu.Item>

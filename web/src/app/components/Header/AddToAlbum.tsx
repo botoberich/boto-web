@@ -11,20 +11,9 @@ import styles from './AddToAlbum.module.css';
 // Types
 import { ArgsProps } from 'antd/lib/notification';
 import { navigate } from 'gatsby';
+import { notifyError, notifySuccess } from '../../utils/notification';
 
 const { Paragraph } = Typography;
-
-// TODO: Again, refactor this to use a single notification config later
-const notificationConfig = (msg: string): ArgsProps => ({
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: 3,
-    message: (
-        <div>
-            <Paragraph>{msg}</Paragraph>
-        </div>
-    ),
-});
 
 function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
     const [visible, setVisible] = React.useState(false);
@@ -46,7 +35,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                 setAlbums(Object.values(resp.data));
                             }
                         } catch (err) {
-                            notification.error(notificationConfig(`Trouble adding photos.`));
+                            notifyError(`Trouble adding photos.`);
                         }
                     }}>
                     <Icon type="wallet" theme="twoTone" />
@@ -75,20 +64,21 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                             albumId: album._id,
                                             photoIds: selectedThumbnails,
                                         });
+
                                         if (res.status === 'success') {
-                                            notification.success(
-                                                notificationConfig(
-                                                    `Successfully added ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} to album.`
-                                                )
+                                            notifySuccess(
+                                                `Added ${selectedThumbnails.length} ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} to album ${
+                                                    res.data.albumMetadata.title
+                                                }.`
                                             );
                                         } else {
-                                            notification.error(notificationConfig(`Trouble adding photos.`));
+                                            notifyError(`Unable to add photos to album. Please contact support.`);
                                         }
                                         setConfirmLoading(false);
                                         setVisible(false);
                                         setSelectedThumbnails([]);
                                     } catch (e) {
-                                        notification.error(notificationConfig(`Trouble adding photos.`));
+                                        notifyError(`Unable to add photos to album. Please contact support.`);
                                         setConfirmLoading(false);
                                         setVisible(false);
                                     }

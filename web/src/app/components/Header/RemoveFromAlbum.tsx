@@ -13,20 +13,9 @@ import styles from './RemoveFromAlbum.module.css';
 
 // Types
 import { ArgsProps } from 'antd/lib/notification';
+import { notifySuccess, notifyError } from '../../utils/notification';
 
 const { Paragraph } = Typography;
-
-// TODO: Again, refactor this to use a single notification config later
-const notificationConfig = (msg: string): ArgsProps => ({
-    placement: 'bottomRight',
-    bottom: 50,
-    duration: 3,
-    message: (
-        <div>
-            <Paragraph>{msg}</Paragraph>
-        </div>
-    ),
-});
 
 function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails }) {
     const dispatch = useDispatch();
@@ -55,14 +44,12 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
                             }
 
                             setLoadingThumbnails([]);
-                            notification.success(
-                                notificationConfig(`Successfully removed ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`)
-                            );
+                            notifySuccess(`Removed ${selectedThumbnails} ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`);
                         } else {
-                            notification.error(notificationConfig(`Trouble removing photos.`));
+                            notifyError(`Unable to remove photos from album. Please contact support.`);
                         }
                     } catch (err) {
-                        notification.error(notificationConfig(`Trouble removing photos.`));
+                        notifyError(`Unable to remove photos from album. Please contact support.`);
                     }
 
                     setSelectedThumbnails([]);

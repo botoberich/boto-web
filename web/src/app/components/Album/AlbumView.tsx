@@ -16,6 +16,7 @@ import { albumSkeletonSelector } from '../../redux/album/album.selectors';
 import { ArgsProps } from 'antd/lib/notification';
 import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
+import { notifyError, notifySuccess } from '../../utils/notification';
 
 const { Title, Paragraph } = Typography;
 
@@ -37,18 +38,6 @@ export function useAlbumView({ albumID }) {
     const [loading, setLoading] = React.useState(true);
     const skeleton = useSelector(state => {
         return albumSkeletonSelector(state, albumID);
-    });
-
-    const notificationConfig = (msg: string): ArgsProps => ({
-        // TODO: Refactor to use a global navigation singleton
-        placement: 'bottomRight',
-        bottom: 50,
-        duration: 3,
-        message: (
-            <div>
-                <Paragraph>{msg}</Paragraph>
-            </div>
-        ),
     });
 
     React.useEffect(() => {
@@ -111,13 +100,10 @@ export function useAlbumView({ albumID }) {
                         thumbnailCtr++;
                     },
                     onError: err => {
-                        notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
+                        notifyError(`Unable to fetch photos. Please contact support.`);
                     },
                     onComplete: () => {
                         setLoading(false);
-                        if (thumbnailCtr !== 0) {
-                            notification.success(notificationConfig(`Successfully loaded all photos.`));
-                        }
                     },
                 });
             } catch (err) {

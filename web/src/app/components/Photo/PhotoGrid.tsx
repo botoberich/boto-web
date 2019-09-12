@@ -15,6 +15,7 @@ import { nextPhoto, setMetaData } from '../../redux/photo/photo.actions';
 import { ArgsProps } from 'antd/lib/notification';
 import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
+import { notifyError, notifySuccess } from '../../utils/notification';
 
 const { Title, Paragraph } = Typography;
 
@@ -23,20 +24,8 @@ export function usePhotoGrid() {
     const { useServer } = useServiceContext();
     const dispatch = useDispatch();
 
-    const notificationConfig = (msg: string): ArgsProps => ({
-        // TODO: Refactor to use a global navigation singleton
-        placement: 'bottomRight',
-        bottom: 50,
-        duration: 3,
-        message: (
-            <div>
-                <Paragraph>{msg}</Paragraph>
-            </div>
-        ),
-    });
-
     React.useEffect(() => {
-        // photoCounter tracks the number of photos fetched. users can successfully fetch 0 photos. 
+        // photoCounter tracks the number of photos fetched. users can successfully fetch 0 photos.
         // if so, we don't want to send them a notification
         let photoCounter = 0;
         const subscription = handleFetchThumbnails(useServer, {
@@ -54,13 +43,10 @@ export function usePhotoGrid() {
                 dispatch(nextPhoto(res));
             },
             onError: err => {
-                notification.error(notificationConfig(`Unable to fetch photos. Please contact support.`));
+                notifyError(`Unable to fetch photos. Please contact support.`);
             },
             onComplete: () => {
                 setLoading(false);
-                if (photoCounter !== 0) {
-                    notification.success(notificationConfig(`Successfully loaded all photos.`));
-                }
             },
         });
         return () => {
