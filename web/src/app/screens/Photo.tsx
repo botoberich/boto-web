@@ -10,7 +10,7 @@ import PhotoGrid, { usePhotoGrid } from '../components/Photo/PhotoGrid';
 function PhotoScreen() {
     const { loading } = usePhotoGrid();
     const skeleton = useSelector(state => skeletonSelector(state));
-    return <PhotoGrid loading={loading} skeleton={skeleton} />;
+    return <PhotoGrid loading={loading} skeleton={skeleton} parent="photo" />;
 }
 
 export default PhotoScreen;

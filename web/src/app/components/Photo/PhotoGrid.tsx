@@ -2,7 +2,7 @@ import React from 'react';
 import { format, isToday, compareDesc } from 'date-fns';
 
 // UI
-import { Skeleton, Typography, Empty, notification } from 'antd';
+import { Skeleton, Typography, Empty, notification, Button } from 'antd';
 import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
@@ -15,7 +15,8 @@ import { nextPhoto, setMetaData } from '../../redux/photo/photo.actions';
 import { ArgsProps } from 'antd/lib/notification';
 import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
-import { notifyError, notifySuccess } from '../../utils/notification';
+import { notifyError, notifySuccess, notifyInfo } from '../../utils/notification';
+import { navigate } from 'gatsby';
 
 const { Title, Paragraph } = Typography;
 
@@ -61,10 +62,23 @@ export function usePhotoGrid() {
     };
 }
 
-function PhotoGrid({ skeleton, loading }) {
+function PhotoGrid({ skeleton, loading, parent }) {
     return (
         <div className={styles.gridContainer}>
-            {!loading && Object.keys(skeleton).length === 0 && <Empty className={styles.noData} description={<span>No boto 😢</span>}></Empty>}
+            {!loading && Object.keys(skeleton).length === 0 && (
+                <Empty className={styles.noData} description={<span>No boto 😢</span>}>
+                    {parent === 'album' && (
+                        <Button
+                            onClick={() => {
+                                notifyInfo('Please select photos to add to the album of your choice.', { duration: 10 });
+                                navigate('/app');
+                            }}
+                            type="primary">
+                            Add Photos
+                        </Button>
+                    )}
+                </Empty>
+            )}
             {Object.keys(skeleton).length > 0 &&
                 Object.keys(skeleton)
                     .sort(compareDesc)

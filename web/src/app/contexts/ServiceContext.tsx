@@ -15,7 +15,8 @@ function useServiceContext(): IServiceContextValue {
 }
 
 function ServiceProvider(props) {
-    const [service, setService] = React.useState(CLIENT);
+    const initialServiceType = window.localStorage.getItem('api-service-type') || CLIENT;
+    const [service, setService] = React.useState(initialServiceType);
 
     const setServer = React.useCallback(() => setService(SERVER), []);
     const setClient = React.useCallback(() => setService(CLIENT), []);
@@ -27,10 +28,7 @@ function ServiceProvider(props) {
         }
     }, [service]);
 
-    const value = React.useMemo(
-        () => ({ service, setServer, setClient, toggleService, useServer: service === SERVER }),
-        [service]
-    );
+    const value = React.useMemo(() => ({ service, setServer, setClient, toggleService, useServer: service === SERVER }), [service]);
 
     return <ServiceContext.Provider value={value} {...props}></ServiceContext.Provider>;
 }

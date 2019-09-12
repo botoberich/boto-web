@@ -20,6 +20,10 @@ const { confirm } = Modal;
 const Sidebar = () => {
     const { service, setServer, setClient, useServer } = useServiceContext();
 
+    React.useEffect(() => {
+        window.localStorage.setItem('api-service-type', useServer ? 'server' : 'client');
+    }, [useServer]);
+
     return (
         <Match path="/app/:title/*">
             {(props: IMatchProps) => {

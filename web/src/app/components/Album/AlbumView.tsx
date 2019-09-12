@@ -24,7 +24,7 @@ function AlbumView({ title, loading, skeleton }) {
     return (
         <>
             <Title>{title}</Title>
-            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading}></PhotoGrid>}
+            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading} parent="album"></PhotoGrid>}
         </>
     );
 }
