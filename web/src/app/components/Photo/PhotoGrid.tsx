@@ -62,7 +62,7 @@ export function usePhotoGrid() {
     };
 }
 
-function PhotoGrid({ skeleton, loading, parent, albumId }) {
+function PhotoGrid({ skeleton, loading, parent = '', albumId = '' }) {
     return (
         <div className={styles.gridContainer}>
             {!loading && Object.keys(skeleton).length === 0 && (

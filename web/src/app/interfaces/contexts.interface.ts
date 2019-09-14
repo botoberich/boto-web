@@ -19,7 +19,7 @@ export interface IServiceContextValue {
 
 export interface IFormContextValue {
     albumForm: ICreateAlbumFormData;
-    setAlbumForm: () => void;
+    setAlbumForm: ({ description, title }) => void;
 }
 
 export interface IHeaderContextValue {

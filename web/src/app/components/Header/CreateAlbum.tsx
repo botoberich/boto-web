@@ -1,23 +1,17 @@
 import React from 'react';
+import { navigate } from 'gatsby';
 
 // State
+import { createAlbum } from '../../services/album.service';
+import { useFormContext } from '../../contexts/FormContext';
 
 // UI
-import { Tooltip, Button, Icon, notification, Typography } from 'antd';
+import { Button, Icon } from 'antd';
 import styles from './CreateAlbum.module.css';
 
 // Types
-import { ArgsProps } from 'antd/lib/notification';
-import { notifySuccess, notifyError } from '../../utils/notification';
-
-import { createAlbum } from '../../services/album.service';
-import { ICreateAlbumFormData } from '../../interfaces/albums.interface';
-import { useSelector } from 'react-redux';
-import { albumCreateFormSelector } from '../../redux/album/album.selectors';
-import { useFormContext } from '../../contexts/FormContext';
-import { navigate } from 'gatsby';
-
-const { Paragraph } = Typography;
+import { notifyError } from '../../utils/notification';
+import { IAlbumMetadata } from '../../interfaces/albums.interface';
 
 function CreateAlbum({ selectedThumbnails }) {
     const {

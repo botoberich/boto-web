@@ -9,11 +9,8 @@ import { skeletonSelector } from '../redux/photo/photo.selectors';
 import { albumSelector } from '../redux/album/album.selectors';
 
 function AddToAlbumScreen({ albumID }) {
-    const meta = useSelector(state => albumSelector(state, albumID));
-    const title =
-        (meta && meta.title) ||
-        (meta && meta.albumMetadata.title) ||
-        ''; /** not sure why it comes in differently depending on where you navigating from */
+    const album = useSelector(state => albumSelector(state, albumID));
+    const title = album ? album.title : '';
     const { setHeaderTitle } = useHeaderContext();
     setHeaderTitle(`Add Photos | ${title}`);
 

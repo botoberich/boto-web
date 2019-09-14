@@ -3,8 +3,8 @@ import React from 'react';
 // UI
 import { Tooltip, Icon, Input } from 'antd';
 import styles from './AlbumForm.module.css';
-import { useDispatch } from 'react-redux';
-import { setAlbumCreateFormData } from '../../redux/album/album.actions';
+// import { useDispatch } from 'react-redux';
+// import { setAlbumCreateFormData } from '../../redux/album/album.actions';
 import { useFormContext } from '../../contexts/FormContext';
 
 function AlbumForm() {
