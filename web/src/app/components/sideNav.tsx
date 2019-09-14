@@ -18,13 +18,7 @@ const { Sider } = Layout;
 const { confirm } = Modal;
 
 const Sidebar = () => {
-    const { service, setServer, setClient, useServer } = useServiceContext();
-
-    React.useEffect(() => {
-        if (typeof window !== 'undefined') {
-            window.localStorage.setItem('api-service-type', useServer ? 'server' : 'client');
-        }
-    }, [useServer]);
+    const { setServer, setClient, useServer } = useServiceContext();
 
     return (
         <Match path="/app/:title/*">
@@ -59,6 +53,9 @@ const Sidebar = () => {
                                     onChange={checked => {
                                         if (!checked) {
                                             setClient();
+                                            if (typeof window !== 'undefined') {
+                                                window.localStorage.setItem('api-service-type', 'client');
+                                            }
                                             return;
                                         }
 
@@ -67,6 +64,9 @@ const Sidebar = () => {
                                             content: serverWarningMessage,
                                             onOk() {
                                                 setServer();
+                                                if (typeof window !== 'undefined') {
+                                                    window.localStorage.setItem('api-service-type', 'server');
+                                                }
                                             },
                                         });
                                     }}
