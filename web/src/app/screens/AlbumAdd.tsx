@@ -6,10 +6,10 @@ import { useHeaderContext } from '../contexts/HeaderContext';
 import PhotoGrid, { usePhotoGrid } from '../components/Photo/PhotoGrid';
 import { useSelector } from 'react-redux';
 import { skeletonSelector } from '../redux/photo/photo.selectors';
-import { albumMetaSelector } from '../redux/album/album.selectors';
+import { albumSelector } from '../redux/album/album.selectors';
 
 function AddToAlbumScreen({ albumID }) {
-    const meta = useSelector(state => albumMetaSelector(state, albumID));
+    const meta = useSelector(state => albumSelector(state, albumID));
     const title =
         (meta && meta.title) ||
         (meta && meta.albumMetadata.title) ||

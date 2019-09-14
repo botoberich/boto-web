@@ -2,7 +2,6 @@ import React from 'react';
 
 // UI
 import PhotoGrid from '../Photo/PhotoGrid';
-import { notification, Typography } from 'antd';
 import 'react-image-lightbox/style.css';
 
 // State
@@ -10,23 +9,16 @@ import { handleFetchAlbumThumbnails } from '../Album/albums.hooks';
 import { getAlbumById } from '../../services/album.service';
 import { setAlbumMetaData, setAlbumPhotoMetaData, nextAlbumPhoto } from '../../redux/album/album.actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { albumSkeletonSelector } from '../../redux/album/album.selectors';
+import { albumSkeletonSelector, albumSelector } from '../../redux/album/album.selectors';
 
 // Types
-import { ArgsProps } from 'antd/lib/notification';
 import { IPhotoMetadata } from '../../interfaces/photos.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
-import { notifyError, notifySuccess } from '../../utils/notification';
+import { notifyError } from '../../utils/notification';
+import { useHeaderContext } from '../../contexts/HeaderContext';
 
-const { Title, Paragraph } = Typography;
-
-function AlbumView({ title, loading, skeleton, albumId }) {
-    return (
-        <>
-            {/* <Title>{title}</Title> */}
-            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading} parent="album" albumId={albumId}></PhotoGrid>}
-        </>
-    );
+function AlbumView({ loading, skeleton, albumId }) {
+    return <>{skeleton && <PhotoGrid skeleton={skeleton} loading={loading} parent="album" albumId={albumId}></PhotoGrid>}</>;
 }
 
 export default AlbumView;
@@ -34,8 +26,19 @@ export default AlbumView;
 export function useAlbumView({ albumID }) {
     const dispatch = useDispatch();
     const { useServer } = useServiceContext();
-    const [title, setTitle] = React.useState('');
+    const { setHeaderTitle } = useHeaderContext();
     const [loading, setLoading] = React.useState(true);
+
+    const title = useSelector(state => {
+        const album = albumSelector(state, albumID);
+        if (album) {
+            return album.title;
+        }
+        return '';
+    });
+
+    setHeaderTitle(`Album ${title ? `| ${title}` : ''}`);
+
     const skeleton = useSelector(state => {
         return albumSkeletonSelector(state, albumID);
     });
@@ -61,7 +64,7 @@ export function useAlbumView({ albumID }) {
                 }
 
                 // To minimize the need to fetch the album view, we count the number of photos in Redux
-                // and compare it to the album's metadata
+                // and compare it to the newly fetched album's metadata
                 let currentPhotoCount = 0;
 
                 if (skeleton) {
@@ -76,9 +79,6 @@ export function useAlbumView({ albumID }) {
 
                 // Prep the metadata to set up initial skeleton
                 dispatch(setAlbumMetaData(albumRes.data.albumMetadata._id, albumRes.data.albumMetadata));
-
-                // Set the album title
-                setTitle(albumRes.data.albumMetadata.title);
 
                 // Collect ids to retrieve the photo thumbnails
                 const thumbnailIDs = albumRes.data.photos.map(photo => photo._id);
@@ -120,7 +120,7 @@ export function useAlbumView({ albumID }) {
                 });
             }
         };
-    }, [albumID, loading]);
+    }, [albumID, loading, title]);
 
-    return { title, skeleton, loading };
+    return { skeleton, loading };
 }

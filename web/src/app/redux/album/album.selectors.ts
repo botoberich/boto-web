@@ -3,7 +3,9 @@ import { IThumbnail } from '../../interfaces/photos.interface';
 
 export const albumsSelector = state => state.album.albums;
 
-export const albumSkeletonMetaSelector = (state, albumId) => {
+export const albumSelector = (state, albumId) => state.album.albums[albumId];
+
+export const albumPhotosMetaSelector = (state, albumId) => {
     if (state.album.source[albumId]) {
         return state.album.source[albumId].photoMetadata;
     }
@@ -15,10 +17,9 @@ export const albumPhotosSelector = (state, albumId) => {
     }
 };
 
-export const albumMetaSelector = (state, albumId) => state.album.albums[albumId];
 
 export const albumSkeletonSelector = createSelector(
-    albumSkeletonMetaSelector,
+    albumPhotosMetaSelector,
     albumPhotosSelector,
     (metaData, photos) => {
         if (!metaData || !photos) {

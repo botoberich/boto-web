@@ -31,9 +31,7 @@ function AlbumReducer(state = INITIAL_STATE, action): AlbumReducerState {
         case SET_ALBUM_METADATA: {
             const albums = {
                 ...state.albums,
-                [action.payload.albumID]: {
-                    albumMetadata: action.payload.metadata,
-                },
+                [action.payload.albumID]: action.payload.metadata,
             };
             const source = {
                 ...state.source,
