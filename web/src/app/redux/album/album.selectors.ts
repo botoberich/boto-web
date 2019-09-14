@@ -15,7 +15,7 @@ export const albumPhotosSelector = (state, albumId) => {
     }
 };
 
-export const albumCreateFormSelector = state => state.album.createForm;
+export const albumMetaSelector = (state, albumId) => state.album.albums[albumId];
 
 export const albumSkeletonSelector = createSelector(
     albumSkeletonMetaSelector,

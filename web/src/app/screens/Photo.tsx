@@ -6,10 +6,13 @@ import { skeletonSelector } from '../redux/photo/photo.selectors';
 
 // UI
 import PhotoGrid, { usePhotoGrid } from '../components/Photo/PhotoGrid';
+import { useHeaderContext } from '../contexts/HeaderContext';
 
 function PhotoScreen() {
     const { loading } = usePhotoGrid();
     const skeleton = useSelector(state => skeletonSelector(state));
+    const { setHeaderTitle } = useHeaderContext();
+    setHeaderTitle(`Photos`);
     return <PhotoGrid loading={loading} skeleton={skeleton} parent="photo" />;
 }
 

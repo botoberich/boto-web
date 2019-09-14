@@ -8,6 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from './redux/root.store';
 import App from './app';
+import { HeaderProvider } from './contexts/HeaderContext';
 
 function AppProvider() {
     return (
@@ -16,13 +17,15 @@ function AppProvider() {
                 <ServiceProvider>
                     <ProgressProvider>
                         <OverlayProvider>
-                            <FormProvider>
-                                <SelectionProvider>
-                                    {/** not ideal since photo states will bleed through all screen components under app 
+                            <HeaderProvider>
+                                <FormProvider>
+                                    <SelectionProvider>
+                                        {/** not ideal since photo states will bleed through all screen components under app 
                      But needed since the header needs to be aware of photo states | Possibly refactor later */}
-                                    <App />
-                                </SelectionProvider>
-                            </FormProvider>
+                                        <App />
+                                    </SelectionProvider>
+                                </FormProvider>
+                            </HeaderProvider>
                         </OverlayProvider>
                     </ProgressProvider>
                 </ServiceProvider>

@@ -21,3 +21,8 @@ export interface IFormContextValue {
     albumForm: ICreateAlbumFormData;
     setAlbumForm: () => void;
 }
+
+export interface IHeaderContextValue {
+    headerTitle: string;
+    setHeaderTitle: () => void;
+}

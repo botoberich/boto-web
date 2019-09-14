@@ -16,6 +16,7 @@ import styles from './app.module.css';
 const Photo = loadable(() => import('./screens/Photo'));
 const Album = loadable(() => import('./screens/Album'));
 const DetailedAlbum = loadable(() => import('./screens/AlbumDetailed'));
+const AddToAlbum = loadable(() => import('./screens/AlbumAdd'));
 const NewAlbum = loadable(() => import('./screens/AlbumNew'));
 // const Sharing = loadable(() => import('./screens/Sharing'));
 
@@ -35,6 +36,7 @@ function App() {
                             <PrivateRoute exact path="/albums" component={Album} />
                             <PrivateRoute exact path="/albums/new" component={NewAlbum} />
                             <PrivateRoute exact path="/albums/:albumID" component={DetailedAlbum} />
+                            <PrivateRoute exact path="/albums/add/:albumID" component={AddToAlbum} />
                             {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                         </PublicRoute>
                     </Router>

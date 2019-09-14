@@ -35,7 +35,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                 setAlbums(Object.values(resp.data));
                             }
                         } catch (err) {
-                            notifyError(`Trouble adding photos.`);
+                            notifyError(`Unable to add photos to album. Please contact support.`);
                         }
                     }}>
                     <Icon type="wallet" theme="twoTone" />

@@ -62,7 +62,7 @@ export function usePhotoGrid() {
     };
 }
 
-function PhotoGrid({ skeleton, loading, parent }) {
+function PhotoGrid({ skeleton, loading, parent, albumId }) {
     return (
         <div className={styles.gridContainer}>
             {!loading && Object.keys(skeleton).length === 0 && (
@@ -70,8 +70,7 @@ function PhotoGrid({ skeleton, loading, parent }) {
                     {parent === 'album' && (
                         <Button
                             onClick={() => {
-                                notifyInfo('Please select photos to add to the album of your choice.', { duration: 10 });
-                                navigate('/app');
+                                navigate(`/app/albums/add/${albumId}`);
                             }}
                             type="primary">
                             <Icon type="picture" />

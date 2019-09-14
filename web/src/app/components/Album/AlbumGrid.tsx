@@ -178,8 +178,7 @@ function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlb
                         <Menu.Item
                             key="add"
                             onClick={() => {
-                                notifyInfo('Please select photos to add to the album of your choice.', { duration: 10 });
-                                navigate('/app');
+                                navigate(`/app/albums/add/${album._id}`);
                             }}>
                             Add Photos
                         </Menu.Item>
