@@ -121,8 +121,7 @@ function ProgressProvider(props) {
                 message: (
                     <div>
                         <Paragraph>
-                            Successfully {cmdVerbageMap[progressState.cmd][1]} {progressState.total}{' '}
-                            {progressState.total > 1 ? 'files' : 'file'}.
+                            Successfully {cmdVerbageMap[progressState.cmd][1]} {progressState.total} {progressState.total > 1 ? 'files' : 'file'}.
                         </Paragraph>
                     </div>
                 ),
@@ -131,11 +130,13 @@ function ProgressProvider(props) {
     }, [progressState.cmd, progressState.complete, progressState.total]);
 
     React.useEffect(() => {
-        window.onbeforeunload = () => {
-            if (progressState.loading) {
-                return 'Changes you made may not be saved.';
-            }
-        };
+        if (typeof window !== 'undefined') {
+            window.onbeforeunload = () => {
+                if (progressState.loading) {
+                    return 'Changes you made may not be saved.';
+                }
+            };
+        }
     }, [progressState.loading]);
 
     const value: IProgressContextValue = {

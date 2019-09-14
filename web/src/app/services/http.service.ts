@@ -4,7 +4,10 @@ import { IRequestBody, IRequestHeaders, IGaiaRequestOptions } from '../interface
 import { getFile, deleteFile, putFile } from 'blockstack';
 
 const getHeaders = (): IRequestHeaders => {
-    let blockStackSession = JSON.parse(window.localStorage.getItem('blockstack-session'));
+    let blockStackSession = { transitKey: '', userData: { authResponseToken: '' } };
+    if (typeof window !== 'undefined') {
+        blockStackSession = JSON.parse(window.localStorage.getItem('blockstack-session'));
+    }
     let transitKey = blockStackSession.transitKey;
     let authResponse = blockStackSession.userData.authResponseToken;
     return { 'x-auth-response': authResponse, 'x-auth-transit-key': transitKey };

@@ -15,7 +15,10 @@ function useServiceContext(): IServiceContextValue {
 }
 
 function ServiceProvider(props) {
-    const initialServiceType = window.localStorage.getItem('api-service-type') || CLIENT;
+    let initialServiceType = CLIENT;
+    if (typeof window !== 'undefined') {
+        window.localStorage.getItem('api-service-type');
+    }
     const [service, setService] = React.useState(initialServiceType);
 
     const setServer = React.useCallback(() => setService(SERVER), []);
