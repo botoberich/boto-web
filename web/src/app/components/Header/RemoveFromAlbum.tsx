@@ -18,7 +18,7 @@ import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
-function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails }) {
+function RemoveFromAlbum({ albumId, className = '', selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails }) {
     const dispatch = useDispatch();
     const currentPhotos = useSelector(state => albumPhotosSelector(state, albumId));
 
@@ -33,7 +33,8 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
 
                     if (resp.status === 'success') {
                         dispatch(removeAlbumPhotos(albumId, selectedThumbnails));
-                        // Have to subtract because currentPhotos does not update in time after the recent photo removal
+
+                        // Manually find diff between redux state and intended removals for optimistic update
                         if (currentPhotos.length - selectedThumbnails.length <= 0) {
                             // Use promise to not delay the notification
                             updateAlbumMetadata(albumId, { coverId: '' }).then(res => {
@@ -44,6 +45,7 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
                         }
 
                         setLoadingThumbnails([]);
+                        
                         notifySuccess(`Removed ${selectedThumbnails.length} ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`);
                     } else {
                         notifyError(`Unable to remove photos from album. Please contact support.`);

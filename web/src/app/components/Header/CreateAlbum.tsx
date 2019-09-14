@@ -14,7 +14,7 @@ import { notifyError } from '../../utils/notification';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
 import { isMobileOnly } from 'react-device-detect';
 
-function CreateAlbum({ selectedThumbnails }) {
+function CreateAlbum({ className = '', selectedThumbnails }) {
     const {
         albumForm: { title, description },
         setAlbumForm,

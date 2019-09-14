@@ -37,7 +37,6 @@ function App() {
                             <PrivateRoute exact path="/albums/new" component={NewAlbum} />
                             <PrivateRoute exact path="/albums/:albumID" component={DetailedAlbum} />
                             <PrivateRoute exact path="/albums/add/:albumID" component={AddToAlbum} />
-                            {/* <PrivateRoute exact path="/sharing" component={Sharing} />/ */}
                             {/* Redirect default/404 pages to root of app  */}
                             <PrivateRoute path="/" component={Photo} default={true}></PrivateRoute> 
                         </PublicRoute>

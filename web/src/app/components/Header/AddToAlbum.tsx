@@ -16,7 +16,7 @@ import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
-function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
+function AddToAlbum({ className = '', selectedThumbnails, setSelectedThumbnails }) {
     const [visible, setVisible] = React.useState(false);
     const [albums, setAlbums] = React.useState([]);
     const [confirmLoading, setConfirmLoading] = React.useState(false);

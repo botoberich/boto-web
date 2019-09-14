@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, navigate } from 'gatsby';
 import { Match } from '@reach/router';
+import { isMobileOnly, isMobile } from 'react-device-detect';
 
 // State
 import { useDispatch } from 'react-redux';
@@ -28,43 +29,38 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useHeaderContext } from '../../contexts/HeaderContext';
 import AddToOneAlbum from './AddToOneAlbum';
 
-import { isMobileOnly, isMobile } from 'react-device-detect';
-// import Sidebar from '../sideNav';
-
 const { Header } = Layout;
 const styles = { ...headerStyles, ...rootStyles };
 
-function HeaderInfo({ title, subTitle }) {
+function HeaderInfo({ title, subtitle }) {
     return (
         <div className={styles.headerInfo}>
             <span className={styles.title}>{title}</span>
-            <span className={styles.subTitle}>{subTitle}</span>
+            <span className={styles.subtitle}>{subtitle}</span>
         </div>
     );
 }
+
+const btnVariants: Variants = {
+    show: {
+        transform: 'translateY(0px)',
+    },
+    hide: {
+        transform: 'translateY(-50px)',
+    },
+};
 
 function PageHeader() {
     const { selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails } = useSelectonContext();
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
-    const { title, subTitle } = useHeaderContext();
+    const { title, subtitle } = useHeaderContext();
     const dispatch = useDispatch();
-
     const noSelection = React.useMemo(() => selectedThumbnails.length === 0, [selectedThumbnails]);
-
-    const btnVariants: Variants = {
-        show: {
-            transform: 'translateY(0px)',
-        },
-        hide: {
-            transform: 'translateY(-50px)',
-        },
-    };
 
     return (
         <Header className={styles.header}>
-            {/* <span className={styles.headerTitle}>{headerTitle}</span> */}
-            <HeaderInfo title={title} subTitle={subTitle}></HeaderInfo>
+            <HeaderInfo title={title} subtitle={subtitle}></HeaderInfo>
             <nav className={styles.nav}>
                 <Match path="/app">
                     {props =>

@@ -14,7 +14,7 @@ import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
-function Download({ useServer, selectedThumbnails, setSelectedThumbnails }) {
+function Download({ className = '', useServer, selectedThumbnails, setSelectedThumbnails }) {
     return (
         <Button
             style={isMobileOnly ? { border: 'none', boxShadow: 'none', padding: 0 } : {}}

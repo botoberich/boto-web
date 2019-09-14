@@ -16,7 +16,7 @@ import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
-function AddToOneAlbum({ albumId, selectedThumbnails, setSelectedThumbnails }) {
+function AddToOneAlbum({ albumId, className = '', selectedThumbnails, setSelectedThumbnails }) {
     return (
         <>
             <Button

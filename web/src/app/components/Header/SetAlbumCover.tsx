@@ -16,7 +16,7 @@ import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
-function SetAlbumCover({ albumId, selectedThumbnails, setSelectedThumbnails }) {
+function SetAlbumCover({ albumId, className = '', selectedThumbnails, setSelectedThumbnails }) {
     const dispatch = useDispatch();
 
     return (
@@ -30,8 +30,7 @@ function SetAlbumCover({ albumId, selectedThumbnails, setSelectedThumbnails }) {
 
                     updateAlbumMetadata(albumId, { coverId: selectedThumbnails[0] }).then(res => {
                         if (res && res.status === 'success') {
-                            // Updating the album metadata causes it to lose its photos in-memory
-                            // TODO: Fix
+                            // TODO: FIX. Updating the album metadata causes it to lose its photos in-memory
                             // dispatch(setAlbumMetaData(albumId, res.data));
                         }
                     });

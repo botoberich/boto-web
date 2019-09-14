@@ -67,8 +67,8 @@
 }
 
 .headerInfo {
+    align-items: baseline;
     display: flex;
-    align-items: center;
     width: 100%;
 }
 

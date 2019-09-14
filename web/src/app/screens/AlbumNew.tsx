@@ -3,7 +3,7 @@ import AlbumCreate from '../components/Album/AlbumCreate';
 import { useHeaderContext } from '../contexts/HeaderContext';
 
 function NewAlbumScreen() {
-    const { setTitle, setSubtitle } = useHeaderContext();
+    const { setTitle } = useHeaderContext();
     setTitle(`Create Album`);
     return <AlbumCreate></AlbumCreate>;
 }
