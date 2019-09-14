@@ -1,7 +1,6 @@
 import React from 'react';
 
 // UI
-import AlbumView, { useAlbumView } from '../components/Album/AlbumView';
 import { useHeaderContext } from '../contexts/HeaderContext';
 import PhotoGrid, { usePhotoGrid } from '../components/Photo/PhotoGrid';
 import { useSelector } from 'react-redux';
@@ -12,7 +11,7 @@ function AddToAlbumScreen({ albumID }) {
     const album = useSelector(state => albumSelector(state, albumID));
     const title = album ? album.title : '';
     const { setHeaderTitle } = useHeaderContext();
-    setHeaderTitle(`Add Photos | ${title}`);
+    setHeaderTitle(`Add photos to ${title}`);
 
     const { loading } = usePhotoGrid();
     const skeleton = useSelector(state => skeletonSelector(state));

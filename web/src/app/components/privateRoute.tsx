@@ -7,6 +7,7 @@ type Props = {
     exact?: boolean;
     location?: any;
     path: string;
+    default?: boolean;
 };
 
 function PrivateRoute(props: Props) {
