@@ -4,7 +4,7 @@ import { Match } from '@reach/router';
 
 // State
 import { useDispatch } from 'react-redux';
-import { Layout, Avatar, Menu, Dropdown, Tag } from 'antd';
+import { Layout, Avatar, Menu, Dropdown, Tag, Icon } from 'antd';
 import { checkIsSignedIn, getUser, logout, handleLogin } from '../../services/auth.service';
 import { useProgressContext } from '../../contexts/ProgressContext';
 import { useSelectonContext } from '../../contexts/SelectionContext';
@@ -18,7 +18,8 @@ import RemoveFromAlbum from './RemoveFromAlbum';
 import AddToAlbum from './AddToAlbum';
 import SetAlbumCover from './SetAlbumCover';
 import CreateAlbum from './CreateAlbum';
-import styles from './Header.module.css';
+import headerStyles from './Header.module.css';
+import rootStyles from '../../app.module.css';
 
 // Types
 import { IMatchProps } from '../../interfaces/ui.interface';
@@ -26,9 +27,21 @@ import { useServiceContext } from '../../contexts/ServiceContext';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useHeaderContext } from '../../contexts/HeaderContext';
 import AddToOneAlbum from './AddToOneAlbum';
+
+import { isMobileOnly, isMobile } from 'react-device-detect';
 // import Sidebar from '../sideNav';
 
 const { Header } = Layout;
+const styles = { ...headerStyles, ...rootStyles };
+
+function HeaderInfo({ title, subTitle }) {
+    return (
+        <div className={styles.headerInfo}>
+            <span className={styles.title}>{title}</span>
+            <span className={styles.subTitle}>{subTitle}</span>
+        </div>
+    );
+}
 
 function PageHeader() {
     const { selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails } = useSelectonContext();
@@ -50,7 +63,8 @@ function PageHeader() {
 
     return (
         <Header className={styles.header}>
-            <span className={styles.headerTitle}>{headerTitle}</span>
+            {/* <span className={styles.headerTitle}>{headerTitle}</span> */}
+            <HeaderInfo title={'Albums'} subTitle="Elena Baby"></HeaderInfo>
             <nav className={styles.nav}>
                 <Match path="/app">
                     {props =>
@@ -67,40 +81,91 @@ function PageHeader() {
                                         useServer={useServer}></Upload>
                                 </motion.div>
 
-                                <motion.nav
-                                    key={1}
-                                    className={styles.nav}
-                                    initial={{ transform: 'translateY(-50px)' }}
-                                    animate={!noSelection ? 'show' : 'hide'}
-                                    variants={btnVariants}>
-                                    <div className={styles.headerBtn}>
-                                        <Tag className={styles.tag} color="#f50">
-                                            {selectedThumbnails.length}
-                                            <span className={styles.hideMobile}>&nbsp;selected</span>
-                                        </Tag>
-                                    </div>
-                                    <div className={styles.headerBtn}>
-                                        <AddToAlbum
-                                            selectedThumbnails={selectedThumbnails}
-                                            setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
-                                    </div>
-                                    <div className={styles.headerBtn}>
-                                        <Download
-                                            useServer={useServer}
-                                            selectedThumbnails={selectedThumbnails}
-                                            setSelectedThumbnails={setSelectedThumbnails}
-                                        />
-                                    </div>
-                                    <div className={styles.headerBtn}>
-                                        <Delete
-                                            progressDispatch={progressDispatch}
-                                            selectedThumbnails={selectedThumbnails}
-                                            setSelectedThumbnails={setSelectedThumbnails}
-                                            setLoadingThumbnails={setLoadingThumbnails}
-                                            removePhoto={metaData => dispatch(removePhoto(metaData))}
-                                            useServer={useServer}></Delete>
-                                    </div>
-                                </motion.nav>
+                                {isMobileOnly && (
+                                    <motion.div
+                                        animate={!noSelection ? 'show' : 'hide'}
+                                        className={styles.nav}
+                                        initial={{ transform: 'translateY(-50px)' }}
+                                        key={3}
+                                        variants={btnVariants}>
+                                        <Dropdown
+                                            overlay={
+                                                <Menu>
+                                                    <Menu.Item key="tag">
+                                                        <Tag className={styles.tag} color="#f50">
+                                                            {selectedThumbnails.length}
+                                                            <span className={styles.hideMobiles}>&nbsp;selected</span>
+                                                        </Tag>
+                                                    </Menu.Item>
+                                                    <Menu.Item key="addalbum">
+                                                        <AddToAlbum
+                                                            className={styles.mobileButton}
+                                                            selectedThumbnails={selectedThumbnails}
+                                                            setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
+                                                    </Menu.Item>
+                                                    <Menu.Item key="download">
+                                                        <Download
+                                                            className={styles.mobileButton}
+                                                            useServer={useServer}
+                                                            selectedThumbnails={selectedThumbnails}
+                                                            setSelectedThumbnails={setSelectedThumbnails}
+                                                        />
+                                                    </Menu.Item>
+                                                    <Menu.Item key="delete">
+                                                        <Delete
+                                                            progressDispatch={progressDispatch}
+                                                            selectedThumbnails={selectedThumbnails}
+                                                            setSelectedThumbnails={setSelectedThumbnails}
+                                                            setLoadingThumbnails={setLoadingThumbnails}
+                                                            removePhoto={metaData => dispatch(removePhoto(metaData))}
+                                                            useServer={useServer}></Delete>
+                                                    </Menu.Item>
+                                                </Menu>
+                                            }
+                                            trigger={['click']}>
+                                            <div className={styles.moreButton} role="button">
+                                                <Icon type="more" />
+                                            </div>
+                                        </Dropdown>
+                                    </motion.div>
+                                )}
+
+                                {!isMobileOnly && (
+                                    <motion.nav
+                                        key={1}
+                                        className={styles.nav}
+                                        initial={{ transform: 'translateY(-50px)' }}
+                                        animate={!noSelection ? 'show' : 'hide'}
+                                        variants={btnVariants}>
+                                        <div className={styles.headerBtn}>
+                                            <Tag className={styles.tag} color="#f50">
+                                                {selectedThumbnails.length}
+                                                <span>&nbsp;selected</span>
+                                            </Tag>
+                                        </div>
+                                        <div className={styles.headerBtn}>
+                                            <AddToAlbum
+                                                selectedThumbnails={selectedThumbnails}
+                                                setSelectedThumbnails={setSelectedThumbnails}></AddToAlbum>
+                                        </div>
+                                        <div className={styles.headerBtn}>
+                                            <Download
+                                                useServer={useServer}
+                                                selectedThumbnails={selectedThumbnails}
+                                                setSelectedThumbnails={setSelectedThumbnails}
+                                            />
+                                        </div>
+                                        <div className={styles.headerBtn}>
+                                            <Delete
+                                                progressDispatch={progressDispatch}
+                                                selectedThumbnails={selectedThumbnails}
+                                                setSelectedThumbnails={setSelectedThumbnails}
+                                                setLoadingThumbnails={setLoadingThumbnails}
+                                                removePhoto={metaData => dispatch(removePhoto(metaData))}
+                                                useServer={useServer}></Delete>
+                                        </div>
+                                    </motion.nav>
+                                )}
                             </AnimatePresence>
                         )
                     }
@@ -111,78 +176,171 @@ function PageHeader() {
                         if (props.match) {
                             switch (props.match.param) {
                                 case 'new':
-                                    return (
-                                        <motion.nav
-                                            animate={'show'}
-                                            className={styles.nav}
-                                            initial={{ transform: 'translateY(-50px)' }}
-                                            key={3}
-                                            variants={btnVariants}>
-                                            <div className={styles.headerBtn}>
-                                                <CreateAlbum selectedThumbnails={selectedThumbnails} />
-                                            </div>
-                                        </motion.nav>
-                                    );
+                                    if (isMobileOnly) {
+                                        return (
+                                            <motion.div animate={'show'} initial={{ transform: 'translateY(-50px)' }} key={3} variants={btnVariants}>
+                                                <Dropdown
+                                                    overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="edit">
+                                                                <CreateAlbum
+                                                                    className={styles.mobileButton}
+                                                                    selectedThumbnails={selectedThumbnails}
+                                                                />
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    }
+                                                    trigger={['click']}>
+                                                    <div className={styles.moreButton} role="button">
+                                                        <Icon type="more" />
+                                                    </div>
+                                                </Dropdown>
+                                            </motion.div>
+                                        );
+                                    } else {
+                                        return (
+                                            <motion.nav
+                                                animate={'show'}
+                                                className={styles.nav}
+                                                initial={{ transform: 'translateY(-50px)' }}
+                                                key={3}
+                                                variants={btnVariants}>
+                                                <div className={styles.headerBtn}>
+                                                    <CreateAlbum selectedThumbnails={selectedThumbnails} />
+                                                </div>
+                                            </motion.nav>
+                                        );
+                                    }
+
                                 case 'add':
                                     let albumId = props.match['*'];
-                                    return (
-                                        <motion.nav
-                                            animate={!noSelection ? 'show' : 'hide'}
-                                            className={styles.nav}
-                                            initial={{ transform: 'translateY(-50px)' }}
-                                            key={3}
-                                            variants={btnVariants}>
-                                            <div className={styles.headerBtn}>
-                                                <Tag className={styles.tag} color="#f50">
-                                                    {selectedThumbnails.length}
-                                                    <span className={styles.hideMobile}>&nbsp;selected</span>
-                                                </Tag>
-                                            </div>
-                                            <div className={styles.headerBtn}>
-                                                <AddToOneAlbum
-                                                    selectedThumbnails={selectedThumbnails}
-                                                    setSelectedThumbnails={setSelectedThumbnails}
-                                                    albumId={albumId}
-                                                />
-                                            </div>
-                                        </motion.nav>
-                                    );
+                                    if (isMobileOnly) {
+                                        return (
+                                            <motion.div
+                                                animate={!noSelection ? 'show' : 'hide'}
+                                                initial={{ transform: 'translateY(-50px)' }}
+                                                key={3}
+                                                variants={btnVariants}>
+                                                <Dropdown
+                                                    overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="add">
+                                                                <Tag className={styles.tag} color="#f50">
+                                                                    {selectedThumbnails.length}
+                                                                    <span className={styles.hideMobiles}>&nbsp;selected</span>
+                                                                </Tag>
+                                                            </Menu.Item>
+                                                            <Menu.Item key="edit">
+                                                                <AddToOneAlbum
+                                                                    className={styles.mobileButton}
+                                                                    selectedThumbnails={selectedThumbnails}
+                                                                    setSelectedThumbnails={setSelectedThumbnails}
+                                                                    albumId={albumId}
+                                                                />
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    }
+                                                    trigger={['click']}>
+                                                    <div className={styles.moreButton} role="button">
+                                                        <Icon type="more" />
+                                                    </div>
+                                                </Dropdown>
+                                            </motion.div>
+                                        );
+                                    } else {
+                                        return (
+                                            <motion.nav
+                                                animate={'show'}
+                                                className={styles.nav}
+                                                initial={{ transform: 'translateY(-50px)' }}
+                                                key={3}
+                                                variants={btnVariants}>
+                                                <div className={styles.headerBtn}>
+                                                    <CreateAlbum selectedThumbnails={selectedThumbnails} />
+                                                </div>
+                                            </motion.nav>
+                                        );
+                                    }
                                 default:
-                                    return (
-                                        <motion.nav
-                                            animate={!noSelection ? 'show' : 'hide'}
-                                            className={styles.nav}
-                                            initial={{ transform: 'translateY(-50px)' }}
-                                            key={2}
-                                            variants={btnVariants}>
-                                            <div className={styles.headerBtn}>
-                                                <Tag className={styles.tag} color="#f50">
-                                                    {selectedThumbnails.length}
-                                                    <span className={styles.hideMobile}>&nbsp;selected</span>
-                                                </Tag>
-                                            </div>
-                                            <div className={styles.headerBtn}>
-                                                <RemoveFromAlbum
-                                                    albumId={props.match.param}
-                                                    selectedThumbnails={selectedThumbnails}
-                                                    setSelectedThumbnails={setSelectedThumbnails}
-                                                    setLoadingThumbnails={setLoadingThumbnails}
-                                                />
-                                            </div>
-                                            <div className={styles.headerBtn}>
-                                                <SetAlbumCover
-                                                    albumId={props.match.param}
-                                                    selectedThumbnails={selectedThumbnails}
-                                                    setSelectedThumbnails={setSelectedThumbnails}></SetAlbumCover>
-                                            </div>
-                                        </motion.nav>
-                                    );
+                                    if (isMobileOnly) {
+                                        return (
+                                            <motion.div
+                                                animate={!noSelection ? 'show' : 'hide'}
+                                                initial={{ transform: 'translateY(-50px)' }}
+                                                key={3}
+                                                variants={btnVariants}>
+                                                <Dropdown
+                                                    overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="add">
+                                                                <Tag className={styles.tag} color="#f50">
+                                                                    {selectedThumbnails.length}
+                                                                    <span className={styles.hideMobiles}>&nbsp;selected</span>
+                                                                </Tag>
+                                                            </Menu.Item>
+                                                            <Menu.Item key="edit">
+                                                                <RemoveFromAlbum
+                                                                    className={styles.mobileButton}
+                                                                    albumId={props.match.param}
+                                                                    selectedThumbnails={selectedThumbnails}
+                                                                    setSelectedThumbnails={setSelectedThumbnails}
+                                                                    setLoadingThumbnails={setLoadingThumbnails}
+                                                                />
+                                                            </Menu.Item>
+                                                            <Menu.Item key="add">
+                                                                <SetAlbumCover
+                                                                    className={styles.mobileButton}
+                                                                    albumId={props.match.param}
+                                                                    selectedThumbnails={selectedThumbnails}
+                                                                    setSelectedThumbnails={setSelectedThumbnails}></SetAlbumCover>
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    }
+                                                    trigger={['click']}>
+                                                    <div className={styles.moreButton} role="button">
+                                                        <Icon type="more" />
+                                                    </div>
+                                                </Dropdown>
+                                            </motion.div>
+                                        );
+                                    } else {
+                                        return (
+                                            <motion.nav
+                                                animate={!noSelection ? 'show' : 'hide'}
+                                                className={styles.nav}
+                                                initial={{ transform: 'translateY(-50px)' }}
+                                                key={2}
+                                                variants={btnVariants}>
+                                                <div className={styles.headerBtn}>
+                                                    <Tag className={styles.tag} color="#f50">
+                                                        {selectedThumbnails.length}
+                                                        <span>&nbsp;selected</span>
+                                                    </Tag>
+                                                </div>
+                                                <div className={styles.headerBtn}>
+                                                    <RemoveFromAlbum
+                                                        albumId={props.match.param}
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}
+                                                        setLoadingThumbnails={setLoadingThumbnails}
+                                                    />
+                                                </div>
+                                                <div className={styles.headerBtn}>
+                                                    <SetAlbumCover
+                                                        albumId={props.match.param}
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}></SetAlbumCover>
+                                                </div>
+                                            </motion.nav>
+                                        );
+                                    }
                             }
                         }
                     }}
                 </Match>
             </nav>
-            <div className={styles.navItem} style={{ marginLeft: '25px' }}>
+
+            <div className={`${styles.navItem} ${styles.userAvatar}`} style={{ marginLeft: '25px' }}>
                 <UserAvatar></UserAvatar>
             </div>
         </Header>

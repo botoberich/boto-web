@@ -12,6 +12,7 @@ import styles from './AddToAlbum.module.css';
 import { ArgsProps } from 'antd/lib/notification';
 import { navigate } from 'gatsby';
 import { notifyError, notifySuccess } from '../../utils/notification';
+import { isMobileOnly } from 'react-device-detect';
 
 const { Paragraph } = Typography;
 
@@ -22,26 +23,25 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
 
     return (
         <>
-            <Tooltip placement="bottom" title={selectedThumbnails.length === 0 ? 'Please select at least one photo.' : ''}>
-                <Button
-                    onClick={async () => {
-                        try {
-                            if (selectedThumbnails.length <= 0) {
-                                return;
-                            }
-                            setVisible(true);
-                            const resp = await getAlbums();
-                            if (resp.status === 'success') {
-                                setAlbums(Object.values(resp.data));
-                            }
-                        } catch (err) {
-                            notifyError(`Unable to add photos to album. Please contact support.`);
+            <Button
+                style={isMobileOnly ? { border: 'none', boxShadow: 'none', padding: 0 } : {}}
+                onClick={async () => {
+                    try {
+                        if (selectedThumbnails.length <= 0) {
+                            return;
                         }
-                    }}>
-                    <Icon type="wallet" theme="twoTone" />
-                    <span className={styles.hideMobile}>Add To Album</span>
-                </Button>
-            </Tooltip>
+                        setVisible(true);
+                        const resp = await getAlbums();
+                        if (resp.status === 'success') {
+                            setAlbums(Object.values(resp.data));
+                        }
+                    } catch (err) {
+                        notifyError(`Unable to add photos to album. Please contact support.`);
+                    }
+                }}>
+                <Icon type="wallet" theme="twoTone" />
+                <span className={styles.hideMobiles}>Add To Album</span>
+            </Button>
 
             <Modal
                 bodyStyle={{ padding: '8px 0 8px 0' }}

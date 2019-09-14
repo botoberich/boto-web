@@ -21,3 +21,10 @@
     background: #ffffff;
     text-align: center;
 }
+
+@media (max-width: 650px) {
+    .hideMobile,
+    .navItem .hideMobile {
+        display: none !important;
+    }
+}

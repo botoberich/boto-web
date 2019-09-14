@@ -16,10 +16,3 @@
 .listItem:hover {
     background: rgb(238, 238, 238);
 }
-
-@media (max-width: 650px) {
-    .hideMobile,
-    .navItem .hideMobile {
-        display: none !important;
-    }
-}

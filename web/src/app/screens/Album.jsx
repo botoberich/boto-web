@@ -4,7 +4,7 @@ import { useHeaderContext } from '../contexts/HeaderContext';
 
 function AlbumScreen() {
     const { setHeaderTitle } = useHeaderContext();
-    setHeaderTitle('Album');
+    setHeaderTitle('Albums');
     return <AlbumGrid></AlbumGrid>;
 }
 

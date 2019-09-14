@@ -30,9 +30,7 @@
     .navItem .hideMobile {
         display: none !important;
     }
-}
 
-@media (max-width: 650px) {
     .uploadIcon {
         margin: 0 !important;
     }

@@ -12,6 +12,7 @@ import styles from './CreateAlbum.module.css';
 // Types
 import { notifyError } from '../../utils/notification';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
+import { isMobileOnly } from 'react-device-detect';
 
 function CreateAlbum({ selectedThumbnails }) {
     const {
@@ -53,15 +54,18 @@ function CreateAlbum({ selectedThumbnails }) {
     }, [selectedThumbnails, title, description]);
 
     return (
-        <Button disabled={title.length === 0 || creating} onClick={handleCreateNewAlbum}>
+        <Button
+            disabled={title.length === 0 || creating}
+            style={isMobileOnly ? { border: 'none', boxShadow: 'none', padding: 0 } : {}}
+            onClick={handleCreateNewAlbum}>
             {!creating && (
                 <>
-                    <Icon type="wallet" theme="twoTone" /> <span className={styles.hideMobile}>Create Album</span>
+                    <Icon type="wallet" theme="twoTone" /> <span>Create Album</span>
                 </>
             )}
             {creating && (
                 <>
-                    <Icon type="loading" /> <span className={styles.hideMobile}>Creating</span>
+                    <Icon type="loading" /> <span>Creating</span>
                 </>
             )}
         </Button>

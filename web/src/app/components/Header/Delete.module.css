@@ -3,4 +3,9 @@
     .navItem .hideMobile {
         display: none !important;
     }
+
+    .moreButton {
+        border: none !important;
+        box-shadow: none !important;
+    }
 }
