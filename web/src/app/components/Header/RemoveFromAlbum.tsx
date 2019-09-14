@@ -44,7 +44,7 @@ function RemoveFromAlbum({ albumId, selectedThumbnails, setSelectedThumbnails, s
                         }
 
                         setLoadingThumbnails([]);
-                        notifySuccess(`Removed ${selectedThumbnails} ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`);
+                        notifySuccess(`Removed ${selectedThumbnails.length} ${selectedThumbnails.length > 1 ? 'photos' : 'photo'} from album.`);
                     } else {
                         notifyError(`Unable to remove photos from album. Please contact support.`);
                     }
