@@ -107,7 +107,7 @@
 
     .headerInfo .title {
         margin-right: 7px;
-        width: 130px;
+        max-width: 130px;
     }
 
     .moreButton {
