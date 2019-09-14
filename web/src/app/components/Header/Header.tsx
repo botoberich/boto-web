@@ -24,6 +24,8 @@ import styles from './Header.module.css';
 import { IMatchProps } from '../../interfaces/ui.interface';
 import { useServiceContext } from '../../contexts/ServiceContext';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { useHeaderContext } from '../../contexts/HeaderContext';
+import AddToOneAlbum from './AddToOneAlbum';
 // import Sidebar from '../sideNav';
 
 const { Header } = Layout;
@@ -32,11 +34,12 @@ function PageHeader() {
     const { selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails } = useSelectonContext();
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
+    const { headerTitle } = useHeaderContext();
     const dispatch = useDispatch();
 
     const noSelection = React.useMemo(() => selectedThumbnails.length === 0, [selectedThumbnails]);
 
-    const variants: Variants = {
+    const btnVariants: Variants = {
         show: {
             transform: 'translateY(0px)',
         },
@@ -47,15 +50,7 @@ function PageHeader() {
 
     return (
         <Header className={styles.header}>
-            <Match path="/app/:title/*">
-                {(props: IMatchProps) => {
-                    let title = props.match ? props.match.title : 'Photos';
-                    if (props.match && props.match['*'] === 'new' && props.match.title === 'albums') {
-                        title = 'Create Album';
-                    }
-                    return <span className={styles.headerTitle}>{title}</span>;
-                }}
-            </Match>
+            <span className={styles.headerTitle}>{headerTitle}</span>
             <nav className={styles.nav}>
                 <Match path="/app">
                     {props =>
@@ -64,7 +59,7 @@ function PageHeader() {
                                 <motion.div
                                     key={0}
                                     animate={noSelection ? 'show' : 'hide'}
-                                    variants={variants}
+                                    variants={btnVariants}
                                     style={{ margin: 0, position: 'absolute' }}>
                                     <Upload
                                         addPhoto={photo => dispatch(newPhoto(photo))}
@@ -77,7 +72,7 @@ function PageHeader() {
                                     className={styles.nav}
                                     initial={{ transform: 'translateY(-50px)' }}
                                     animate={!noSelection ? 'show' : 'hide'}
-                                    variants={variants}>
+                                    variants={btnVariants}>
                                     <div className={styles.headerBtn}>
                                         <Tag className={styles.tag} color="#f50">
                                             {selectedThumbnails.length}
@@ -111,7 +106,7 @@ function PageHeader() {
                     }
                 </Match>
 
-                <Match path="/app/albums/:param">
+                <Match path="/app/albums/:param/*">
                     {(props: IMatchProps) => {
                         if (props.match) {
                             switch (props.match.param) {
@@ -122,9 +117,33 @@ function PageHeader() {
                                             className={styles.nav}
                                             initial={{ transform: 'translateY(-50px)' }}
                                             key={3}
-                                            variants={variants}>
+                                            variants={btnVariants}>
                                             <div className={styles.headerBtn}>
                                                 <CreateAlbum selectedThumbnails={selectedThumbnails} />
+                                            </div>
+                                        </motion.nav>
+                                    );
+                                case 'add':
+                                    let albumId = props.match['*'];
+                                    return (
+                                        <motion.nav
+                                            animate={!noSelection ? 'show' : 'hide'}
+                                            className={styles.nav}
+                                            initial={{ transform: 'translateY(-50px)' }}
+                                            key={3}
+                                            variants={btnVariants}>
+                                            <div className={styles.headerBtn}>
+                                                <Tag className={styles.tag} color="#f50">
+                                                    {selectedThumbnails.length}
+                                                    <span className={styles.hideMobile}>&nbsp;selected</span>
+                                                </Tag>
+                                            </div>
+                                            <div className={styles.headerBtn}>
+                                                <AddToOneAlbum
+                                                    selectedThumbnails={selectedThumbnails}
+                                                    setSelectedThumbnails={setSelectedThumbnails}
+                                                    albumId={albumId}
+                                                />
                                             </div>
                                         </motion.nav>
                                     );
@@ -135,7 +154,13 @@ function PageHeader() {
                                             className={styles.nav}
                                             initial={{ transform: 'translateY(-50px)' }}
                                             key={2}
-                                            variants={variants}>
+                                            variants={btnVariants}>
+                                            <div className={styles.headerBtn}>
+                                                <Tag className={styles.tag} color="#f50">
+                                                    {selectedThumbnails.length}
+                                                    <span className={styles.hideMobile}>&nbsp;selected</span>
+                                                </Tag>
+                                            </div>
                                             <div className={styles.headerBtn}>
                                                 <RemoveFromAlbum
                                                     albumId={props.match.param}

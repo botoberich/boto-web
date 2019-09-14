@@ -20,11 +20,11 @@ import { notifyError, notifySuccess } from '../../utils/notification';
 
 const { Title, Paragraph } = Typography;
 
-function AlbumView({ title, loading, skeleton }) {
+function AlbumView({ title, loading, skeleton, albumId }) {
     return (
         <>
-            <Title>{title}</Title>
-            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading} parent="album"></PhotoGrid>}
+            {/* <Title>{title}</Title> */}
+            {skeleton && <PhotoGrid skeleton={skeleton} loading={loading} parent="album" albumId={albumId}></PhotoGrid>}
         </>
     );
 }
