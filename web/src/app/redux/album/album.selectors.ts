@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { IThumbnail } from '../../interfaces/photos.interface';
 
-export const albumsSelector = state => state.album.albums
+export const albumsSelector = state => state.album.albums;
 
 export const albumSkeletonMetaSelector = (state, albumId) => {
     if (state.album.source[albumId]) {
@@ -14,6 +14,8 @@ export const albumPhotosSelector = (state, albumId) => {
         return state.album.source[albumId].photos;
     }
 };
+
+export const albumCreateFormSelector = state => state.album.createForm;
 
 export const albumSkeletonSelector = createSelector(
     albumSkeletonMetaSelector,

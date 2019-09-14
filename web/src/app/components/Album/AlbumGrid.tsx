@@ -142,10 +142,16 @@ function AlbumHeader({ title, description }) {
 }
 
 function AlbumMenu({ album, refetchAlbums }: { album: IAlbumMetadata; refetchAlbums: () => void }) {
-    const { Modal, setVisible } = useEditAlbumModal(album, { refetchAlbums });
+    const { Modal, setVisible, setAlbumForm } = useEditAlbumModal(album, { refetchAlbums });
     const { useServer } = useServiceContext();
 
-    const handleModalOpen = React.useCallback(e => setVisible(true), [setVisible]);
+    const handleModalOpen = React.useCallback(
+        e => {
+            setVisible(true);
+            setAlbumForm({ title: album.title, description: album.description });
+        },
+        [setVisible]
+    );
 
     const handleDeleteAlbum = React.useCallback(
         id => {

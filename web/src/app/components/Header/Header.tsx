@@ -17,6 +17,7 @@ import Download from './Download';
 import RemoveFromAlbum from './RemoveFromAlbum';
 import AddToAlbum from './AddToAlbum';
 import SetAlbumCover from './SetAlbumCover';
+import CreateAlbum from './CreateAlbum';
 import styles from './Header.module.css';
 
 // Types
@@ -46,7 +47,6 @@ function PageHeader() {
 
     return (
         <Header className={styles.header}>
-            {/* <Sidebar className={styles.sideBar}></Sidebar> */}
             <Match path="/app/:title/*">
                 {(props: IMatchProps) => {
                     let title = props.match ? props.match.title : 'Photos';
@@ -112,32 +112,49 @@ function PageHeader() {
                 </Match>
 
                 <Match path="/app/albums/:param">
-                    {(props: IMatchProps) =>
-                        props.match &&
-                        props.match.param !== 'new' && (
-                            <motion.nav
-                                animate={!noSelection ? 'show' : 'hide'}
-                                className={styles.nav}
-                                initial={{ transform: 'translateY(-50px)' }}
-                                key={2}
-                                variants={variants}>
-                                <div className={styles.headerBtn}>
-                                    <RemoveFromAlbum
-                                        albumId={props.match.param}
-                                        selectedThumbnails={selectedThumbnails}
-                                        setSelectedThumbnails={setSelectedThumbnails}
-                                        setLoadingThumbnails={setLoadingThumbnails}
-                                    />
-                                </div>
-                                <div className={styles.headerBtn}>
-                                    <SetAlbumCover
-                                        albumId={props.match.param}
-                                        selectedThumbnails={selectedThumbnails}
-                                        setSelectedThumbnails={setSelectedThumbnails}></SetAlbumCover>
-                                </div>
-                            </motion.nav>
-                        )
-                    }
+                    {(props: IMatchProps) => {
+                        if (props.match) {
+                            switch (props.match.param) {
+                                case 'new':
+                                    return (
+                                        <motion.nav
+                                            animate={'show'}
+                                            className={styles.nav}
+                                            initial={{ transform: 'translateY(-50px)' }}
+                                            key={3}
+                                            variants={variants}>
+                                            <div className={styles.headerBtn}>
+                                                <CreateAlbum selectedThumbnails={selectedThumbnails} />
+                                            </div>
+                                        </motion.nav>
+                                    );
+                                default:
+                                    return (
+                                        <motion.nav
+                                            animate={!noSelection ? 'show' : 'hide'}
+                                            className={styles.nav}
+                                            initial={{ transform: 'translateY(-50px)' }}
+                                            key={2}
+                                            variants={variants}>
+                                            <div className={styles.headerBtn}>
+                                                <RemoveFromAlbum
+                                                    albumId={props.match.param}
+                                                    selectedThumbnails={selectedThumbnails}
+                                                    setSelectedThumbnails={setSelectedThumbnails}
+                                                    setLoadingThumbnails={setLoadingThumbnails}
+                                                />
+                                            </div>
+                                            <div className={styles.headerBtn}>
+                                                <SetAlbumCover
+                                                    albumId={props.match.param}
+                                                    selectedThumbnails={selectedThumbnails}
+                                                    setSelectedThumbnails={setSelectedThumbnails}></SetAlbumCover>
+                                            </div>
+                                        </motion.nav>
+                                    );
+                            }
+                        }
+                    }}
                 </Match>
             </nav>
             <div className={styles.navItem} style={{ marginLeft: '25px' }}>

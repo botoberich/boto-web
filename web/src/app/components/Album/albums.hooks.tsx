@@ -6,11 +6,12 @@ import { Modal } from 'antd';
 // State
 import { updateAlbumMetadata, removeFromAlbum, addToAlbum, getAlbums } from '../../services/album.service';
 import { getThumbnailsByIds } from '../../services/photo.service';
-import AlbumForm, { useAlbumForm } from './AlbumForm';
+import AlbumForm from './AlbumForm';
 
 // Types
 import { IThumbnail, IPhotoMetadata } from '../../interfaces/photos.interface';
 import { IAlbumMetadata } from '../../interfaces/albums.interface';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const handleRemoveFromAlbum = ({ albumId, photoIds }) => {
     return removeFromAlbum(photoIds, albumId);
@@ -63,30 +64,30 @@ export const handleFetchAlbumThumbnails = async (
 };
 
 export function useEditAlbumModal(album: IAlbumMetadata, { refetchAlbums = () => {} }) {
-    const { title, setTitle, desc, setDesc, validInput, setValidInput } = useAlbumForm({
-        initialTitle: album.title,
-        initialDesc: album.description,
-    });
+    const {
+        albumForm: { title, description },
+        setAlbumForm,
+    } = useFormContext();
+
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
 
     const handleEditAlbum = React.useCallback(async () => {
         if (title.length === 0) {
-            setValidInput(false);
             return;
         }
 
         setConfirmLoading(true);
 
         await updateAlbumMetadata(album._id, {
-            title: title,
-            description: desc,
+            title,
+            description,
         });
 
         refetchAlbums();
         setConfirmLoading(false);
         setVisible(false);
-    }, [title, desc, album._id]);
+    }, [title, description, album._id]);
 
     return {
         Modal: (
@@ -96,41 +97,28 @@ export function useEditAlbumModal(album: IAlbumMetadata, { refetchAlbums = () =>
                 visible={visible}
                 setVisible={setVisible}
                 confirmLoading={confirmLoading}
-                validInput={validInput}
-                setValidInput={setValidInput}
-                title={title}
-                setTitle={setTitle}
-                desc={desc}
-                setDesc={setDesc}></EditModal>
+                setAlbumForm={setAlbumForm}></EditModal>
         ),
         visible,
         setVisible,
         confirmLoading,
         setConfirmLoading,
-        validInput,
-        setValidInput,
-        title,
-        setTitle,
-        desc,
-        setDesc,
+        setAlbumForm,
     };
 }
 
-function EditModal({ album, handleEditAlbum, visible, setVisible, confirmLoading, validInput, setValidInput, title, setTitle, desc, setDesc }) {
+function EditModal({ album, handleEditAlbum, visible, setVisible, confirmLoading, setAlbumForm }) {
     return (
         <Modal
             title={`Editing album ${album.title}`}
             visible={visible}
             onOk={handleEditAlbum}
-            onCancel={() => setVisible(false)}
+            onCancel={() => {
+                setVisible(false);
+                setAlbumForm({ title: '', description: '' });
+            }}
             confirmLoading={confirmLoading}>
-            <AlbumForm
-                setTitle={setTitle}
-                title={title}
-                setDesc={setDesc}
-                desc={desc}
-                setValidInput={setValidInput}
-                validInput={validInput}></AlbumForm>
+            <AlbumForm></AlbumForm>
         </Modal>
     );
 }

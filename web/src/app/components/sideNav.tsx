@@ -40,7 +40,7 @@ const Sidebar = () => {
                             </Menu.Item>
                             <Menu.Item key="albums" className={styles.menuItem}>
                                 <Link to="/app/albums">
-                                    <Icon type="book" />
+                                    <Icon type="wallet" />
                                     <span className="nav-text">Albums</span>
                                 </Link>
                             </Menu.Item>

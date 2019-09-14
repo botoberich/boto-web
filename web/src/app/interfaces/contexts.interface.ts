@@ -1,3 +1,5 @@
+import { ICreateAlbumFormData } from './albums.interface';
+
 export interface ISelectionContextValue {
     selectedThumbnails: string[];
     setSelectedThumbnails: React.Dispatch<React.SetStateAction<string[]>>;
@@ -13,4 +15,9 @@ export interface IServiceContextValue {
     setServer: () => void;
     setClient: () => void;
     useServer: boolean;
+}
+
+export interface IFormContextValue {
+    albumForm: ICreateAlbumFormData;
+    setAlbumForm: () => void;
 }

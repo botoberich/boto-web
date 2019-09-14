@@ -1,3 +1,5 @@
+import { ICreateAlbumFormData } from '../../interfaces/albums.interface';
+
 export const SET_ALBUM_METADATA = 'SET_ALBUM_METADATA';
 export const SET_ALBUMS_METADATA = 'SET_ALBUMS_METADATA';
 export const SET_ALBUM_PHOTO_METADATA = 'SET_ALBUM_PHOTO_METADATA';
@@ -18,7 +20,7 @@ export const setAlbumsMetaData = albums => {
     return {
         type: SET_ALBUMS_METADATA,
         payload: {
-            albums: albums,
+            albums,
         },
     };
 };

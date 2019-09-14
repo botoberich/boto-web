@@ -2,7 +2,7 @@ import React from 'react';
 import { format, isToday, compareDesc } from 'date-fns';
 
 // UI
-import { Skeleton, Typography, Empty, notification, Button } from 'antd';
+import { Skeleton, Typography, Empty, notification, Button, Icon } from 'antd';
 import PhotoGridItem from './PhotoGridItem';
 import styles from './PhotoGrid.module.css';
 
@@ -74,6 +74,7 @@ function PhotoGrid({ skeleton, loading, parent }) {
                                 navigate('/app');
                             }}
                             type="primary">
+                            <Icon type="picture" />
                             Add Photos
                         </Button>
                     )}

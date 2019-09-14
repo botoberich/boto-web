@@ -84,7 +84,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                                     }
                                 }}>
                                 <span className={styles.icon}>
-                                    <Icon type="book" theme="twoTone" />{' '}
+                                    <Icon type="wallet" theme="twoTone" />{' '}
                                 </span>
                                 {album.title}
                             </li>
@@ -95,7 +95,7 @@ function AddToAlbum({ selectedThumbnails, setSelectedThumbnails }) {
                 {albums.length === 0 && (
                     <Empty style={{ marginBottom: '10px' }} description={<span>No albums 😢</span>}>
                         <Button onClick={() => navigate('/app/albums/new')} type="primary">
-                            Create One
+                            <Icon type="wallet" theme="twoTone" /> Create One
                         </Button>
                     </Empty>
                 )}

@@ -11,6 +11,10 @@ export interface IAlbumMetadata {
     coverId?: string;
 }
 
+export interface ICreateAlbumFormData {
+    title: string;
+    description: string;
+}
 export interface ICreateAlbumResult {
     albumMetadata: IAlbumMetadata;
     $photos: Subject<PhotoModel>;
