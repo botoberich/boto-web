@@ -69,8 +69,7 @@ function PhotoGridItem({ id, src }) {
             key={id}
             onClick={handlePhotoDownload}
             onMouseLeave={() => clearTimeout(timeoutId.current)}
-            onTouchCancel={() => clearTimeout(timeoutId.current)}
-            onTouchStart={handleInitiateDownload}>
+            onTouchCancel={() => clearTimeout(timeoutId.current)}>
             <Button
                 aria-checked={selectedThumbnails.indexOf(id) !== -1}
                 className={`${styles.triggerBox} checkbox`}

@@ -23,6 +23,8 @@ export interface IFormContextValue {
 }
 
 export interface IHeaderContextValue {
-    headerTitle: string;
-    setHeaderTitle: (string) => void;
+    title: string;
+    setTitle: (string) => void;
+    subTitle: string;
+    setSubtitle: (string) => void;
 }

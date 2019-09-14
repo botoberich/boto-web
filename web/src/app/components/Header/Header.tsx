@@ -47,7 +47,7 @@ function PageHeader() {
     const { selectedThumbnails, setSelectedThumbnails, setLoadingThumbnails } = useSelectonContext();
     const { useServer } = useServiceContext();
     const { progressDispatch } = useProgressContext();
-    const { headerTitle } = useHeaderContext();
+    const { title, subTitle } = useHeaderContext();
     const dispatch = useDispatch();
 
     const noSelection = React.useMemo(() => selectedThumbnails.length === 0, [selectedThumbnails]);
@@ -64,7 +64,7 @@ function PageHeader() {
     return (
         <Header className={styles.header}>
             {/* <span className={styles.headerTitle}>{headerTitle}</span> */}
-            <HeaderInfo title={'Albums'} subTitle="Elena Baby"></HeaderInfo>
+            <HeaderInfo title={title} subTitle={subTitle}></HeaderInfo>
             <nav className={styles.nav}>
                 <Match path="/app">
                     {props =>
@@ -250,13 +250,18 @@ function PageHeader() {
                                     } else {
                                         return (
                                             <motion.nav
-                                                animate={'show'}
+                                                animate={!noSelection ? 'show' : 'hide'}
                                                 className={styles.nav}
                                                 initial={{ transform: 'translateY(-50px)' }}
                                                 key={3}
                                                 variants={btnVariants}>
                                                 <div className={styles.headerBtn}>
-                                                    <CreateAlbum selectedThumbnails={selectedThumbnails} />
+                                                    <AddToOneAlbum
+                                                        className={styles.mobileButton}
+                                                        selectedThumbnails={selectedThumbnails}
+                                                        setSelectedThumbnails={setSelectedThumbnails}
+                                                        albumId={albumId}
+                                                    />
                                                 </div>
                                             </motion.nav>
                                         );

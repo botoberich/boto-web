@@ -3,8 +3,8 @@ import AlbumGrid from '../components/Album/AlbumGrid';
 import { useHeaderContext } from '../contexts/HeaderContext';
 
 function AlbumScreen() {
-    const { setHeaderTitle } = useHeaderContext();
-    setHeaderTitle('Albums');
+    const { setTitle } = useHeaderContext();
+    setTitle('Albums');
     return <AlbumGrid></AlbumGrid>;
 }
 

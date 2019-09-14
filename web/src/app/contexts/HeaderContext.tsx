@@ -12,11 +12,14 @@ function useHeaderContext(): IHeaderContextValue {
 }
 
 function HeaderProvider(props) {
-    const [headerTitle, setHeaderTitle] = React.useState('');
+    const [title, setTitle] = React.useState('');
+    const [subTitle, setSubtitle] = React.useState('');
 
     const value = {
-        headerTitle,
-        setHeaderTitle,
+        title,
+        setTitle,
+        subTitle,
+        setSubtitle,
     };
     return <HeaderContext.Provider value={value} {...props} />;
 }

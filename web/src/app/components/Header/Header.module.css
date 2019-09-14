@@ -11,7 +11,7 @@
     width: 100%;
     z-index: 100;
 }
-
+/** old title */
 .headerTitle {
     color: #5f6368;
     font-size: 20px;
@@ -77,6 +77,9 @@
     margin-right: 15px;
     color: #242424;
     font-weight: 500;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .headerInfo .subTitle {
@@ -86,7 +89,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    /* font-weight: 700; */
 }
 
 @media (max-width: 650px) {
@@ -94,7 +96,7 @@
     .navItem .hideMobile {
         display: none !important;
     }
-
+    /** old title */
     .headerTitle {
         width: 500px;
         font-size: 20px;
@@ -105,6 +107,7 @@
 
     .headerInfo .title {
         margin-right: 7px;
+        width: 130px;
     }
 
     .moreButton {

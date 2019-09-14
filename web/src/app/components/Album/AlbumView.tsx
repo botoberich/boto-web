@@ -26,7 +26,7 @@ export default AlbumView;
 export function useAlbumView({ albumID }) {
     const dispatch = useDispatch();
     const { useServer } = useServiceContext();
-    const { setHeaderTitle } = useHeaderContext();
+    const { setTitle, setSubtitle } = useHeaderContext();
     const [loading, setLoading] = React.useState(true);
 
     const title = useSelector(state => {
@@ -37,7 +37,8 @@ export function useAlbumView({ albumID }) {
         return '';
     });
 
-    setHeaderTitle(`Album ${title ? `| ${title}` : ''}`);
+    setTitle(`Album`);
+    setSubtitle(`${title ? `${title}` : ''}`);
 
     const skeleton = useSelector(state => {
         return albumSkeletonSelector(state, albumID);
@@ -114,6 +115,7 @@ export function useAlbumView({ albumID }) {
         fetch();
 
         return () => {
+            setSubtitle('');
             if (subscription) {
                 subscription.then(sub => {
                     sub.unsubscribe();

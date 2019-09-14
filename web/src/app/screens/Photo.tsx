@@ -11,8 +11,8 @@ import { useHeaderContext } from '../contexts/HeaderContext';
 function PhotoScreen() {
     const { loading } = usePhotoGrid();
     const skeleton = useSelector(state => skeletonSelector(state));
-    const { setHeaderTitle } = useHeaderContext();
-    setHeaderTitle(`Photos`);
+    const { setTitle } = useHeaderContext();
+    setTitle(`Photos`);
     return <PhotoGrid loading={loading} skeleton={skeleton} parent="photo" />;
 }
 
