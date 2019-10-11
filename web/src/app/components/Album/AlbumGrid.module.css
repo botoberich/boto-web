@@ -64,6 +64,14 @@
 
 .topOverlay {
     border-radius: 6px;
+    height: 56px;
     opacity: 0;
-    z-index: 5;
+    position: absolute;
+}
+
+.gridItem:hover .topOverlay {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.12), transparent 56px, transparent);
+    opacity: 1;
+    transition: opacity 0.135s cubic-bezier(0, 0, 0.2, 1);
+    width: 100%;
 }

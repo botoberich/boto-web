@@ -20,8 +20,6 @@ function BotoIcon() {
 }
 
 class IndexPage extends React.Component {
-    componentDidMount() {}
-
     render() {
         return (
             <>

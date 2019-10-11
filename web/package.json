@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "author": "@kangaroo",
     "scripts": {
-        "develop": "gatsby develop -H 0.0.0.0",
+        "develop": "gatsby develop",
         "start": "run-p start:**",
         "start:app": "npm run develop",
         "start:type-check": "tsc --noEmit -w",

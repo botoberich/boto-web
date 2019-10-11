@@ -8,12 +8,13 @@ const MobileAuthRedirect = () => {
         function getParameterByName(name) {
             const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-          }
-       
-        const authResponse = getParameterByName('authResponse')
-        window.location="botophotos://?authResponse=" + authResponse
-    })
-    
+        }
+
+        console.log({ authResponse });
+        const authResponse = getParameterByName('authResponse');
+        window.location = 'botophotos://?authResponse=' + authResponse;
+    });
+
     return (
         <div className={styles.container}>
             <SEO title="Mobile Auth Redirect" />
@@ -22,7 +23,7 @@ const MobileAuthRedirect = () => {
                 <p>You will be redirected back to Boto soon</p>
             </div>
         </div>
-    )
+    );
 };
 
 export default MobileAuthRedirect;

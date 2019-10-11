@@ -20,8 +20,6 @@ function AppProvider() {
                             <HeaderProvider>
                                 <FormProvider>
                                     <SelectionProvider>
-                                        {/** not ideal since photo states will bleed through all screen components under app 
-                     But needed since the header needs to be aware of photo states | Possibly refactor later */}
                                         <App />
                                     </SelectionProvider>
                                 </FormProvider>
