@@ -16,22 +16,15 @@ function AlbumForm() {
     return (
         <>
             <div className={styles.inputRow}>
-                <Tooltip placement="topRight" title="Please enter a title" visible={title.length === 0}>
-                    <Input
-                        onChange={e => {
-                            setAlbumForm({ description, title: e.target.value });
-                        }}
-                        placeholder="Title"
-                        prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        required
-                        suffix={
-                            <Tooltip title="Enter the title for the album">
-                                <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                            </Tooltip>
-                        }
-                        value={title}
-                    />
-                </Tooltip>
+                <Input
+                    onChange={e => {
+                        setAlbumForm({ description, title: e.target.value });
+                    }}
+                    placeholder="Title"
+                    prefix={<Icon type="tag" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                    required
+                    value={title}
+                />
             </div>
             <div className={styles.inputRow}>
                 <Input
@@ -40,11 +33,6 @@ function AlbumForm() {
                     }}
                     placeholder="Description"
                     prefix={<Icon type="tags" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    suffix={
-                        <Tooltip title="Enter the description for the album">
-                            <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                        </Tooltip>
-                    }
                     value={description}
                 />
             </div>
