@@ -40,12 +40,12 @@ const Sidebar = () => {
                                     <span className="nav-text">Albums</span>
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="sharing" className={styles.menuItem} disabled>
+                            {/* <Menu.Item key="sharing" className={styles.menuItem} disabled>
                                 <Link to="/app/sharing">
                                     <Icon type="upload" />
                                     <span className="nav-text">Sharing</span>
                                 </Link>
-                            </Menu.Item>
+                            </Menu.Item> */}
                             <div className={styles.serviceSelector}>
                                 <Switch
                                     style={{ width: '100%' }}
