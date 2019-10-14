@@ -17,11 +17,19 @@ const makeGaiaRequest = async (method: 'get' | 'put' | 'delete', { body, options
     let headers = getHeaders();
     let result;
     if (useServer) {
-        let res = await axios.post(`${process.env.GATSBY_RADIKS_SERVER_URL}/gaia/${method}`, body, {
-            headers,
-        });
-        result = res.data ? JSON.stringify(res.data) : null;
-        return result;
+        try {
+            let res = await axios.post(`${process.env.GATSBY_RADIKS_SERVER_URL}/gaia/${method}`, body, {
+                headers,
+            });
+            result = res.data ? JSON.stringify(res.data) : null;
+            return result;
+        } catch (err) {
+            if (err.response.status === 401) {
+                alert('Your session has expired. Please login again.');
+                localStorage.removeItem('blockstack-session');
+                document.location.href = '/';
+            }
+        }
     }
 
     switch (method) {

@@ -74,9 +74,7 @@ export const authenticate = async (req, res: IResponse, next) => {
         if (userDataRes.status === 'success') {
             const appConfig = new AppConfig(
                 ['store_write', 'publish_data'],
-                process.env.APP_ENV === 'dev'
-                    ? 'http://localhost:3000'
-                    : `https://${process.env.APP_ENV}-boto-server.herokuapp.com`
+                process.env.APP_ENV === 'dev' ? 'http://localhost:3000' : `https://${process.env.APP_ENV}-boto-server.herokuapp.com`
             );
             const userSession = new UserSession({ appConfig });
             const userData = userDataRes.data;
@@ -90,7 +88,7 @@ export const authenticate = async (req, res: IResponse, next) => {
             };
             next();
         } else {
-            res.status(401).json(error(userDataRes.data));
+            res.status(401).json(error(userDataRes.data.message));
         }
     }
 };
