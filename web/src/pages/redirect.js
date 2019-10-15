@@ -9,9 +9,10 @@ const MobileAuthRedirect = () => {
             const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         }
-
-        console.log({ authResponse });
+        
+        console.log("window.location.search", window.location.search)
         const authResponse = getParameterByName('authResponse');
+        console.log({ authResponse });
         window.location = 'botophotos://?authResponse=' + authResponse;
     });
 
